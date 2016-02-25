@@ -301,6 +301,14 @@ fi
 
     RELEASE_DIR="target/$IMAGE_NAME"
 
+    if [ -n "$DEVICE" -a -d "$PROJECT_DIR/$PROJECT/devices/$DEVICE/install" ]; then
+      INSTALL_SRC_DIR="$PROJECT_DIR/$PROJECT/devices/$DEVICE/install"
+    else
+      INSTALL_SRC_DIR="$PROJECT_DIR/$PROJECT/install"
+    fi
+
+    MKIMAGE_TOOL_CMD="$ROOT/$BUILD/linux-$(kernel_version)/arch/$TARGET_KERNEL_ARCH/boot/mkimage -A $TARGET_KERNEL_ARCH -O linux -T script -C none -d"
+
     # cleanup
       rm -rf $RELEASE_DIR
 
@@ -404,8 +412,10 @@ fi
           TOOLCHAIN="$TOOLCHAIN" \
           TARGET_IMG="$TARGET_IMG" \
           IMAGE_NAME="$IMAGE_NAME" \
+          INSTALL_SRC_DIR="$INSTALL_SRC_DIR" \
           BOOTLOADER="$BOOTLOADER" \
           KERNEL_NAME="$KERNEL_NAME" \
+          MKIMAGE_TOOL_CMD="$MKIMAGE_TOOL_CMD" \
           RELEASE_DIR="$RELEASE_DIR" \
           UUID_SYSTEM="$(uuidgen)" \
           UUID_STORAGE="$(uuidgen)" \
@@ -419,12 +429,6 @@ fi
     # create WeTek Play (Amlogic) ZIP update and auto-install packages if requested
       if [ "$1" = "amlpkg" ]; then
         echo "Creating Amlogic ZIP update package"
-
-        if [ -n "$DEVICE" -a -d "$PROJECT_DIR/$PROJECT/devices/$DEVICE/install" ]; then
-          INSTALL_SRC_DIR="$PROJECT_DIR/$PROJECT/devices/$DEVICE/install"
-        else
-          INSTALL_SRC_DIR="$PROJECT_DIR/$PROJECT/install"
-        fi
 
         AML_PKG_DIR="$RELEASE_DIR/ampl-pkg"
 
@@ -467,6 +471,8 @@ fi
           cp $INSTALL_SRC_DIR/files/recovery.img .
           if [ -f $INSTALL_SRC_DIR/files/aml_autoscript ]; then
             cp $INSTALL_SRC_DIR/files/aml_autoscript .
+          elif [ -f "$INSTALL_SRC_DIR/aml_autoscript.src" ]; then
+            $MKIMAGE_TOOL_CMD "$INSTALL_SRC_DIR/aml_autoscript.src" aml_autoscript > /dev/null
           fi
           zip -q $TARGET_IMG/$IMAGE_NAME.zip *
           popd > /dev/null

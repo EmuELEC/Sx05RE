@@ -237,6 +237,14 @@ elif [ "$BOOTLOADER" = "u-boot" ]; then
     done
 fi # bootloader
 
+if [ -f "$INSTALL_SRC_DIR/aml_autoscript.src" ]; then
+  cat "$INSTALL_SRC_DIR/aml_autoscript.src" > "$OE_TMP/aml_autoscript.src"
+  echo "run storeargs" >> "$OE_TMP/aml_autoscript.src"
+  echo "run bootcmd" >> "$OE_TMP/aml_autoscript.src"
+  $MKIMAGE_TOOL_CMD "$OE_TMP/aml_autoscript.src" "$OE_TMP/aml_autoscript" > /dev/null
+  mcopy "$OE_TMP/aml_autoscript" "::/aml_autoscript"
+fi
+
 # extract part2 from image to format and copy files
   echo "image: extracting part2 from image..."
   STORAGE_PART_COUNT=$(( $STORAGE_PART_END - $STORAGE_PART_START + 1 ))
