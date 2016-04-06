@@ -54,10 +54,19 @@ else
   LIBREELEC_BUILD="community"
 fi
 
-TARGET_VERSION="$PROJECT.$TARGET_ARCH-$LIBREELEC_VERSION"
+if [ -z "$DEVICE" ]; then
+  TARGET_VERSION="$PROJECT.$TARGET_ARCH-$LIBREELEC_VERSION"
+else
+  TARGET_VERSION="$PROJECT.$DEVICE.$TARGET_ARCH-$LIBREELEC_VERSION"
+fi
 IMAGE_NAME="$DISTRONAME-$TARGET_VERSION"
+
 if [ "$DEVEL_VERSION" = "devel" ] ; then
-  IMAGE_NAME="$DISTRONAME-$PROJECT.$TARGET_ARCH-$OS_VERSION-$LIBREELEC_VERSION"
+  if [ -z "$DEVICE" ]; then
+    IMAGE_NAME="$DISTRONAME-$PROJECT.$TARGET_ARCH-$OS_VERSION-$LIBREELEC_VERSION"
+  else
+    IMAGE_NAME="$DISTRONAME-$PROJECT.$DEVICE.$TARGET_ARCH-$OS_VERSION-$LIBREELEC_VERSION"
+  fi
 fi
 
 if [ "$PROJECT" == "imx6" -a -n "$SYSTEM" ]; then
@@ -211,6 +220,11 @@ fi
         enable_service $(basename $service)
       fi
     done
+  fi
+
+# copy board related files to filesystem
+  if [ -n "$DEVICE" -a -d "$PROJECT_DIR/$PROJECT/devices/$DEVICE/filesystem" ]; then
+    cp -PR $PROJECT_DIR/$PROJECT/devices/$DEVICE/filesystem/* $INSTALL
   fi
 
 # run depmod
@@ -384,7 +398,12 @@ fi
       if [ "$1" = "amlpkg" ]; then
         echo "Creating Amlogic ZIP update package"
 
-        INSTALL_SRC_DIR="$PROJECT_DIR/$PROJECT/install"
+        if [ -n "$DEVICE" -a -d "$PROJECT_DIR/$PROJECT/devices/$DEVICE/install" ]; then
+          INSTALL_SRC_DIR="$PROJECT_DIR/$PROJECT/devices/$DEVICE/install"
+        else
+          INSTALL_SRC_DIR="$PROJECT_DIR/$PROJECT/install"
+        fi
+
         AML_PKG_DIR="$RELEASE_DIR/ampl-pkg"
 
         # create package directory
