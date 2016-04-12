@@ -462,21 +462,21 @@ fi
         java -Xmx1024m -jar $SIGNAPK_DIR/signapk.jar -w $SIGNAPK_DIR/testkey.x509.pem $SIGNAPK_DIR/testkey.pk8 update.zip sign/$IMAGE_NAME-update.zip
 
         # create the auto-install package
+        echo "Creating Amlogic ZIP auto-install package"
+        pushd sign > /dev/null
+        echo --update_package=/sdcard/$IMAGE_NAME-update.zip > factory_update_param.aml
+        echo --wipe_data >> factory_update_param.aml
+        echo --wipe_cache >> factory_update_param.aml
         if [ -f "$INSTALL_SRC_DIR/files/recovery.img" ]; then
-          echo "Creating Amlogic ZIP auto-install package"
-          pushd sign > /dev/null
-          echo --update_package=/sdcard/$IMAGE_NAME-update.zip > factory_update_param.aml
-          echo --wipe_data >> factory_update_param.aml
-          echo --wipe_cache >> factory_update_param.aml
           cp $INSTALL_SRC_DIR/files/recovery.img .
-          if [ -f $INSTALL_SRC_DIR/files/aml_autoscript ]; then
-            cp $INSTALL_SRC_DIR/files/aml_autoscript .
-          elif [ -f "$INSTALL_SRC_DIR/aml_autoscript.src" ]; then
-            $MKIMAGE_TOOL_CMD "$INSTALL_SRC_DIR/aml_autoscript.src" aml_autoscript > /dev/null
-          fi
-          zip -q $TARGET_IMG/$IMAGE_NAME.zip *
-          popd > /dev/null
         fi
+        if [ -f $INSTALL_SRC_DIR/files/aml_autoscript ]; then
+          cp $INSTALL_SRC_DIR/files/aml_autoscript .
+        elif [ -f "$INSTALL_SRC_DIR/aml_autoscript.src" ]; then
+          $MKIMAGE_TOOL_CMD "$INSTALL_SRC_DIR/aml_autoscript.src" aml_autoscript > /dev/null
+        fi
+        zip -q $TARGET_IMG/$IMAGE_NAME.zip *
+        popd > /dev/null
 
         # copy update package to target directory
         cp sign/$IMAGE_NAME-update.zip $TARGET_IMG
