@@ -1,4 +1,4 @@
-From 01759c5adfb050b1ba0c8a8fc4e20a875a98c0e5 Mon Sep 17 00:00:00 2001
+From 1ac1ea72fb2d7a5b0707b12a11652609e8188033 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sun, 10 Aug 2014 18:58:37 +0100
 Subject: [PATCH 1/2] confluence: Remove media-overlay.jpg for when video is
@@ -21,11 +21,8 @@ index cc996da..d6aa595 100644
  			<visible>[Player.HasVideo + !Skin.HasSetting(ShowBackgroundVideo)] + !Window.IsVisible(TVChannels) + !Window.IsVisible(RadioChannels)</visible>
  			<include>VisibleFadeEffect</include>
  		</control>
--- 
-2.5.0
 
-
-From d99f70c094006144f07bdf739f5847b733030245 Mon Sep 17 00:00:00 2001
+From 173a2f038511095ad8390bc39cb40280b73d7cd4 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Mon, 22 Jul 2013 23:19:15 +0100
 Subject: [PATCH 2/2] [confluence] Use animated gif as a cheaper working
@@ -111,7 +108,4 @@ xGUUb21Yb|%0k3;EZL|UA71ss70{N2%rZhjU!V8TtZxzYw_F;tVxR3z1e*p+ht@8i?
 
 literal 0
 HcmV?d00001
-
--- 
-2.5.0
 
