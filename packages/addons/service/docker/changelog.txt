@@ -1,2 +1,6 @@
+7.0.101
+- Update to golan 1.6.2
+- Update to docker 1.11.0
+
 7.0.100
 - Initial release
