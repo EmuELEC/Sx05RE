@@ -34,6 +34,10 @@ case "$LINUX" in
     PKG_VERSION="amlogic-3.10-c8d5b2f"
     PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
     ;;
+  amlogic-kszaq)
+    PKG_VERSION="4e597d35"
+    PKG_URL="https://github.com/kszaq/linux/archive/$PKG_VERSION.tar.gz"
+    ;;
   imx6)
     PKG_VERSION="3.14-mx6-sr"
     PKG_COMMIT="4386797"
