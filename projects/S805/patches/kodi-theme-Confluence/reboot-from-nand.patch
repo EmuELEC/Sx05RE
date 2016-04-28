@@ -16,7 +16,7 @@ index e6cbfd8..6a80d84 100644
 +				<textwidth>290</textwidth>
 +				<texturefocus border="25,5,25,5">ShutdownButtonFocus.png</texturefocus>
 +				<texturenofocus border="25,5,25,5">ShutdownButtonNoFocus.png</texturenofocus>
-+				<onclick>System.ExecWait("/usr/bin/rebootfromnand.sh")</onclick>
++				<onclick>System.ExecWait("/usr/sbin/rebootfromnand.sh")</onclick>
 +				<visible>System.CanReboot</visible>
 +				<pulseonselect>no</pulseonselect>
 +				<font>font13</font>
