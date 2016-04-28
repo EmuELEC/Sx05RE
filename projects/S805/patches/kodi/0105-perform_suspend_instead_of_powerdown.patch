@@ -7,20 +7,7 @@ index 45682a2..b8ce91b 100644
        <home>FirstPage</home>
        <end>LastPage</end>
 -      <power>ActivateWindow(shutdownmenu)</power>
-+      <power>XBMC.Powerdown()</power>
++      <power>XBMC.Suspend()</power>
        <sleep>ActivateWindow(shutdownmenu)</sleep>
        <!-- PVR windows -->
        <e>XBMC.ActivateWindowAndFocus(MyPVR, 31,0, 10,0)</e>
-diff --git a/xbmc/powermanagement/linux/LogindUPowerSyscall.cpp b/xbmc/powermanagement/linux/LogindUPowerSyscall.cpp
-index 5a97fe6..369e790 100644
---- a/xbmc/powermanagement/linux/LogindUPowerSyscall.cpp
-+++ b/xbmc/powermanagement/linux/LogindUPowerSyscall.cpp
-@@ -97,7 +97,7 @@ CLogindUPowerSyscall::~CLogindUPowerSyscall()
- 
- bool CLogindUPowerSyscall::Powerdown()
- {
--  return LogindSetPowerState("PowerOff");
-+  return Suspend();
- }
- 
- bool CLogindUPowerSyscall::Reboot()
