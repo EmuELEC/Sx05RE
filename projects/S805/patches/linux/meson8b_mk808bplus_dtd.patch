@@ -1,9 +1,9 @@
 diff --git a/arch/arm/boot/dts/amlogic/meson8b_mk808bplus.dtd b/arch/arm/boot/dts/amlogic/meson8b_mk808bplus.dtd
 new file mode 100644
-index 0000000..a2243c9
+index 0000000..3a2d9f7
 --- /dev/null
 +++ b/arch/arm/boot/dts/amlogic/meson8b_mk808bplus.dtd
-@@ -0,0 +1,2106 @@
+@@ -0,0 +1,2107 @@
 +/dts-v1/;
 +/// ***************************************************************************************\n
 +//$$ PROJECT="meson8b"
@@ -328,6 +328,7 @@ index 0000000..a2243c9
 +//$$ L2 PROP_STR = "status"
 +    rtc{
 +		compatible = "amlogic,aml_rtc";
++		sec_adjust = <1735>;
 +		status = "okay";
 +	};
 +
