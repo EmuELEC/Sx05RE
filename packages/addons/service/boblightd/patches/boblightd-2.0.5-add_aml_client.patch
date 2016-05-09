@@ -251,7 +251,7 @@ diff -urPp src/clients/boblight-aml.cpp src/clients/boblight-aml/boblight-aml.cp
 +
 +#define VIDEO_PATH       "/dev/amvideo"
 +#define AMSTREAM_IOC_MAGIC  'S'
-+#define AMSTREAM_IOC_GET_VIDEO_DISABLE  _IOR(AMSTREAM_IOC_MAGIC, 0x48, unsigned long)
++#define AMSTREAM_IOC_GET_VIDEO_DISABLE  _IOR(AMSTREAM_IOC_MAGIC, 0x48, int)
 +static int amvideo_utils_video_playing()
 +{
 +  int video_fd;
