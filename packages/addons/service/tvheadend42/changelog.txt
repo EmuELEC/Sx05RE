@@ -1,3 +1,7 @@
+7.0.102
+- Update to Tvheadend 4.1.1945
+- fixes problems with DVB-C sticks
+
 7.0.101
 - Update to Tvheadend 4.1.1928
 
