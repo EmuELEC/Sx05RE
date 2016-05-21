@@ -1,2 +1,5 @@
+7.0.101
+- Add mpg123 and squeezelite
+
 7.0.100
 - Initial Release
