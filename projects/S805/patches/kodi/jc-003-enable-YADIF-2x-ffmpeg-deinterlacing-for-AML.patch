@@ -1,0 +1,160 @@
+commit 991b44d55cbf2447a0e6208befa431c564ac76f9
+Author: Jamie Coldhill <wrxtasy@amnet.net.au>
+Date:   Sat May 7 10:42:58 2016 +0800
+
+    AML S8x2/S905 has enough CPU ponies to do quality full motion, Software YADIF x2 deinterlacing
+    Lets enable it by default.
+
+diff --git a/addons/resource.language.en_gb/resources/strings.po b/addons/resource.language.en_gb/resources/strings.po
+index a697a61..3208a35 100644
+--- a/addons/resource.language.en_gb/resources/strings.po
++++ b/addons/resource.language.en_gb/resources/strings.po
+@@ -7961,7 +7961,7 @@ msgstr ""
+ 
+ #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
+ msgctxt "#16020"
+-msgid "Deinterlace"
++msgid "Yadif 2x"
+ msgstr ""
+ 
+ #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
+@@ -8030,7 +8030,7 @@ msgstr ""
+ 
+ #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
+ msgctxt "#16036"
+-msgid "Deinterlace (half)"
++msgid "Yadif"
+ msgstr ""
+ 
+ msgctxt "#16037"
+@@ -8057,7 +8057,11 @@ msgctxt "#16041"
+ msgid "On"
+ msgstr ""
+ 
+-#empty strings from id 16042 to 16099
++#: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
++msgctxt "#16336"
++msgid "Software - FFmpeg"
++msgstr ""
++#empty strings from id 16337 to 16399
+ 
+ #: xbmc/video/windows/GUIWindowVideoNav.cpp
+ msgctxt "#16100"
+diff --git a/xbmc/cores/VideoRenderers/LinuxRendererGLES.cpp b/xbmc/cores/VideoRenderers/LinuxRendererGLES.cpp
+index 1c4715a..4e0850a 100644
+--- a/xbmc/cores/VideoRenderers/LinuxRendererGLES.cpp
++++ b/xbmc/cores/VideoRenderers/LinuxRendererGLES.cpp
+@@ -3009,18 +3009,13 @@ bool CLinuxRendererGLES::Supports(EINTERLACEMETHOD method)
+       return false;
+   }
+ 
+-#if !defined(TARGET_ANDROID) && (defined(__i386__) || defined(__x86_64__))
+-  if(method == VS_INTERLACEMETHOD_DEINTERLACE
+-  || method == VS_INTERLACEMETHOD_DEINTERLACE_HALF
+-  || method == VS_INTERLACEMETHOD_SW_BLEND)
+-#else
+-  if(method == VS_INTERLACEMETHOD_SW_BLEND
++  if(method == VS_INTERLACEMETHOD_YADIF
++  || method == VS_INTERLACEMETHOD_YADIF_HALF
+   || method == VS_INTERLACEMETHOD_RENDER_BOB
++  || method == VS_INTERLACEMETHOD_SW_FFMPEG
++  || method == VS_INTERLACEMETHOD_SW_BLEND
+   || method == VS_INTERLACEMETHOD_RENDER_BOB_INVERTED)
+-#endif
+     return true;
+-
+-  return false;
+ }
+ 
+ bool CLinuxRendererGLES::Supports(ESCALINGMETHOD method)
+@@ -3074,8 +3069,8 @@ EINTERLACEMETHOD CLinuxRendererGLES::AutoInterlaceMethod()
+   if(m_renderMethod & RENDER_IMXMAP)
+     return VS_INTERLACEMETHOD_IMX_FASTMOTION;
+ 
+-#if !defined(TARGET_ANDROID) && (defined(__i386__) || defined(__x86_64__))
+-  return VS_INTERLACEMETHOD_DEINTERLACE_HALF;
++#if (defined(__i386__) || defined(__x86_64__) || defined(HAS_LIBAMCODEC))
++  return VS_INTERLACEMETHOD_YADIF;
+ #else
+   return VS_INTERLACEMETHOD_RENDER_BOB;
+ #endif
+diff --git a/xbmc/cores/dvdplayer/DVDPlayerVideo.cpp b/xbmc/cores/dvdplayer/DVDPlayerVideo.cpp
+index 379c541..f6ba17d 100644
+--- a/xbmc/cores/dvdplayer/DVDPlayerVideo.cpp
++++ b/xbmc/cores/dvdplayer/DVDPlayerVideo.cpp
+@@ -553,9 +553,9 @@ void CDVDPlayerVideo::Process()
+ 
+       if (mDeintMode != VS_DEINTERLACEMODE_OFF)
+       {
+-        if (mInt == VS_INTERLACEMETHOD_DEINTERLACE)
++        if (mInt == VS_INTERLACEMETHOD_YADIF)
+           mFilters = CDVDVideoCodec::FILTER_DEINTERLACE_ANY;
+-        else if(mInt == VS_INTERLACEMETHOD_DEINTERLACE_HALF)
++        else if(mInt == VS_INTERLACEMETHOD_YADIF_HALF)
+           mFilters = CDVDVideoCodec::FILTER_DEINTERLACE_ANY | CDVDVideoCodec::FILTER_DEINTERLACE_HALFED;
+ 
+         if (mDeintMode == VS_DEINTERLACEMODE_AUTO && mFilters)
+@@ -678,7 +678,14 @@ void CDVDPlayerVideo::Process()
+                 sPostProcessType += g_advancedSettings.m_videoPPFFmpegDeint;
+                 bPostProcessDeint = true;
+               }
+-            }
++              else if(mInt == VS_INTERLACEMETHOD_SW_FFMPEG)
++              {
++                if (!sPostProcessType.empty())
++                  sPostProcessType += ",";
++                sPostProcessType += "ffmpegdeint";
++                bPostProcessDeint = true;
++              }
++	    }
+ 
+             if (CMediaSettings::GetInstance().GetCurrentVideoSettings().m_PostProcess)
+             {
+diff --git a/xbmc/settings/VideoSettings.h b/xbmc/settings/VideoSettings.h
+index 0305058..aa30dc6 100644
+--- a/xbmc/settings/VideoSettings.h
++++ b/xbmc/settings/VideoSettings.h
+@@ -45,7 +45,7 @@ enum EINTERLACEMETHOD
+   VS_INTERLACEMETHOD_RENDER_BOB_INVERTED=5,
+   VS_INTERLACEMETHOD_RENDER_BOB=6,
+ 
+-  VS_INTERLACEMETHOD_DEINTERLACE=7,
++  VS_INTERLACEMETHOD_YADIF=7,
+ 
+   VS_INTERLACEMETHOD_VDPAU_BOB=8,
+   VS_INTERLACEMETHOD_INVERSE_TELECINE=9,
+@@ -55,7 +55,7 @@ enum EINTERLACEMETHOD
+   VS_INTERLACEMETHOD_VDPAU_TEMPORAL_HALF=13,
+   VS_INTERLACEMETHOD_VDPAU_TEMPORAL_SPATIAL=14,
+   VS_INTERLACEMETHOD_VDPAU_TEMPORAL_SPATIAL_HALF=15,
+-  VS_INTERLACEMETHOD_DEINTERLACE_HALF=16,
++  VS_INTERLACEMETHOD_YADIF_HALF=16,
+   VS_INTERLACEMETHOD_DXVA_BOB = 17,
+   VS_INTERLACEMETHOD_DXVA_BEST = 18,
+   // VS_INTERLACEMETHOD_DXVA_ANY = 19, Legacy
+@@ -75,6 +75,8 @@ enum EINTERLACEMETHOD
+   VS_INTERLACEMETHOD_IMX_FASTMOTION = 29,
+   VS_INTERLACEMETHOD_IMX_FASTMOTION_DOUBLE = 30,
+ 
++  VS_INTERLACEMETHOD_SW_FFMPEG = 31,
++
+   VS_INTERLACEMETHOD_MAX // do not use and keep as last enum value.
+ };
+ 
+diff --git a/xbmc/video/dialogs/GUIDialogVideoSettings.cpp b/xbmc/video/dialogs/GUIDialogVideoSettings.cpp
+index b248566..f50307c 100644
+--- a/xbmc/video/dialogs/GUIDialogVideoSettings.cpp
++++ b/xbmc/video/dialogs/GUIDialogVideoSettings.cpp
+@@ -252,9 +252,10 @@ void CGUIDialogVideoSettings::InitializeSettings()
+   entries.push_back(std::make_pair(20129, VS_INTERLACEMETHOD_RENDER_WEAVE));
+   entries.push_back(std::make_pair(16022, VS_INTERLACEMETHOD_RENDER_BOB_INVERTED));
+   entries.push_back(std::make_pair(16021, VS_INTERLACEMETHOD_RENDER_BOB));
+-  entries.push_back(std::make_pair(16020, VS_INTERLACEMETHOD_DEINTERLACE));
+-  entries.push_back(std::make_pair(16036, VS_INTERLACEMETHOD_DEINTERLACE_HALF));
++  entries.push_back(std::make_pair(16020, VS_INTERLACEMETHOD_YADIF));
++  entries.push_back(std::make_pair(16036, VS_INTERLACEMETHOD_YADIF_HALF));
+   entries.push_back(std::make_pair(16324, VS_INTERLACEMETHOD_SW_BLEND));
++  entries.push_back(std::make_pair(16336, VS_INTERLACEMETHOD_SW_FFMPEG));
+   entries.push_back(std::make_pair(16314, VS_INTERLACEMETHOD_INVERSE_TELECINE));
+   entries.push_back(std::make_pair(16311, VS_INTERLACEMETHOD_VDPAU_TEMPORAL_SPATIAL));
+   entries.push_back(std::make_pair(16310, VS_INTERLACEMETHOD_VDPAU_TEMPORAL));

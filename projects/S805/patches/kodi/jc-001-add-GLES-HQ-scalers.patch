@@ -1,0 +1,1248 @@
+commit afa59d56ddb3b1311cace42164619521c7e63b81
+Author: Jamie Coldhill <wrxtasy@amnet.net.au>
+Date:   Sun May 1 23:23:17 2016 +0800
+
+    Add: GLES HQ Scalers
+
+diff --git a/system/shaders/convolution-4x4_gles.glsl b/system/shaders/convolution-4x4_gles.glsl
+new file mode 100644
+index 0000000..f69ac6e
+--- /dev/null
++++ b/system/shaders/convolution-4x4_gles.glsl
+@@ -0,0 +1,101 @@
++/*
++ *      Copyright (C) 2010-2013 Team XBMC
++ *      http://xbmc.org
++ *
++ *  This Program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2, or (at your option)
++ *  any later version.
++ *
++ *  This Program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with XBMC; see the file COPYING.  If not, see
++ *  <http://www.gnu.org/licenses/>.
++ *
++ */
++
++precision highp float;
++uniform sampler2D img;
++uniform vec2      stepxy;
++uniform float     m_stretch;
++varying vec2      cord;
++uniform float     m_alpha;
++
++#if (USE1DTEXTURE)
++  uniform sampler1D kernelTex;
++#else
++  uniform sampler2D kernelTex;
++#endif
++
++vec4 weight(float pos)
++{
++#if (HAS_FLOAT_TEXTURE)
++  #if (USE1DTEXTURE)
++    return texture1D(kernelTex, pos);
++  #else
++    return texture2D(kernelTex, vec2(pos, 0.5));
++  #endif
++#else
++  #if (USE1DTEXTURE)
++    return texture1D(kernelTex, pos) * 2.0 - 1.0;
++  #else
++    return texture2D(kernelTex, vec2(pos, 0.5)) * 2.0 - 1.0;
++  #endif
++#endif
++}
++
++vec2 stretch(vec2 pos)
++{
++#if (XBMC_STRETCH)
++  // our transform should map [0..1] to itself, with f(0) = 0, f(1) = 1, f(0.5) = 0.5, and f'(0.5) = b.
++  // a simple curve to do this is g(x) = b(x-0.5) + (1-b)2^(n-1)(x-0.5)^n + 0.5
++  // where the power preserves sign. n = 2 is the simplest non-linear case (required when b != 1)
++  float x = pos.x - 0.5;
++  return vec2(mix(x * abs(x) * 2.0, x, m_stretch) + 0.5, pos.y);
++#else
++  return pos;
++#endif
++}
++
++vec3 pixel(float xpos, float ypos)
++{
++  return texture2D(img, vec2(xpos, ypos)).rgb;
++}
++
++vec3 line (float ypos, vec4 xpos, vec4 linetaps)
++{
++  return
++    pixel(xpos.r, ypos) * linetaps.r +
++    pixel(xpos.g, ypos) * linetaps.g +
++    pixel(xpos.b, ypos) * linetaps.b +
++    pixel(xpos.a, ypos) * linetaps.a;
++}
++
++void main()
++{
++  vec2 pos = stretch(cord) + stepxy * 0.5;
++  vec2 f = fract(pos / stepxy);
++
++  vec4 linetaps   = weight(1.0 - f.x);
++  vec4 columntaps = weight(1.0 - f.y);
++
++  //make sure all taps added together is exactly 1.0, otherwise some (very small) distortion can occur
++  linetaps /= linetaps.r + linetaps.g + linetaps.b + linetaps.a;
++  columntaps /= columntaps.r + columntaps.g + columntaps.b + columntaps.a;
++
++  vec2 xystart = (-1.5 - f) * stepxy + pos;
++  vec4 xpos = vec4(xystart.x, xystart.x + stepxy.x, xystart.x + stepxy.x * 2.0, xystart.x + stepxy.x * 3.0);
++
++  gl_FragColor.rgb =
++    line(xystart.y                 , xpos, linetaps) * columntaps.r +
++    line(xystart.y + stepxy.y      , xpos, linetaps) * columntaps.g +
++    line(xystart.y + stepxy.y * 2.0, xpos, linetaps) * columntaps.b +
++    line(xystart.y + stepxy.y * 3.0, xpos, linetaps) * columntaps.a;
++
++  gl_FragColor.a = m_alpha;
++}
++
+diff --git a/system/shaders/convolution-6x6_gles.glsl b/system/shaders/convolution-6x6_gles.glsl
+new file mode 100644
+index 0000000..25d99d3
+--- /dev/null
++++ b/system/shaders/convolution-6x6_gles.glsl
+@@ -0,0 +1,112 @@
++/*
++ *      Copyright (C) 2010-2013 Team XBMC
++ *      http://xbmc.org
++ *
++ *  This Program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2, or (at your option)
++ *  any later version.
++ *
++ *  This Program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with XBMC; see the file COPYING.  If not, see
++ *  <http://www.gnu.org/licenses/>.
++ *
++ */
++
++precision highp float;
++uniform sampler2D img;
++uniform vec2      stepxy;
++uniform float     m_stretch;
++varying vec2      cord;
++uniform float     m_alpha;
++
++#if (USE1DTEXTURE)
++  uniform sampler1D kernelTex;
++#else
++  uniform sampler2D kernelTex;
++#endif
++
++vec3 weight(float pos)
++{
++#if (HAS_FLOAT_TEXTURE)
++  #if (USE1DTEXTURE)
++    return texture1D(kernelTex, pos).rgb;
++  #else
++    return texture2D(kernelTex, vec2(pos, 0.5)).rgb;
++  #endif
++#else
++  #if (USE1DTEXTURE)
++    return texture1D(kernelTex, pos).rgb * 2.0 - 1.0;
++  #else
++    return texture2D(kernelTex, vec2(pos, 0.5)).rgb * 2.0 - 1.0;
++  #endif
++#endif
++}
++
++vec2 stretch(vec2 pos)
++{
++#if (XBMC_STRETCH)
++  // our transform should map [0..1] to itself, with f(0) = 0, f(1) = 1, f(0.5) = 0.5, and f'(0.5) = b.
++  // a simple curve to do this is g(x) = b(x-0.5) + (1-b)2^(n-1)(x-0.5)^n + 0.5
++  // where the power preserves sign. n = 2 is the simplest non-linear case (required when b != 1)
++  float x = pos.x - 0.5;
++  return vec2(mix(x * abs(x) * 2.0, x, m_stretch) + 0.5, pos.y);
++#else
++  return pos;
++#endif
++}
++
++vec3 pixel(float xpos, float ypos)
++{
++  return texture2D(img, vec2(xpos, ypos)).rgb;
++}
++
++vec3 line (float ypos, vec3 xpos1, vec3 xpos2, vec3 linetaps1, vec3 linetaps2)
++{
++  return
++    pixel(xpos1.r, ypos) * linetaps1.r +
++    pixel(xpos1.g, ypos) * linetaps2.r +
++    pixel(xpos1.b, ypos) * linetaps1.g +
++    pixel(xpos2.r, ypos) * linetaps2.g +
++    pixel(xpos2.g, ypos) * linetaps1.b +
++    pixel(xpos2.b, ypos) * linetaps2.b; 
++}
++
++void main()
++{
++  vec2 pos = stretch(cord) + stepxy * 0.5;
++  vec2 f = fract(pos / stepxy);
++
++  vec3 linetaps1   = weight((1.0 - f.x) / 2.0);
++  vec3 linetaps2   = weight((1.0 - f.x) / 2.0 + 0.5);
++  vec3 columntaps1 = weight((1.0 - f.y) / 2.0);
++  vec3 columntaps2 = weight((1.0 - f.y) / 2.0 + 0.5);
++
++  //make sure all taps added together is exactly 1.0, otherwise some (very small) distortion can occur
++  float sum = linetaps1.r + linetaps1.g + linetaps1.b + linetaps2.r + linetaps2.g + linetaps2.b;
++  linetaps1 /= sum;
++  linetaps2 /= sum;
++  sum = columntaps1.r + columntaps1.g + columntaps1.b + columntaps2.r + columntaps2.g + columntaps2.b;
++  columntaps1 /= sum;
++  columntaps2 /= sum;
++
++  vec2 xystart = (-2.5 - f) * stepxy + pos;
++  vec3 xpos1 = vec3(xystart.x, xystart.x + stepxy.x, xystart.x + stepxy.x * 2.0);
++  vec3 xpos2 = vec3(xystart.x + stepxy.x * 3.0, xystart.x + stepxy.x * 4.0, xystart.x + stepxy.x * 5.0);
++
++  gl_FragColor.rgb =
++   line(xystart.y                 , xpos1, xpos2, linetaps1, linetaps2) * columntaps1.r +
++   line(xystart.y + stepxy.y      , xpos1, xpos2, linetaps1, linetaps2) * columntaps2.r +
++   line(xystart.y + stepxy.y * 2.0, xpos1, xpos2, linetaps1, linetaps2) * columntaps1.g +
++   line(xystart.y + stepxy.y * 3.0, xpos1, xpos2, linetaps1, linetaps2) * columntaps2.g +
++   line(xystart.y + stepxy.y * 4.0, xpos1, xpos2, linetaps1, linetaps2) * columntaps1.b +
++   line(xystart.y + stepxy.y * 5.0, xpos1, xpos2, linetaps1, linetaps2) * columntaps2.b;
++
++  gl_FragColor.a = m_alpha;
++}
++
+diff --git a/xbmc/cores/VideoRenderers/LinuxRendererGLES.cpp b/xbmc/cores/VideoRenderers/LinuxRendererGLES.cpp
+index 1c4715a..db4a8cc 100644
+--- a/xbmc/cores/VideoRenderers/LinuxRendererGLES.cpp
++++ b/xbmc/cores/VideoRenderers/LinuxRendererGLES.cpp
+@@ -93,6 +93,10 @@ static PFNEGLCLIENTWAITSYNCKHRPROC eglClientWaitSyncKHR;
+ #include "DVDCodecs/Video/DVDVideoCodecAndroidMediaCodec.h"
+ #endif
+ 
++#ifndef GL_UNPACK_ROW_LENGTH_EXT
++#define GL_UNPACK_ROW_LENGTH_EXT 0x0CF2
++#endif
++
+ using namespace Shaders;
+ 
+ CLinuxRendererGLES::YUVBUFFER::YUVBUFFER()
+@@ -150,6 +154,8 @@ CLinuxRendererGLES::CLinuxRendererGLES()
+   m_rgbBuffer = NULL;
+   m_rgbBufferSize = 0;
+ 
++  m_nonLinStretch = false;
++
+   m_sw_context = NULL;
+   m_NumYV12Buffers = 0;
+   m_iLastRenderBuffer = 0;
+@@ -159,6 +165,9 @@ CLinuxRendererGLES::CLinuxRendererGLES()
+   m_StrictBinding = false;
+   m_clearColour = 0.0f;
+ 
++  m_fbo.width = 0.0;
++  m_fbo.height = 0.0;
++
+ #ifdef HAS_LIBSTAGEFRIGHT
+   if (!eglCreateImageKHR)
+     eglCreateImageKHR = (PFNEGLCREATEIMAGEKHRPROC) CEGLWrapper::GetProcAddress("eglCreateImageKHR");
+@@ -245,6 +254,7 @@ bool CLinuxRendererGLES::Configure(unsigned int width, unsigned int height, unsi
+     m_buffers[i].image.flags = 0;
+ 
+   m_iLastRenderBuffer = -1;
++  m_nonLinStretch    = false;
+ 
+   m_RenderUpdateCallBackFn = NULL;
+   m_RenderUpdateCallBackCtx = NULL;
+@@ -447,15 +457,24 @@ void CLinuxRendererGLES::LoadPlane( YUVPLANE& plane, int type, unsigned flipinde
+ 
+   glBindTexture(m_textureTarget, plane.id);
+ 
+-  // OpenGL ES does not support strided texture input.
+   if(stride != width * bps)
+   {
+-    unsigned char* src = (unsigned char*)data;
+-    for (unsigned int y = 0; y < height;++y, src += stride)
+-      glTexSubImage2D(m_textureTarget, 0, 0, y, width, 1, type, datatype, src);
+-  } else {
+-    glTexSubImage2D(m_textureTarget, 0, 0, 0, width, height, type, datatype, pixelData);
++    if (g_Windowing.SupportsEGLSubimage())
++    {
++      glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, stride / bps);
++      glTexSubImage2D(m_textureTarget, 0, 0, 0, width, height, type, datatype, pixelData);
++      glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, 0);
++    }
++    else
++    {
++      // OpenGL ES does not support strided texture input.
++      unsigned char* src = (unsigned char*)data;
++      for (unsigned int y = 0; y < height;++y, src += stride)
++        glTexSubImage2D(m_textureTarget, 0, 0, y, width, 1, type, datatype, src);
++    }
+   }
++  else
++    glTexSubImage2D(m_textureTarget, 0, 0, 0, width, height, type, datatype, pixelData);
+ 
+   /* check if we need to load any border pixels */
+   if(height < plane.texheight)
+@@ -496,7 +515,7 @@ void CLinuxRendererGLES::Flush()
+ 
+   glFinish();
+   m_bValidated = false;
+-  m_fbo.Cleanup();
++  m_fbo.fbo.Cleanup();
+   m_iYV12RenderBuffer = 0;
+ }
+ 
+@@ -806,7 +825,7 @@ void CLinuxRendererGLES::UpdateVideoFilter()
+     delete m_pVideoFilterShader;
+     m_pVideoFilterShader = NULL;
+   }
+-  m_fbo.Cleanup();
++  m_fbo.fbo.Cleanup();
+ 
+   VerifyGLState();
+ 
+@@ -822,17 +841,43 @@ void CLinuxRendererGLES::UpdateVideoFilter()
+     m_renderQuality = RQ_SINGLEPASS;
+     return;
+ 
+-  case VS_SCALINGMETHOD_CUBIC:
+-    CLog::Log(LOGERROR, "GLES: CUBIC not supported!");
+-    break;
+-
+-  case VS_SCALINGMETHOD_LANCZOS2:
+-  case VS_SCALINGMETHOD_LANCZOS3:
+   case VS_SCALINGMETHOD_SINC8:
+   case VS_SCALINGMETHOD_NEDI:
+     CLog::Log(LOGERROR, "GL: TODO: This scaler has not yet been implemented");
+     break;
+ 
++  case VS_SCALINGMETHOD_LANCZOS2:
++  case VS_SCALINGMETHOD_SPLINE36_FAST:
++  case VS_SCALINGMETHOD_LANCZOS3_FAST:
++  case VS_SCALINGMETHOD_SPLINE36:
++  case VS_SCALINGMETHOD_LANCZOS3:
++  case VS_SCALINGMETHOD_CUBIC:
++    if (m_renderMethod & RENDER_GLSL)
++    {
++      if (!m_fbo.fbo.Initialize())
++      {
++        CLog::Log(LOGERROR, "GL: Error initializing FBO");
++        break;
++      }
++
++      if (!m_fbo.fbo.CreateAndBindToTexture(GL_TEXTURE_2D, m_sourceWidth, m_sourceHeight, GL_RGBA))
++      {
++        CLog::Log(LOGERROR, "GL: Error creating texture and binding to FBO");
++        break;
++      }
++    }
++
++    m_pVideoFilterShader = new ConvolutionFilterShader(m_scalingMethod, m_nonLinStretch);
++    if (!m_pVideoFilterShader->CompileAndLink())
++    {
++      CLog::Log(LOGERROR, "GL: Error compiling and linking video filter shader");
++      break;
++    }
++
++    SetTextureFilter(GL_LINEAR);
++    m_renderQuality = RQ_MULTIPASS;
++    return;
++
+   default:
+     break;
+   }
+@@ -844,7 +889,7 @@ void CLinuxRendererGLES::UpdateVideoFilter()
+     delete m_pVideoFilterShader;
+     m_pVideoFilterShader = NULL;
+   }
+-  m_fbo.Cleanup();
++  m_fbo.fbo.Cleanup();
+ 
+   SetTextureFilter(GL_LINEAR);
+   m_renderQuality = RQ_SINGLEPASS;
+@@ -880,6 +925,7 @@ void CLinuxRendererGLES::LoadShaders(int field)
+       {
+         CLog::Log(LOGNOTICE, "GL: Using MediaCodec render method");
+         m_renderMethod = RENDER_MEDIACODEC;
++        UpdateVideoFilter();
+         break;
+       }
+       else if (m_format == RENDER_FMT_MEDIACODECSURFACE)
+@@ -1053,7 +1099,7 @@ void CLinuxRendererGLES::UnInit()
+   }
+ 
+   // cleanup framebuffer object if it was in use
+-  m_fbo.Cleanup();
++  m_fbo.fbo.Cleanup();
+   m_bValidated = false;
+   m_bImageReady = false;
+   m_bConfigured = false;
+@@ -1169,7 +1215,20 @@ void CLinuxRendererGLES::Render(DWORD flags, int index)
+   }
+   else if (m_renderMethod & RENDER_MEDIACODEC)
+   {
+-    RenderSurfaceTexture(index, m_currentField);
++    UpdateVideoFilter();
++    switch(m_renderQuality)
++    {
++    case RQ_LOW:
++    case RQ_SINGLEPASS:
++      RenderSurfaceTexture(index, m_currentField);
++      VerifyGLState();
++      break;
++
++    case RQ_MULTIPASS:
++      RenderMultiPass(index, m_currentField);
++      VerifyGLState();
++      break;
++    }
+   }
+   else if (m_renderMethod & RENDER_IMXMAP)
+   {
+@@ -1294,14 +1353,12 @@ void CLinuxRendererGLES::RenderSinglePass(int index, int field)
+   VerifyGLState();
+ }
+ 
+-void CLinuxRendererGLES::RenderMultiPass(int index, int field)
++void CLinuxRendererGLES::RenderToFBO(int index, int field, bool weave /*= false*/)
+ {
+-  // TODO: Multipass rendering does not currently work! FIX!
+-  CLog::Log(LOGERROR, "GLES: MULTIPASS rendering was called! But it doesnt work!!!");
+-  return;
+-
+   YV12Image &im     = m_buffers[index].image;
+-  YUVPLANES &planes = m_buffers[index].fields[field];
++  YUVFIELDS &fields = m_buffers[index].fields;
++  YUVPLANES &planes = fields[FIELD_FULL];
++  YUVPLANES &planesf = fields[field];
+ 
+   if (m_reloadShaders)
+   {
+@@ -1332,102 +1389,280 @@ void CLinuxRendererGLES::RenderMultiPass(int index, int field)
+   glActiveTexture(GL_TEXTURE0);
+   VerifyGLState();
+ 
++  Shaders::BaseYUV2RGBShader *pYUVShader = m_pYUVProgShader;
+   // make sure the yuv shader is loaded and ready to go
+-  if (!m_pYUVProgShader || (!m_pYUVProgShader->OK()))
++  if (!pYUVShader || (!pYUVShader->OK()))
+   {
+     CLog::Log(LOGERROR, "GL: YUV shader not active, cannot do multipass render");
+     return;
+   }
+ 
+-  m_fbo.BeginRender();
++  m_fbo.fbo.BeginRender();
+   VerifyGLState();
+ 
+-  m_pYUVProgShader->SetBlack(CMediaSettings::GetInstance().GetCurrentVideoSettings().m_Brightness * 0.01f - 0.5f);
+-  m_pYUVProgShader->SetContrast(CMediaSettings::GetInstance().GetCurrentVideoSettings().m_Contrast * 0.02f);
+-  m_pYUVProgShader->SetWidth(im.width);
+-  m_pYUVProgShader->SetHeight(im.height);
++  m_fbo.width  = planes[0].rect.x2 - planes[0].rect.x1;
++  m_fbo.height = planes[0].rect.y2 - planes[0].rect.y1;
++  if (m_textureTarget == GL_TEXTURE_2D)
++  {
++    m_fbo.width  *= planes[0].texwidth;
++    m_fbo.height *= planes[0].texheight;
++  }
++  m_fbo.width  *= planes[0].pixpertex_x;
++  m_fbo.height *= planes[0].pixpertex_y;
++  if (weave)
++    m_fbo.height *= 2;
++
++  pYUVShader->SetBlack(CMediaSettings::GetInstance().GetCurrentVideoSettings().m_Brightness * 0.01f - 0.5f);
++  pYUVShader->SetContrast(CMediaSettings::GetInstance().GetCurrentVideoSettings().m_Contrast * 0.02f);
++  pYUVShader->SetWidth(m_sourceWidth);
++  pYUVShader->SetHeight(m_sourceHeight);
++  pYUVShader->SetNonLinStretch(1.0);
+   if     (field == FIELD_TOP)
+-    m_pYUVProgShader->SetField(1);
++    pYUVShader->SetField(1);
+   else if(field == FIELD_BOT)
+-    m_pYUVProgShader->SetField(0);
++    pYUVShader->SetField(0);
+ 
+   VerifyGLState();
+-//TODO
+-//  glPushAttrib(GL_VIEWPORT_BIT);
+-//  glPushAttrib(GL_SCISSOR_BIT);
++
+   glMatrixModview.Push();
+   glMatrixModview->LoadIdentity();
++  glMatrixModview.Load();
+ 
+   glMatrixProject.Push();
+   glMatrixProject->LoadIdentity();
+   glMatrixProject->Ortho2D(0, m_sourceWidth, 0, m_sourceHeight);
++  glMatrixProject.Load();
+ 
+-  CRect viewport(0, 0, m_sourceWidth, m_sourceHeight);
+-  g_Windowing.SetViewPort(viewport);
+-  VerifyGLState();
++  pYUVShader->SetMatrices(glMatrixProject.Get(), glMatrixModview.Get());
+ 
++  CRect viewport;
++  g_Windowing.GetViewPort(viewport);
++  glViewport(0, 0, m_sourceWidth, m_sourceHeight);
++  glScissor (0, 0, m_sourceWidth, m_sourceHeight);
+ 
+-  if (!m_pYUVProgShader->Enable())
++  if (!pYUVShader->Enable())
+   {
+     CLog::Log(LOGERROR, "GL: Error enabling YUV shader");
+   }
+ 
+-// 1st Pass to video frame size
+-//TODO
+-//  float imgwidth  = planes[0].rect.x2 - planes[0].rect.x1;
+-//  float imgheight = planes[0].rect.y2 - planes[0].rect.y1;
+-//  if (m_textureTarget == GL_TEXTURE_2D)
+-//  {
+-//    imgwidth  *= planes[0].pixpertex_x;
+-//    imgheight *= planes[0].pixpertex_y;
+-//  }
+-//
+-//  glBegin(GL_QUADS);
+-//
+-//  glMultiTexCoord2fARB(GL_TEXTURE0, planes[0].rect.x1, planes[0].rect.y1);
+-//  glMultiTexCoord2fARB(GL_TEXTURE1, planes[1].rect.x1, planes[1].rect.y1);
+-//  glMultiTexCoord2fARB(GL_TEXTURE2, planes[2].rect.x1, planes[2].rect.y1);
+-//  glVertex2f(0.0f    , 0.0f);
+-//
+-//  glMultiTexCoord2fARB(GL_TEXTURE0, planes[0].rect.x2, planes[0].rect.y1);
+-//  glMultiTexCoord2fARB(GL_TEXTURE1, planes[1].rect.x2, planes[1].rect.y1);
+-//  glMultiTexCoord2fARB(GL_TEXTURE2, planes[2].rect.x2, planes[2].rect.y1);
+-//  glVertex2f(imgwidth, 0.0f);
+-//
+-//  glMultiTexCoord2fARB(GL_TEXTURE0, planes[0].rect.x2, planes[0].rect.y2);
+-//  glMultiTexCoord2fARB(GL_TEXTURE1, planes[1].rect.x2, planes[1].rect.y2);
+-//  glMultiTexCoord2fARB(GL_TEXTURE2, planes[2].rect.x2, planes[2].rect.y2);
+-//  glVertex2f(imgwidth, imgheight);
+-//
+-//  glMultiTexCoord2fARB(GL_TEXTURE0, planes[0].rect.x1, planes[0].rect.y2);
+-//  glMultiTexCoord2fARB(GL_TEXTURE1, planes[1].rect.x1, planes[1].rect.y2);
+-//  glMultiTexCoord2fARB(GL_TEXTURE2, planes[2].rect.x1, planes[2].rect.y2);
+-//  glVertex2f(0.0f    , imgheight);
+-//
+-//  glEnd();
+-//  VerifyGLState();
++  // 1st Pass to video frame size
++  GLubyte idx[4] = {0, 1, 3, 2};        //determines order of triangle strip
++  GLfloat vert[4][3];
++  GLfloat tex[3][4][2];
++
++  GLint vertLoc = pYUVShader->GetVertexLoc();
++  GLint Yloc    = pYUVShader->GetYcoordLoc();
++  GLint Uloc    = pYUVShader->GetUcoordLoc();
++  GLint Vloc    = pYUVShader->GetVcoordLoc();
++
++  glVertexAttribPointer(vertLoc, 3, GL_FLOAT, 0, 0, vert);
++  glVertexAttribPointer(Yloc, 2, GL_FLOAT, 0, 0, tex[0]);
++  glVertexAttribPointer(Uloc, 2, GL_FLOAT, 0, 0, tex[1]);
++  glVertexAttribPointer(Vloc, 2, GL_FLOAT, 0, 0, tex[2]);
++
++  glEnableVertexAttribArray(vertLoc);
++  glEnableVertexAttribArray(Yloc);
++  glEnableVertexAttribArray(Uloc);
++  glEnableVertexAttribArray(Vloc);
++
++  // Setup vertex position values
++  // Set vertex coordinates
++  vert[0][0] = vert[3][0] = 0.0f;
++  vert[0][1] = vert[1][1] = 0.0f;
++  vert[1][0] = vert[2][0] = m_fbo.width;
++  vert[2][1] = vert[3][1] = m_fbo.height;
++  vert[0][2] = vert[1][2] = vert[2][2] = vert[3][2] = 0.0f;
++
++
++  // Setup texture coordinates
++  for (int i=0; i<3; i++)
++  {
++    tex[i][0][0] = tex[i][3][0] = planesf[i].rect.x1;
++    tex[i][0][1] = tex[i][1][1] = planesf[i].rect.y1;
++    tex[i][1][0] = tex[i][2][0] = planesf[i].rect.x2;
++    tex[i][2][1] = tex[i][3][1] = planesf[i].rect.y2;
++  }
++
++  glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, idx);
++
++  VerifyGLState();
+ 
+   m_pYUVProgShader->Disable();
+ 
+   glMatrixModview.PopLoad();
+   glMatrixProject.PopLoad();
+-
+-//TODO
+-//  glPopAttrib(); // pop scissor
+-//  glPopAttrib(); // pop viewport
+   VerifyGLState();
+ 
+-  m_fbo.EndRender();
++  glDisableVertexAttribArray(vertLoc);
++  glDisableVertexAttribArray(Yloc);
++  glDisableVertexAttribArray(Uloc);
++  glDisableVertexAttribArray(Vloc);
++
++  g_Windowing.SetViewPort(viewport);
++
++  m_fbo.fbo.EndRender();
+ 
+   glActiveTexture(GL_TEXTURE1);
+   glDisable(m_textureTarget);
++
+   glActiveTexture(GL_TEXTURE2);
+   glDisable(m_textureTarget);
++
+   glActiveTexture(GL_TEXTURE0);
+   glDisable(m_textureTarget);
+ 
++  VerifyGLState();
++}
++
++void CLinuxRendererGLES::RenderToFBO_OES(int index, int field, bool weave /*= false*/)
++{
++#if defined(TARGET_ANDROID)
++  #ifdef DEBUG_VERBOSE
++    unsigned int time = XbmcThreads::SystemClockMillis();
++  #endif
++
++  YUVPLANE &plane = m_buffers[index].fields[0][0];
++  YUVPLANE &planef = m_buffers[index].fields[field][0];
++
++  glDisable(GL_DEPTH_TEST);
++
++  glActiveTexture(GL_TEXTURE0);
++  glBindTexture(GL_TEXTURE_EXTERNAL_OES, plane.id);
++
++  m_fbo.fbo.BeginRender();
++  VerifyGLState();
++
++  m_fbo.width  = plane.rect.x2 - plane.rect.x1;
++  m_fbo.height = plane.rect.y2 - plane.rect.y1;
++  if (m_textureTarget == GL_TEXTURE_2D)
++  {
++    m_fbo.width  *= plane.texwidth;
++    m_fbo.height *= plane.texheight;
++  }
++  m_fbo.width  *= plane.pixpertex_x;
++  m_fbo.height *= plane.pixpertex_y;
++  if (weave)
++    m_fbo.height *= 2;
++
++  glMatrixModview.Push();
++  glMatrixModview->LoadIdentity();
++  glMatrixModview.Load();
++
++  glMatrixProject.Push();
++  glMatrixProject->LoadIdentity();
++  glMatrixProject->Ortho2D(0, m_sourceWidth, 0, m_sourceHeight);
++  glMatrixProject.Load();
++
++  CRect viewport;
++  g_Windowing.GetViewPort(viewport);
++  glViewport(0, 0, m_sourceWidth, m_sourceHeight);
++  glScissor (0, 0, m_sourceWidth, m_sourceHeight);
++
++  if (field != FIELD_FULL)
++  {
++    g_Windowing.EnableGUIShader(SM_TEXTURE_RGBA_BOB_OES);
++    GLint   fieldLoc = g_Windowing.GUIShaderGetField();
++    GLint   stepLoc = g_Windowing.GUIShaderGetStep();
++
++    // Y is inverted, so invert fields
++    if     (field == FIELD_TOP)
++      glUniform1i(fieldLoc, 0);
++    else if(field == FIELD_BOT)
++      glUniform1i(fieldLoc, 1);
++    glUniform1f(stepLoc, 1.0f / (float)plane.texheight);
++  }
++  else
++    g_Windowing.EnableGUIShader(SM_TEXTURE_RGBA_OES);
++
++  GLint   contrastLoc = g_Windowing.GUIShaderGetContrast();
++  glUniform1f(contrastLoc, CMediaSettings::GetInstance().GetCurrentVideoSettings().m_Contrast * 0.02f);
++  GLint   brightnessLoc = g_Windowing.GUIShaderGetBrightness();
++  glUniform1f(brightnessLoc, CMediaSettings::GetInstance().GetCurrentVideoSettings().m_Brightness * 0.01f - 0.5f);
++
++  glUniformMatrix4fv(g_Windowing.GUIShaderGetCoord0Matrix(), 1, GL_FALSE, m_textureMatrix);
++
++  GLubyte idx[4] = {0, 1, 3, 2};        //determines order of triangle strip
++  GLfloat vert[4][4];
++  GLfloat tex[4][4];
++
++  GLint   posLoc = g_Windowing.GUIShaderGetPos();
++  GLint   texLoc = g_Windowing.GUIShaderGetCoord0();
++
++
++  glVertexAttribPointer(posLoc, 4, GL_FLOAT, 0, 0, vert);
++  glVertexAttribPointer(texLoc, 4, GL_FLOAT, 0, 0, tex);
++
++  glEnableVertexAttribArray(posLoc);
++  glEnableVertexAttribArray(texLoc);
++
++  // Set vertex coordinates
++  vert[0][0] = vert[3][0] = 0.0f;
++  vert[0][1] = vert[1][1] = 0.0f;
++  vert[1][0] = vert[2][0] = m_fbo.width;
++  vert[2][1] = vert[3][1] = m_fbo.height;
++  vert[0][2] = vert[1][2] = vert[2][2] = vert[3][2] = 0.0f;
++  vert[0][3] = vert[1][3] = vert[2][3] = vert[3][3] = 1.0f;
++
++  // Set texture coordinates (MediaCodec is flipped in y)
++  if (field == FIELD_FULL)
++  {
++    tex[0][0] = tex[3][0] = plane.rect.x1;
++    tex[0][1] = tex[1][1] = plane.rect.y2;
++    tex[1][0] = tex[2][0] = plane.rect.x2;
++    tex[2][1] = tex[3][1] = plane.rect.y1;
++  }
++  else
++  {
++    tex[0][0] = tex[3][0] = planef.rect.x1;
++    tex[0][1] = tex[1][1] = planef.rect.y2 * 2.0f;
++    tex[1][0] = tex[2][0] = planef.rect.x2;
++    tex[2][1] = tex[3][1] = planef.rect.y1 * 2.0f;
++  }
++
++  for(int i = 0; i < 4; i++)
++  {
++    tex[i][2] = 0.0f;
++    tex[i][3] = 1.0f;
++  }
++
++  glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, idx);
++
++  glDisableVertexAttribArray(posLoc);
++  glDisableVertexAttribArray(texLoc);
++
++  const float identity[16] = {
++      1.0f, 0.0f, 0.0f, 0.0f,
++      0.0f, 1.0f, 0.0f, 0.0f,
++      0.0f, 0.0f, 1.0f, 0.0f,
++      0.0f, 0.0f, 0.0f, 1.0f
++  };
++  glUniformMatrix4fv(g_Windowing.GUIShaderGetCoord0Matrix(),  1, GL_FALSE, identity);
++
++  g_Windowing.DisableGUIShader();
++  VerifyGLState();
++
++  glBindTexture(GL_TEXTURE_EXTERNAL_OES, 0);
++  VerifyGLState();
++
++  glMatrixModview.PopLoad();
++  glMatrixProject.PopLoad();
++  VerifyGLState();
++
++  g_Windowing.SetViewPort(viewport);
++
++  m_fbo.fbo.EndRender();
++
++  #ifdef DEBUG_VERBOSE
++    CLog::Log(LOGDEBUG, "RenderMediaCodecImage %d: tm:%d", index, XbmcThreads::SystemClockMillis() - time);
++  #endif
++#endif
++}
++
++void CLinuxRendererGLES::RenderFromFBO()
++{
+   glEnable(GL_TEXTURE_2D);
+-  glBindTexture(GL_TEXTURE_2D, m_fbo.Texture());
++  glActiveTexture(GL_TEXTURE0);
++  glBindTexture(GL_TEXTURE_2D, m_fbo.fbo.Texture());
+   VerifyGLState();
+ 
+   // Use regular normalized texture coordinates
+@@ -1436,36 +1671,62 @@ void CLinuxRendererGLES::RenderMultiPass(int index, int field)
+ 
+   if (m_pVideoFilterShader)
+   {
+-    m_fbo.SetFiltering(GL_TEXTURE_2D, GL_NEAREST);
++    GLint filter;
++    if (!m_pVideoFilterShader->GetTextureFilter(filter))
++      filter = m_scalingMethod == VS_SCALINGMETHOD_NEAREST ? GL_NEAREST : GL_LINEAR;
++    m_fbo.fbo.SetFiltering(GL_TEXTURE_2D, filter);
++
+     m_pVideoFilterShader->SetSourceTexture(0);
+     m_pVideoFilterShader->SetWidth(m_sourceWidth);
+     m_pVideoFilterShader->SetHeight(m_sourceHeight);
++    m_pVideoFilterShader->SetAlpha(1.0f);
++
++    //disable non-linear stretch when a dvd menu is shown, parts of the menu are rendered through the overlay renderer
++    //having non-linear stretch on breaks the alignment
++    if (g_application.m_pPlayer->IsInMenu())
++      m_pVideoFilterShader->SetNonLinStretch(1.0);
++    else
++      m_pVideoFilterShader->SetNonLinStretch(pow(CDisplaySettings::GetInstance().GetPixelRatio(), g_advancedSettings.m_videoNonLinStretchRatio));
++
++    m_pVideoFilterShader->SetMatrices(glMatrixProject.Get(), glMatrixModview.Get());
+     m_pVideoFilterShader->Enable();
+   }
+   else
+-    m_fbo.SetFiltering(GL_TEXTURE_2D, GL_LINEAR);
++    m_fbo.fbo.SetFiltering(GL_TEXTURE_2D, GL_LINEAR);
+ 
+   VerifyGLState();
+ 
+-//TODO
+-//  imgwidth  /= m_sourceWidth;
+-//  imgheight /= m_sourceHeight;
+-//
+-//  glBegin(GL_QUADS);
+-//
+-//  glMultiTexCoord2fARB(GL_TEXTURE0, 0.0f    , 0.0f);
+-//  glVertex4f(m_destRect.x1, m_destRect.y1, 0, 1.0f );
+-//
+-//  glMultiTexCoord2fARB(GL_TEXTURE0, imgwidth, 0.0f);
+-//  glVertex4f(m_destRect.x2, m_destRect.y1, 0, 1.0f);
+-//
+-//  glMultiTexCoord2fARB(GL_TEXTURE0, imgwidth, imgheight);
+-//  glVertex4f(m_destRect.x2, m_destRect.y2, 0, 1.0f);
+-//
+-//  glMultiTexCoord2fARB(GL_TEXTURE0, 0.0f    , imgheight);
+-//  glVertex4f(m_destRect.x1, m_destRect.y2, 0, 1.0f);
+-//
+-//  glEnd();
++  float imgwidth = m_fbo.width / m_sourceWidth;
++  float imgheight = m_fbo.height / m_sourceHeight;
++
++  GLubyte idx[4] = {0, 1, 3, 2};        //determines order of triangle strip
++  GLfloat m_vert[4][3];
++  GLfloat m_tex[4][2];
++
++  GLint vertLoc = m_pVideoFilterShader->GetVertexLoc();
++  GLint loc     = m_pVideoFilterShader->GetcoordLoc();
++
++  glVertexAttribPointer(vertLoc, 3, GL_FLOAT, 0, 0, m_vert);
++  glVertexAttribPointer(loc, 2, GL_FLOAT, 0, 0, m_tex);
++
++  glEnableVertexAttribArray(vertLoc);
++  glEnableVertexAttribArray(loc);
++
++  // Setup vertex position values
++  for(int i = 0; i < 4; i++)
++  {
++    m_vert[i][0] = m_rotatedDestCoords[i].x;
++    m_vert[i][1] = m_rotatedDestCoords[i].y;
++    m_vert[i][2] = 0.0f;// set z to 0
++  }
++
++  // Setup texture coordinates
++  m_tex[0][0] = m_tex[3][0] = 0.0f;
++  m_tex[0][1] = m_tex[1][1] = 0.0f;
++  m_tex[1][0] = m_tex[2][0] = imgwidth;
++  m_tex[2][1] = m_tex[3][1] = imgheight;
++
++  glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, idx);
+ 
+   VerifyGLState();
+ 
+@@ -1474,10 +1735,35 @@ void CLinuxRendererGLES::RenderMultiPass(int index, int field)
+ 
+   VerifyGLState();
+ 
+-  glDisable(m_textureTarget);
++  glBindTexture(GL_TEXTURE_2D, 0);
++  glDisable(GL_TEXTURE_2D);
+   VerifyGLState();
+ }
+ 
++void CLinuxRendererGLES::RenderMultiPass(int index, int field)
++{
++  if (!m_fbo.fbo.IsValid())
++  {
++    if (!m_fbo.fbo.Initialize())
++    {
++      CLog::Log(LOGERROR, "GL: Error initializing FBO");
++      return;
++    }
++
++    if (!m_fbo.fbo.CreateAndBindToTexture(GL_TEXTURE_2D, m_sourceWidth, m_sourceHeight, GL_RGBA))
++    {
++      CLog::Log(LOGERROR, "GL: Error creating texture and binding to FBO");
++      return;
++    }
++  }
++
++  if (m_renderMethod & RENDER_MEDIACODEC)
++    RenderToFBO_OES(index, m_currentField);
++  else
++    RenderToFBO(index, m_currentField);
++  RenderFromFBO();
++}
++
+ void CLinuxRendererGLES::RenderSoftware(int index, int field)
+ {
+   YUVPLANES &planes = m_buffers[index].fields[field];
+@@ -3042,6 +3328,31 @@ bool CLinuxRendererGLES::Supports(ESCALINGMETHOD method)
+   || method == VS_SCALINGMETHOD_LINEAR)
+     return true;
+ 
++  if(method == VS_SCALINGMETHOD_CUBIC
++  || method == VS_SCALINGMETHOD_LANCZOS2
++  || method == VS_SCALINGMETHOD_SPLINE36_FAST
++  || method == VS_SCALINGMETHOD_LANCZOS3_FAST
++  || method == VS_SCALINGMETHOD_SPLINE36
++  || method == VS_SCALINGMETHOD_LANCZOS3)
++  {
++    // if scaling is below level, avoid hq scaling
++    float scaleX = fabs(((float)m_sourceWidth - m_destRect.Width())/m_sourceWidth)*100;
++    float scaleY = fabs(((float)m_sourceHeight - m_destRect.Height())/m_sourceHeight)*100;
++    int minScale = CSettings::GetInstance().GetInt(CSettings::SETTING_VIDEOPLAYER_HQSCALERS);
++    if (scaleX < minScale && scaleY < minScale)
++      return false;
++
++    if (m_renderMethod & (RENDER_GLSL | RENDER_MEDIACODEC))
++    {
++      // spline36 and lanczos3 are only allowed through advancedsettings.xml
++      if(method != VS_SCALINGMETHOD_SPLINE36
++      && method != VS_SCALINGMETHOD_LANCZOS3)
++        return true;
++      else
++        return g_advancedSettings.m_videoEnableHighQualityHwScalers;
++    }
++  }
++
+   return false;
+ }
+ 
+diff --git a/xbmc/cores/VideoRenderers/LinuxRendererGLES.h b/xbmc/cores/VideoRenderers/LinuxRendererGLES.h
+index 77bbb57..03bb2ad 100644
+--- a/xbmc/cores/VideoRenderers/LinuxRendererGLES.h
++++ b/xbmc/cores/VideoRenderers/LinuxRendererGLES.h
+@@ -229,6 +229,9 @@ protected:
+   void CalculateTextureSourceRects(int source, int num_planes);
+ 
+   // renderers
++  void RenderToFBO(int index, int field, bool weave = false);
++  void RenderToFBO_OES(int index, int field, bool weave = false);
++  void RenderFromFBO();
+   void RenderMultiPass(int index, int field);     // multi pass glsl renderer
+   void RenderSinglePass(int index, int field);    // single pass glsl renderer
+   void RenderSoftware(int index, int field);      // single pass s/w yuv2rgb renderer
+@@ -238,7 +241,12 @@ protected:
+   void RenderSurfaceTexture(int index, int field);// MediaCodec rendering using SurfaceTexture
+   void RenderIMXMAPTexture(int index, int field); // IMXMAP rendering
+ 
+-  CFrameBufferObject m_fbo;
++ struct
++  {
++    CFrameBufferObject fbo;
++    float width, height;
++  } m_fbo;
++  bool  m_nonLinStretch;
+ 
+   int m_iYV12RenderBuffer;
+   int m_NumYV12Buffers;
+diff --git a/xbmc/cores/VideoRenderers/VideoShaders/VideoFilterShader.cpp b/xbmc/cores/VideoRenderers/VideoShaders/VideoFilterShader.cpp
+index 18f0bad..f16a329 100644
+--- a/xbmc/cores/VideoRenderers/VideoShaders/VideoFilterShader.cpp
++++ b/xbmc/cores/VideoRenderers/VideoShaders/VideoFilterShader.cpp
+@@ -55,6 +55,38 @@ BaseVideoFilterShader::BaseVideoFilterShader()
+ 
+   m_stretch = 0.0f;
+ 
++#ifdef HAS_GLES == 2
++  m_hVertex = -1;
++  m_hcoord = -1;
++  m_hProj   = -1;
++  m_hModel  = -1;
++  m_hAlpha  = -1;
++
++  std::string shaderv =
++      " attribute vec4 m_attrpos;"
++      " attribute vec2 m_attrcord;"
++      " varying vec2 cord;"
++      " uniform mat4 m_proj;"
++      " uniform mat4 m_model;"
++
++      " void main ()"
++      " {"
++      "   mat4 mvp    = m_proj * m_model;"
++      "   gl_Position = mvp * m_attrpos;"
++      "   cord        = m_attrcord.xy;"
++      " }";
++  VertexShader()->SetSource(shaderv);
++
++  std::string shaderp =
++    "precision mediump float;"
++    "uniform sampler2D img;"
++    "varying vec2 cord;"
++    "void main()"
++    "{"
++    "  gl_FragColor = texture2D(img, cord);"
++    "}";
++  PixelShader()->SetSource(shaderp);
++#else
+   std::string shaderv =
+     "varying vec2 cord;"
+     "void main()"
+@@ -74,6 +106,28 @@ BaseVideoFilterShader::BaseVideoFilterShader()
+     "gl_FragColor.a = gl_Color.a;"
+     "}";
+   PixelShader()->SetSource(shaderp);
++#endif
++}
++
++void BaseVideoFilterShader::OnCompiledAndLinked()
++{
++#if HAS_GLES == 2
++  m_hVertex = glGetAttribLocation(ProgramHandle(),  "m_attrpos");
++  m_hcoord = glGetAttribLocation(ProgramHandle(),  "m_attrcord");
++  m_hAlpha  = glGetUniformLocation(ProgramHandle(), "m_alpha");
++  m_hProj  = glGetUniformLocation(ProgramHandle(), "m_proj");
++  m_hModel = glGetUniformLocation(ProgramHandle(), "m_model");
++#endif
++}
++
++bool BaseVideoFilterShader::OnEnabled()
++{
++#if HAS_GLES == 2
++  glUniformMatrix4fv(m_hProj,  1, GL_FALSE, m_proj);
++  glUniformMatrix4fv(m_hModel, 1, GL_FALSE, m_model);
++  glUniform1f(m_hAlpha, m_alpha);
++#endif
++  return true;
+ }
+ 
+ ConvolutionFilterShader::ConvolutionFilterShader(ESCALINGMETHOD method, bool stretch)
+@@ -95,24 +149,30 @@ ConvolutionFilterShader::ConvolutionFilterShader(ESCALINGMETHOD method, bool str
+       m_method == VS_SCALINGMETHOD_SPLINE36_FAST ||
+       m_method == VS_SCALINGMETHOD_LANCZOS3_FAST)
+   {
+-    shadername = "convolution-4x4.glsl";
+ #if defined(HAS_GL)
++    shadername = "convolution-4x4.glsl";
+     if (m_floattex)
+       m_internalformat = GL_RGBA16F_ARB;
+     else
+-#endif
+       m_internalformat = GL_RGBA;
++#elif HAS_GLES == 2
++    shadername = "convolution-4x4_gles.glsl";
++    m_internalformat = GL_RGBA;
++#endif
+   }
+   else if (m_method == VS_SCALINGMETHOD_SPLINE36 || 
+            m_method == VS_SCALINGMETHOD_LANCZOS3)
+   {
+-    shadername = "convolution-6x6.glsl";
+ #if defined(HAS_GL)
++    shadername = "convolution-6x6.glsl";
+     if (m_floattex)
+       m_internalformat = GL_RGB16F_ARB;
+     else
+-#endif
+       m_internalformat = GL_RGB;
++#elif HAS_GLES == 2
++    shadername = "convolution-6x6_gles.glsl";
++    m_internalformat = GL_RGB;
++#endif
+   }
+ 
+   if (m_floattex)
+@@ -139,6 +199,8 @@ ConvolutionFilterShader::ConvolutionFilterShader(ESCALINGMETHOD method, bool str
+ 
+ void ConvolutionFilterShader::OnCompiledAndLinked()
+ {
++  BaseVideoFilterShader::OnCompiledAndLinked();
++
+   // obtain shader attribute handles on successfull compilation
+   m_hSourceTex = glGetUniformLocation(ProgramHandle(), "img");
+   m_hStepXY    = glGetUniformLocation(ProgramHandle(), "stepxy");
+@@ -199,6 +261,8 @@ void ConvolutionFilterShader::OnCompiledAndLinked()
+ 
+ bool ConvolutionFilterShader::OnEnabled()
+ {
++  BaseVideoFilterShader::OnEnabled();
++
+   // set shader attributes once enabled
+   glActiveTexture(GL_TEXTURE2);
+   glBindTexture(TEXTARGET, m_kernelTex1);
+@@ -227,12 +291,16 @@ StretchFilterShader::StretchFilterShader()
+ 
+ void StretchFilterShader::OnCompiledAndLinked()
+ {
++  BaseVideoFilterShader::OnCompiledAndLinked();
++
+   m_hSourceTex = glGetUniformLocation(ProgramHandle(), "img");
+   m_hStretch   = glGetUniformLocation(ProgramHandle(), "m_stretch");
+ }
+ 
+ bool StretchFilterShader::OnEnabled()
+ {
++  BaseVideoFilterShader::OnEnabled();
++
+   glUniform1i(m_hSourceTex, m_sourceTexUnit);
+   glUniform1f(m_hStretch, m_stretch);
+   VerifyGLState();
+@@ -241,11 +309,15 @@ bool StretchFilterShader::OnEnabled()
+ 
+ void DefaultFilterShader::OnCompiledAndLinked()
+ {
++  BaseVideoFilterShader::OnCompiledAndLinked();
++
+   m_hSourceTex = glGetUniformLocation(ProgramHandle(), "img");
+ }
+ 
+ bool DefaultFilterShader::OnEnabled()
+ {
++  BaseVideoFilterShader::OnEnabled();
++
+   glUniform1i(m_hSourceTex, m_sourceTexUnit);
+   VerifyGLState();
+   return true;
+diff --git a/xbmc/cores/VideoRenderers/VideoShaders/VideoFilterShader.h b/xbmc/cores/VideoRenderers/VideoShaders/VideoFilterShader.h
+index a489865..bd4a1f4 100644
+--- a/xbmc/cores/VideoRenderers/VideoShaders/VideoFilterShader.h
++++ b/xbmc/cores/VideoRenderers/VideoShaders/VideoFilterShader.h
+@@ -36,12 +36,20 @@ namespace Shaders {
+   {
+   public:
+     BaseVideoFilterShader();
+-    void Free() { CGLSLShaderProgram::Free(); }
++    virtual void OnCompiledAndLinked();
++    virtual bool OnEnabled();
++    virtual void Free() { CGLSLShaderProgram::Free(); }
+     virtual void  SetSourceTexture(GLint ytex) { m_sourceTexUnit = ytex; }
+     virtual void  SetWidth(int w)     { m_width  = w; m_stepX = w>0?1.0f/w:0; }
+     virtual void  SetHeight(int h)    { m_height = h; m_stepY = h>0?1.0f/h:0; }
+     virtual void  SetNonLinStretch(float stretch) { m_stretch = stretch; }
+     virtual bool  GetTextureFilter(GLint& filter) { return false; }
++#if HAS_GLES == 2
++    virtual GLint GetVertexLoc() { return m_hVertex; }
++    virtual GLint GetcoordLoc() { return m_hcoord; }
++    virtual void SetMatrices(GLfloat *p, GLfloat *m) { m_proj = p; m_model = m; }
++    virtual void SetAlpha(GLfloat alpha)             { m_alpha = alpha; }
++#endif
+ 
+   protected:
+     int   m_width;
+@@ -55,6 +63,17 @@ namespace Shaders {
+     GLint m_hSourceTex;
+     GLint m_hStepXY;
+     GLint m_hStretch;
++#if HAS_GLES == 2
++    GLint m_hVertex;
++    GLint m_hcoord;
++    GLint m_hProj;
++    GLint m_hModel;
++    GLint m_hAlpha;
++
++    GLfloat *m_proj;
++    GLfloat *m_model;
++    GLfloat  m_alpha;
++#endif
+   };
+ 
+   class ConvolutionFilterShader : public BaseVideoFilterShader
+diff --git a/xbmc/guilib/FrameBufferObject.cpp b/xbmc/guilib/FrameBufferObject.cpp
+index 1fa9398..767c68a 100644
+--- a/xbmc/guilib/FrameBufferObject.cpp
++++ b/xbmc/guilib/FrameBufferObject.cpp
+@@ -53,10 +53,14 @@ CFrameBufferObject::CFrameBufferObject()
+ 
+ bool CFrameBufferObject::IsSupported()
+ {
++#if HAS_GLES == 2
++  m_supported = true;
++#else
+   if(g_Windowing.IsExtSupported("GL_EXT_framebuffer_object"))
+     m_supported = true;
+   else
+     m_supported = false;
++#endif
+   return m_supported;
+ }
+ 
+diff --git a/xbmc/guilib/Shader.cpp b/xbmc/guilib/Shader.cpp
+index 5749799..7de9647 100644
+--- a/xbmc/guilib/Shader.cpp
++++ b/xbmc/guilib/Shader.cpp
+@@ -48,7 +48,7 @@ bool CShader::LoadSource(const std::string& filename, const std::string& prefix)
+ 
+   if(!file.Open("special://xbmc/system/shaders/" + filename))
+   {
+-    CLog::Log(LOGERROR, "CYUVShaderGLSL::CYUVShaderGLSL - failed to open file %s", filename.c_str());
++   CLog::Log(LOGERROR, "CShader::LoadSource - failed to open file %s", filename.c_str());
+     return false;
+   }
+   getline(file, m_source, '\0');
+diff --git a/xbmc/rendering/RenderSystem.cpp b/xbmc/rendering/RenderSystem.cpp
+index 64e0d16..feba098 100644
+--- a/xbmc/rendering/RenderSystem.cpp
++++ b/xbmc/rendering/RenderSystem.cpp
+@@ -67,6 +67,11 @@ bool CRenderSystemBase::SupportsBGRAApple() const
+   return (m_renderCaps & RENDER_CAPS_BGRA_APPLE) == RENDER_CAPS_BGRA_APPLE;
+ }
+ 
++bool CRenderSystemBase::SupportsEGLSubimage() const
++{
++  return (m_renderCaps & RENDER_CAPS_EGL_SUBIMAGE) == RENDER_CAPS_EGL_SUBIMAGE;
++}
++
+ bool CRenderSystemBase::SupportsStereo(RENDER_STEREO_MODE mode) const
+ {
+   switch(mode)
+diff --git a/xbmc/rendering/RenderSystem.h b/xbmc/rendering/RenderSystem.h
+index bf9e59c..1b98466 100644
+--- a/xbmc/rendering/RenderSystem.h
++++ b/xbmc/rendering/RenderSystem.h
+@@ -50,7 +50,8 @@ enum
+   RENDER_CAPS_NPOT     = (1 << 1),
+   RENDER_CAPS_DXT_NPOT = (1 << 2),
+   RENDER_CAPS_BGRA     = (1 << 3),
+-  RENDER_CAPS_BGRA_APPLE = (1 << 4)
++  RENDER_CAPS_BGRA_APPLE = (1 << 4),
++  RENDER_CAPS_EGL_SUBIMAGE = (1 << 5)
+ };
+ 
+ enum
+@@ -145,6 +146,7 @@ public:
+   bool SupportsBGRA() const;
+   bool SupportsBGRAApple() const;
+   bool SupportsNPOT(bool dxt) const;
++  bool SupportsEGLSubimage() const;
+   bool SupportsStereo(RENDER_STEREO_MODE mode) const;
+   unsigned int GetMaxTextureSize() const { return m_maxTextureSize; }
+   unsigned int GetMinDXTPitch() const { return m_minDXTPitch; }
+diff --git a/xbmc/rendering/gles/RenderSystemGLES.cpp b/xbmc/rendering/gles/RenderSystemGLES.cpp
+index cde084b..9854984 100644
+--- a/xbmc/rendering/gles/RenderSystemGLES.cpp
++++ b/xbmc/rendering/gles/RenderSystemGLES.cpp
+@@ -130,10 +130,13 @@ bool CRenderSystemGLES::InitRenderSystem()
+     m_renderCaps |= RENDER_CAPS_BGRA_APPLE;
+   }
+ 
+-
++  if (IsExtSupported("GL_EXT_unpack_subimage"))
++   {
++     m_renderCaps |= RENDER_CAPS_EGL_SUBIMAGE;
++   }
+ 
+   m_bRenderCreated = true;
+-  
++
+   InitialiseGUIShader();
+ 
+   return true;
