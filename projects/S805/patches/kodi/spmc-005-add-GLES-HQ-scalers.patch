@@ -1,12 +1,6 @@
-commit afa59d56ddb3b1311cace42164619521c7e63b81
-Author: Jamie Coldhill <wrxtasy@amnet.net.au>
-Date:   Sun May 1 23:23:17 2016 +0800
-
-    Add: GLES HQ Scalers
-
 diff --git a/system/shaders/convolution-4x4_gles.glsl b/system/shaders/convolution-4x4_gles.glsl
 new file mode 100644
-index 0000000..f69ac6e
+index 0000000..f69ac6e8
 --- /dev/null
 +++ b/system/shaders/convolution-4x4_gles.glsl
 @@ -0,0 +1,101 @@
@@ -927,7 +921,7 @@ index 1c4715a..db4a8cc 100644
  }
  
 diff --git a/xbmc/cores/VideoRenderers/LinuxRendererGLES.h b/xbmc/cores/VideoRenderers/LinuxRendererGLES.h
-index 77bbb57..03bb2ad 100644
+index 77bbb57..3716dd5 100644
 --- a/xbmc/cores/VideoRenderers/LinuxRendererGLES.h
 +++ b/xbmc/cores/VideoRenderers/LinuxRendererGLES.h
 @@ -229,6 +229,9 @@ protected:
@@ -945,7 +939,7 @@ index 77bbb57..03bb2ad 100644
    void RenderIMXMAPTexture(int index, int field); // IMXMAP rendering
  
 -  CFrameBufferObject m_fbo;
-+ struct
++  struct
 +  {
 +    CFrameBufferObject fbo;
 +    float width, height;
@@ -1176,7 +1170,7 @@ index 1fa9398..767c68a 100644
  }
  
 diff --git a/xbmc/guilib/Shader.cpp b/xbmc/guilib/Shader.cpp
-index 5749799..7de9647 100644
+index 5749799..1eda4d9 100644
 --- a/xbmc/guilib/Shader.cpp
 +++ b/xbmc/guilib/Shader.cpp
 @@ -48,7 +48,7 @@ bool CShader::LoadSource(const std::string& filename, const std::string& prefix)
@@ -1184,7 +1178,7 @@ index 5749799..7de9647 100644
    if(!file.Open("special://xbmc/system/shaders/" + filename))
    {
 -    CLog::Log(LOGERROR, "CYUVShaderGLSL::CYUVShaderGLSL - failed to open file %s", filename.c_str());
-+   CLog::Log(LOGERROR, "CShader::LoadSource - failed to open file %s", filename.c_str());
++    CLog::Log(LOGERROR, "CShader::LoadSource - failed to open file %s", filename.c_str());
      return false;
    }
    getline(file, m_source, '\0');
@@ -1227,22 +1221,17 @@ index bf9e59c..1b98466 100644
    unsigned int GetMaxTextureSize() const { return m_maxTextureSize; }
    unsigned int GetMinDXTPitch() const { return m_minDXTPitch; }
 diff --git a/xbmc/rendering/gles/RenderSystemGLES.cpp b/xbmc/rendering/gles/RenderSystemGLES.cpp
-index cde084b..9854984 100644
+index cde084b..c3756c3 100644
 --- a/xbmc/rendering/gles/RenderSystemGLES.cpp
 +++ b/xbmc/rendering/gles/RenderSystemGLES.cpp
-@@ -130,10 +130,13 @@ bool CRenderSystemGLES::InitRenderSystem()
+@@ -130,6 +130,10 @@ bool CRenderSystemGLES::InitRenderSystem()
      m_renderCaps |= RENDER_CAPS_BGRA_APPLE;
    }
  
--
 +  if (IsExtSupported("GL_EXT_unpack_subimage"))
-+   {
-+     m_renderCaps |= RENDER_CAPS_EGL_SUBIMAGE;
-+   }
++  {
++    m_renderCaps |= RENDER_CAPS_EGL_SUBIMAGE;
++  }
+ 
  
    m_bRenderCreated = true;
--  
-+
-   InitialiseGUIShader();
- 
-   return true;
