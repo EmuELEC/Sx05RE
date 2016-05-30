@@ -23,6 +23,8 @@
 
 if [ -f /storage/.config/remote.conf ]; then
   /usr/bin/remotecfg /storage/.config/remote.conf
+elif [ -f /flash/remote.conf ]; then
+  /usr/bin/remotecfg /flash/remote.conf
 elif [ -f /etc/amremote/remote.conf ]; then
   /usr/bin/remotecfg /etc/amremote/remote.conf
 elif [ "$LSUSB_RET" = 0 ]; then
