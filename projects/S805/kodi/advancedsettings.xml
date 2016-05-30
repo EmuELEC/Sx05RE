@@ -8,6 +8,7 @@
 
   <network>
     <readbufferfactor>4.0</readbufferfactor>
+    <buffermode>1</buffermode>
   </network>
 
   <pvr>
