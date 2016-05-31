@@ -98,6 +98,12 @@ pre_configure_target() {
     export CFLAGS="-I$SYSROOT_PREFIX/usr/include/interface/vcos/pthreads -I$SYSROOT_PREFIX/usr/include/interface/vmcs_host/linux -DRPI=1 $CFLAGS"
     export FFMPEG_LIBS="-lbcm_host -lvcos -lvchiq_arm -lmmal -lmmal_core -lmmal_util -lvcsm"
   fi
+
+  case "$TARGET_FPU" in
+    neon*)
+      export CFLAGS=`echo $CFLAGS | sed -e "s|-O[s012]|-O3 -ffast-math -ftree-vectorize -mvectorize-with-neon-quad|"`
+    ;;
+  esac
 }
 
 configure_target() {
