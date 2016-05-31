@@ -1,15 +1,16 @@
 diff --git a/arch/arm/boot/dts/amlogic/meson8b_m201d.dtd b/arch/arm/boot/dts/amlogic/meson8b_m201d.dtd
 new file mode 100644
-index 0000000..6be19e0
+index 0000000..3983974
 --- /dev/null
 +++ b/arch/arm/boot/dts/amlogic/meson8b_m201d.dtd
-@@ -0,0 +1,1951 @@
+@@ -0,0 +1,1952 @@
 +/dts-v1/;
 +/// ***************************************************************************************\n
 +//$$ PROJECT="meson8b"
 +//$$ REMOVE 1
 +void root_func(){
 +//$$ ADD /{
++	amlogic-dt-id = "m8b_m201C_512M";
 +	compatible = "AMLOGIC,8726_M8B";
 +	model = "AMLOGIC";
 +	interrupt-parent = <&gic>;
