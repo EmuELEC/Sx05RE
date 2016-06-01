@@ -1,9 +1,9 @@
 diff --git a/arch/arm/boot/dts/amlogic/meson8b_hd18q.dtd b/arch/arm/boot/dts/amlogic/meson8b_hd18q.dtd
 new file mode 100644
-index 0000000..1eb6771
+index 0000000..da5cff6
 --- /dev/null
 +++ b/arch/arm/boot/dts/amlogic/meson8b_hd18q.dtd
-@@ -0,0 +1,1858 @@
+@@ -0,0 +1,1853 @@
 +/dts-v1/;
 +/// ***************************************************************************************\n
 +//$$ PROJECT="meson8b"
@@ -674,25 +674,17 @@ index 0000000..1eb6771
 +//$$ L2 PROP_U32 16*3 = "dvfs_table"
 +        vcck_dvfs {
 +            dvfs_id     = <1>;                                  /** must be value of (1 << n)            */
-+            table_count = <13>;                                 /** must be correct count for dvfs_table */
-+            change-frequent-only;
-+            post-reduce;
-+            inc_threshold = <800000>;
++            table_count = <8>;                                  /** must be correct count for dvfs_table */
 +            dvfs_table  = <
 +            /* NOTE: frequent in this table must be ascending order */
 +            /* frequent(Khz)    min_uV      max_uV                  */
-+                  96000         860000      860000
-+                 192000         860000      860000
-+                 312000         860000      860000
-+                 408000         860000      860000
-+                 504000         860000      860000
 +                 600000         860000      860000
 +                 720000         860000      860000
 +                 816000         900000      900000
 +                1008000         920000      920000
 +                1200000         970000      970000
 +                1320000        1100000     1100000
-+                1488000        1100000     1100000
++		1488000	       1110000	   1110000
 +                1536000        1140000     1140000
 +            >;
 +        };
@@ -707,7 +699,7 @@ index 0000000..1eb6771
 +	meson_vcck_dvfs_driver{
 +        compatible = "amlogic, meson_vcck_dvfs";
 +        dev_name = "meson_vcck_dvfs_driver";
-+        status = "disable";
++        status = "ok";
 +        pinctrl-names = "default";
 +        pinctrl-0 = <&aml_pwm_pins>;
 +        use_pwm = <1>;
@@ -731,26 +723,26 @@ index 0000000..1eb6771
 +		0x190003        890000
 +		0x180004        900000
 +		0x170005        910000
-+		0x160006        920000
++		0x160006        925000
 +		0x150007        930000
 +		0x140008        940000
 +		0x130009        950000
 +		0x12000a        960000
-+		0x11000b        970000
++		0x11000b        975000
 +		0x10000c        980000
 +		0x0f000d        990000
 +		0x0e000e        1000000
 +		0x0d000f        1010000
 +		0x0c0010        1020000
-+		0x0b0011        1030000
-+		0x0a0012        1040000
-+		0x090013        1050000
-+		0x080014        1060000
-+		0x070015        1070000
-+		0x060016        1080000
-+		0x050017        1090000
-+		0x040018        1100000
-+		0x030019        1110000
++		0x0c0011	1030000
++		0x0c0012	1040000
++		0x0c0013	1050000
++		0x0c0014	1060000
++		0x0c0015	1070000
++		0x0c0016	1080000
++		0x0c0017	1090000
++		0x0c0018	1100000
++		0x0c0019	1110000
 +		0x02001a        1120000
 +		0x01001b        1130000
 +		0x00001c        1140000
@@ -1164,9 +1156,12 @@ index 0000000..1eb6771
 +		compatible = "amlogic-thermal";
 +		#thermal-cells=<7>;
 +		dev_name = "aml_thermal";
-+        trip_point=<70 1488001 1488001 511 511 3 2
-+                    80 1200001 1200001 435 435 2 2
-+                    90  800001  800001 328 328 1 1
++        trip_point=<60 1536001 1536001 511 511 3 2
++		    65 1488001 1488001 426 426 3 2
++		    70 1320001 1320001 328 328 2 2
++		    75 1200001 1200001 328 328 2 1
++		    80 1008001 1008001 328 328 2 1
++		    90 720001  720001  251 251 1 1
 +                    260 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff>;
 +		cpu_cali_a=<0>;
 +		idle_interval=<1000>;
