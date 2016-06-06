@@ -176,7 +176,7 @@ new file mode 100644
 index 0000000..5aeddda
 --- /dev/null
 +++ b/src/libcec/adapter/Amlogic/AmlogicCECAdapterCommunication.cpp
-@@ -0,0 +1,305 @@
+@@ -0,0 +1,306 @@
 +/*
 + * This file is part of the libCEC(R) library.
 + *
@@ -431,7 +431,8 @@ index 0000000..5aeddda
 +
 +    if (fd == INVALID_SOCKET_VALUE)
 +    {
-+      break;
++      Sleep(250);
++      continue;
 +    }
 +
 +    FD_ZERO(&rfds);
