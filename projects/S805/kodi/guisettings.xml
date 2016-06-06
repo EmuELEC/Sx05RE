@@ -5,4 +5,7 @@
   <general>
     <settinglevel>3</settinglevel>
   </general>
+  <audiooutput>
+    <audiodevice>ALSA:iec958:CARD=AMLM8AUDIO,DEV=0</audiodevice>
+  </audiooutput>
 </settings>
