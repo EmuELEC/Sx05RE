@@ -313,7 +313,7 @@ fi
       INSTALL_SRC_DIR="$PROJECT_DIR/$PROJECT/install"
     fi
 
-    MKIMAGE_TOOL_CMD="$ROOT/$BUILD/linux-$(kernel_version)/arch/$TARGET_KERNEL_ARCH/boot/mkimage -A $TARGET_KERNEL_ARCH -O linux -T script -C none -d"
+    MKIMAGE_TOOL_CMD="$(which mkimage) -A $TARGET_KERNEL_ARCH -O linux -T script -C none -d"
 
     # cleanup
       rm -rf $RELEASE_DIR
