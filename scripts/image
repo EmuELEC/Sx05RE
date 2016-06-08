@@ -271,7 +271,7 @@ fi
       MKBOOTIMG_SECOND=""
     fi
     mkbootimg --kernel arch/$TARGET_KERNEL_ARCH/boot/$KERNEL_TARGET --ramdisk $ROOT/$BUILD/image/initramfs.cpio \
-      $MKBOOTIMG_SECOND --output arch/$TARGET_KERNEL_ARCH/boot/boot.img
+      $MKBOOTIMG_SECOND $MKBOOTIMG_OPTIONS --output arch/$TARGET_KERNEL_ARCH/boot/boot.img
     echo "...done"
     popd > /dev/null
     cp -PR $BUILD/linux-$(kernel_version)/arch/$TARGET_KERNEL_ARCH/boot/boot.img $TARGET_IMG/$IMAGE_NAME.kernel
