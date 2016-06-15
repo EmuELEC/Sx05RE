@@ -111,6 +111,9 @@
   # build and install IRServer IR/LCD support (yes / no)
     IRSERVER_SUPPORT="no"
 
+  # build and install iSCSI support - iscsistart (yes / no)
+    ISCSI_SUPPORT="no"
+
   # Amlogic IR remote support (yes / no)
     AMREMOTE_SUPPORT="yes"
 
