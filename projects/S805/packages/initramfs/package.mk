@@ -47,6 +47,11 @@ post_install() {
     if [ "$TARGET_ARCH" = "x86_64" -o "$TARGET_ARCH" = "powerpc64" ]; then
       ln -s /lib $ROOT/$BUILD/initramfs/lib64
     fi
+
+    for MOD in `find ./lib/modules/ -type f -name *.ko`; do
+      $STRIP --strip-debug $MOD
+    done
+
     mkdir -p $ROOT/$BUILD/image/
     find . | cpio -H newc -ov -R 0:0 | gzip > $ROOT/$BUILD/image/initramfs.cpio
   cd -
