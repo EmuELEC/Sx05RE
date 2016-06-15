@@ -1,0 +1,53 @@
+commit 3b9433f806e9e713e290835b91ffc7b4d128f81e
+Author: Jamie Coldhill <wrxtasy@amnet.net.au>
+Date:   Fri Jun 10 01:04:36 2016 +0800
+
+    2160p: Calculate 2160p Video Axis coordinates
+
+diff --git a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
+index fde0f70..e7cdf16 100644
+--- a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
++++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
+@@ -2204,6 +2204,8 @@ void CAMLCodec::SetVideoRect(const CRect &SrcRect, const CRect &DestRect)
+ 
+   CRect gui, display;
+   gui = CRect(0, 0, CDisplaySettings::GetInstance().GetCurrentResolutionInfo().iWidth, CDisplaySettings::GetInstance().GetCurrentResolutionInfo().iHeight);
++  std::string display_mode;
++  SysfsUtils::GetString("/sys/class/display/mode", display_mode);
+ 
+ #ifdef TARGET_ANDROID
+   display = m_display_rect;
+@@ -2212,6 +2214,8 @@ void CAMLCodec::SetVideoRect(const CRect &SrcRect, const CRect &DestRect)
+ #endif
+   if (gui != display)
+   {
++   if (StringUtils::StartsWith(display_mode, "1080") || StringUtils::StartsWith(display_mode, "720"))
++   {
+     float xscale = display.Width() / gui.Width();
+     float yscale = display.Height() / gui.Height();
+     if (m_stereo_mode == RENDER_STEREO_MODE_SPLIT_VERTICAL)
+@@ -2222,6 +2226,24 @@ void CAMLCodec::SetVideoRect(const CRect &SrcRect, const CRect &DestRect)
+     dst_rect.x2 *= xscale;
+     dst_rect.y1 *= yscale;
+     dst_rect.y2 *= yscale;
++   }
++  }
++
++  if (gui.Width() != 3840)
++  {
++   if (StringUtils::StartsWith(display_mode, "2160"))
++   {
++    float xscale = (3840 / DestRect.Width());
++    float yscale = xscale;
++    if (m_stereo_mode == RENDER_STEREO_MODE_SPLIT_VERTICAL)
++      xscale /= 2.0;
++    else if (m_stereo_mode == RENDER_STEREO_MODE_SPLIT_HORIZONTAL)
++      yscale /= 2.0;
++    dst_rect.x1  = 0;
++    dst_rect.y1  = (DestRect.y1 * yscale);
++    dst_rect.x2 *= xscale;
++    dst_rect.y2 *= yscale;
++   }
+   }
+ 
+   if (m_stereo_mode == RENDER_STEREO_MODE_MONO)

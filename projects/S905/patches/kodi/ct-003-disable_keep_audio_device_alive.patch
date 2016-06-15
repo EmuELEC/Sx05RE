@@ -1,0 +1,23 @@
+From 7c548189831e0fed9e440ce2875822e79f53b0b4 Mon Sep 17 00:00:00 2001
+From: Alan Marchesan <justcavalli@gmail.com>
+Date: Fri, 5 Feb 2016 06:30:21 +0100
+Subject: [PATCH] Disable 'Keep audio device alive' to speed up suspension when
+ turning off the device and Kodi is playing something
+
+---
+ system/settings/settings.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/system/settings/settings.xml b/system/settings/settings.xml
+index 5ebe164..ab1fe91 100644
+--- a/system/settings/settings.xml
++++ b/system/settings/settings.xml
+@@ -2550,7 +2550,7 @@
+         </setting>
+         <setting id="audiooutput.streamsilence" type="integer" label="421" help="34111">
+           <level>1</level>
+-          <default>1</default>
++          <default>0</default>
+           <constraints>
+             <options>audiostreamsilence</options>
+           </constraints>

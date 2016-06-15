@@ -1,0 +1,15 @@
+defenv
+setenv bootfromnand 0
+setenv reboot_mode normal
+setenv hdmimode 1080p60hz
+setenv outputmode 1080p60hz
+setenv libre4k 'fdt set /reserved-memory/linux,meson-fb size <0x0 0x4480000>; fdt set /meson-fb mem_size <0x04380000 0x00100000>'
+setenv libreaocec 'if fdt print /aocec; then echo AOCEC present; else fdt resize; fdt set /amhdmitx/vend_data reg <0x0 0xc810023c 0x0 0x4 0x0 0xc8100000 0x0 0x200 0x0 0xda83e000 0x0 0x10>; fdt set /amhdmitx/vend_data interrupt-names hdmi_aocec; fdt set /amhdmitx/vend_data device_name aocec; fdt set /amhdmitx/vend_data compatible "amlogic, amlogic-aocec"; fi'
+setenv libredtb 'store dtb read $dtb_mem_addr; fdt addr $dtb_mem_addr; run libre4k; run libreaocec'
+setenv librefromsd 'if test ${bootfromnand} = 1; then setenv bootfromnand 0; saveenv; exit; fi; if mmcinfo; then if fatload mmc 0 ${loadaddr} kernel.img; then run libredtb; setenv bootargs ${bootargs} BOOT_IMAGE=kernel.img boot=/dev/mmcblk0p1 disk=/dev/mmcblk0p2; bootm; fi; fi'
+setenv librefromnand 'if imgread kernel boot ${loadaddr}; then run libredtb; setenv bootargs ${bootargs} BOOT_IMAGE=/dev/boot boot=/dev/system disk=/dev/data; bootm; fi'
+setenv bootcmd 'run librefromsd; if test ${libreonnand} = 1; then run librefromnand; else run storeboot; fi'
+saveenv
+run storeargs
+run librefromsd
+run recovery_from_flash

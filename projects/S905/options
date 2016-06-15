@@ -1,0 +1,153 @@
+################################################################################
+# setup system defaults
+################################################################################
+
+    TARGET_ARCH="aarch64"
+    TARGET_CPU="cortex-a53"
+
+  # Bootloader to use (syslinux / u-boot / bcm2835-bootloader)
+    BOOTLOADER="u-boot"
+
+  # u-boot version to use (default)
+    UBOOT_VERSION=""
+
+  # Configuration for u-boot
+    UBOOT_CONFIG=""
+
+  # Target Configfile for u-boot
+    UBOOT_CONFIGFILE=""
+
+  # Kernel target
+    KERNEL_TARGET="Image.lzo"
+
+  # Kernel extra targets to build
+    KERNEL_UBOOT_EXTRA_TARGET="gxbb_p200.dtb"
+
+  # Build Android kernel image using mkbootimg
+    BUILD_ANDROID_BOOTIMG="yes"
+
+  # Path to a file that will be passed as the --second parameter to Android mkbootimg
+    ANDROID_BOOTIMG_SECOND=""
+
+    MKBOOTIMG_OPTIONS="--base 0x0 --kernel_offset 0x1080000"
+
+  # Additional kernel make parameters (for example to specify the u-boot loadaddress)
+    KERNEL_MAKE_EXTRACMD="gxbb_p200.dtb"
+
+  # Kernel to use. values can be:
+  # default:  default mainline kernel
+    LINUX="custom"
+    KERNEL_VERSION="9016eca"
+    KERNEL_URL="https://github.com/kszaq/linux/archive/$KERNEL_VERSION.tar.gz"
+
+################################################################################
+# setup build defaults
+################################################################################
+
+  # Build optimizations (size/normal)
+    OPTIMIZATIONS="size"
+
+  # Project CFLAGS
+    PROJECT_CFLAGS=""
+
+  # LTO (Link Time Optimization) support
+    LTO_SUPPORT="yes"
+
+  # GOLD (Google Linker) support
+    GOLD_SUPPORT="yes"
+
+  # SquashFS compression method (gzip / lzo / xz)
+    SQUASHFS_COMPRESSION="lzo"
+
+  # SquashFS block size (default: 131072)
+    SQUASHFS_BLOCK_SIZE="16384"
+
+################################################################################
+# setup project defaults
+################################################################################
+
+  # build and install ALSA Audio support (yes / no)
+    ALSA_SUPPORT="yes"
+
+  # OpenGL(X) implementation to use (no / Mesa)
+    OPENGL="no"
+
+  # OpenGL-ES implementation to use (no / bcm2835-driver / gpu-viv-bin-mx6q / opengl-meson)
+    OPENGLES="opengl-meson"
+
+  # Amlogic Meson SOC family (8 / 6 / gxbb)
+    MESON_FAMILY="gxbb"
+
+  # include uvesafb support (yes / no)
+    UVESAFB_SUPPORT="no"
+
+  # Displayserver to use (x11 / no)
+    DISPLAYSERVER="no"
+
+  # Windowmanager to use (ratpoison / fluxbox / none)
+    WINDOWMANAGER="none"
+
+  # Xorg Graphic drivers to use (all / i915,i965,r200,r300,r600,nvidia)
+  # Space separated list is supported,
+  # e.g. GRAPHIC_DRIVERS="i915 i965 r300 r600 radeonsi nvidia"
+    GRAPHIC_DRIVERS=""
+
+  # KODI Player implementation to use (default / bcm2835-driver / libfslvpuwrap / libamcodec)
+    KODIPLAYER_DRIVER="libamcodec"
+
+  # KODI DCADEC support (yes / no)
+    DCADEC_SUPPORT="yes"
+
+  # Modules to install in initramfs for early boot
+    INITRAMFS_MODULES="aml_nftl_dev"
+
+  # additional drivers to install:
+  # for a list of additinoal drivers see packages/linux-drivers
+  # Space separated list is supported,
+  # e.g. ADDITIONAL_DRIVERS="DRIVER1 DRIVER2"
+    ADDITIONAL_DRIVERS="RTL8192CU RTL8192DU"
+
+  # additional Firmware to use (dvb-firmware, misc-firmware, wlan-firmware)
+  # Space separated list is supported,
+  # e.g. FIRMWARE="dvb-firmware misc-firmware wlan-firmware"
+    FIRMWARE="misc-firmware wlan-firmware dvb-firmware brcmfmac_sdio-firmware-aml rtl8723bs_bt"
+
+  # build and install ATV IR remote support (yes / no)
+    ATVCLIENT_SUPPORT="no"
+
+  # build and install IRServer IR/LCD support (yes / no)
+    IRSERVER_SUPPORT="no"
+
+  # build and install iSCSI support - iscsistart (yes / no)
+    ISCSI_SUPPORT="no"
+
+  # Amlogic IR remote support (yes / no)
+    AMREMOTE_SUPPORT="yes"
+
+  # build with swap support (yes / no)
+    SWAP_SUPPORT="yes"
+
+  # swap support enabled per default (yes / no)
+    SWAP_ENABLED_DEFAULT="no"
+
+  # build with installer (yes / no)
+    INSTALLER_SUPPORT="no"
+
+  # extra build dependeices
+    EXTRA_DEPS="mkimage"
+    EXTRA_DEPS_PKG="u-boot-tools"
+
+  # kernel image name
+    KERNEL_NAME="kernel.img"
+
+  # set the addon dirs
+    ADDON_SERVER_URL="https://raw.github.com/wrxtasy/LibreELEC.tv.7.0/LE-7.0.Addons"
+    ADDON_PATH="addons/$ADDON_VERSION/Odroid_C2/$TARGET_ARCH"
+    ADDON_URL="$ADDON_SERVER_URL/$ADDON_PATH"
+
+  # Hardware random number generator daemon
+    HW_RNG="yes"
+
+  # OEM packages for OEM's (yes / no)
+    OEM_SUPPORT="yes"
+

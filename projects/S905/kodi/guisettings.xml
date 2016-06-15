@@ -1,0 +1,11 @@
+<settings>
+  <debug>
+    <screenshotpath pathversion="1">/storage/screenshots/</screenshotpath>
+  </debug>
+  <general>
+    <settinglevel>3</settinglevel>
+  </general>
+  <audiooutput>
+    <audiodevice>ALSA:hdmi:CARD=AMLM8AUDIO,DEV=0</audiodevice>
+  </audiooutput>
+</settings>
