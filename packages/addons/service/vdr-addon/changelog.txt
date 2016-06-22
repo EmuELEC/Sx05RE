@@ -1,3 +1,7 @@
+7.0.102
+- update Sat>IP plugin to support RTP/TCP which allows error free streaming
+- fixed channel sorting order
+
 7.0.101
 - added proper icon and description
 
