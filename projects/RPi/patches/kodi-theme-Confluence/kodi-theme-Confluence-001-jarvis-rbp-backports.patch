@@ -1,4 +1,4 @@
-From 1ac1ea72fb2d7a5b0707b12a11652609e8188033 Mon Sep 17 00:00:00 2001
+From ba7ed9c1fa4fb87a10d92cc9eb6d8b876482858e Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sun, 10 Aug 2014 18:58:37 +0100
 Subject: [PATCH 1/2] confluence: Remove media-overlay.jpg for when video is
@@ -22,7 +22,7 @@ index cc996da..d6aa595 100644
  			<include>VisibleFadeEffect</include>
  		</control>
 
-From 173a2f038511095ad8390bc39cb40280b73d7cd4 Mon Sep 17 00:00:00 2001
+From 08bc53a54e53a04317ae19d16eb0271cbf18bc09 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Mon, 22 Jul 2013 23:19:15 +0100
 Subject: [PATCH 2/2] [confluence] Use animated gif as a cheaper working
