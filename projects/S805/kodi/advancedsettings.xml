@@ -14,10 +14,4 @@
     <minvideocachelevel>5</minvideocachelevel>
     <minaudiocachelevel>20</minaudiocachelevel>
   </pvr>
-
-  <gui>
-    <algorithmdirtyregions>1</algorithmdirtyregions>
-    <nofliptimeout>2</nofliptimeout>
-  </gui>
-
 </advancedsettings>
