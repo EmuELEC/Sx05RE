@@ -1,6 +1,6 @@
 diff --git a/arch/arm/boot/dts/amlogic/meson8b_mk808bplus.dtd b/arch/arm/boot/dts/amlogic/meson8b_mk808bplus.dtd
 new file mode 100644
-index 0000000..a6660ed
+index 0000000..d1a856f
 --- /dev/null
 +++ b/arch/arm/boot/dts/amlogic/meson8b_mk808bplus.dtd
 @@ -0,0 +1,1862 @@
@@ -166,7 +166,7 @@ index 0000000..a6660ed
 +		dev_name = "mesonstream.0";
 +		status = "okay";
 +		reserve-memory = <0x02000000>; // 32M
-+		reserve-iomap = "true";
++		//reserve-iomap = "true";
 +	};
 +
 +/// ***************************************************************************************
