@@ -484,8 +484,6 @@ fi
         zip -q $TARGET_IMG/$IMAGE_NAME.zip *
         popd > /dev/null
 
-        # copy update package to target directory
-        cp sign/$IMAGE_NAME-update.zip $TARGET_IMG
         popd > /dev/null
       fi
 
