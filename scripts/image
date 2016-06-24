@@ -61,11 +61,16 @@ else
 fi
 IMAGE_NAME="$DISTRONAME-$TARGET_VERSION"
 
+# Set Amlogic update package name
+AML_UPDATE_NAME="$IMAGE_NAME"
+
 if [ "$DEVEL_VERSION" = "devel" ] ; then
   if [ -z "$DEVICE" ]; then
     IMAGE_NAME="$DISTRONAME-$PROJECT.$TARGET_ARCH-$OS_VERSION-$LIBREELEC_VERSION"
+    AML_UPDATE_NAME="$DISTRONAME-$PROJECT.$TARGET_ARCH-$OS_VERSION-$DEVEL_VERSION"
   else
     IMAGE_NAME="$DISTRONAME-$PROJECT.$DEVICE.$TARGET_ARCH-$OS_VERSION-$LIBREELEC_VERSION"
+    AML_UPDATE_NAME="$DISTRONAME-$PROJECT.$DEVICE.$TARGET_ARCH-$OS_VERSION-$DEVEL_VERSION"
   fi
 fi
 
@@ -465,12 +470,12 @@ fi
         echo "Signing the update package"
         mkdir -p sign
         SIGNAPK_DIR="$ROOT/tools/signapk"
-        java -Xmx1024m -jar $SIGNAPK_DIR/signapk.jar -w $SIGNAPK_DIR/testkey.x509.pem $SIGNAPK_DIR/testkey.pk8 update.zip sign/$IMAGE_NAME-update.zip
+        java -Xmx1024m -jar $SIGNAPK_DIR/signapk.jar -w $SIGNAPK_DIR/testkey.x509.pem $SIGNAPK_DIR/testkey.pk8 update.zip sign/$AML_UPDATE_NAME-update.zip
 
         # create the auto-install package
         echo "Creating Amlogic ZIP auto-install package"
         pushd sign > /dev/null
-        echo --update_package=/sdcard/$IMAGE_NAME-update.zip > factory_update_param.aml
+        echo --update_package=/sdcard/$AML_UPDATE_NAME-update.zip > factory_update_param.aml
         echo --wipe_data >> factory_update_param.aml
         echo --wipe_cache >> factory_update_param.aml
         if [ -f "$INSTALL_SRC_DIR/files/recovery.img" ]; then
