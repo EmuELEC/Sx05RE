@@ -238,10 +238,7 @@ elif [ "$BOOTLOADER" = "u-boot" ]; then
 fi # bootloader
 
 if [ -f "$INSTALL_SRC_DIR/aml_autoscript.src" ]; then
-  cat "$INSTALL_SRC_DIR/aml_autoscript.src" > "$OE_TMP/aml_autoscript.src"
-  echo "run storeargs" >> "$OE_TMP/aml_autoscript.src"
-  echo "run bootcmd" >> "$OE_TMP/aml_autoscript.src"
-  $MKIMAGE_TOOL_CMD "$OE_TMP/aml_autoscript.src" "$OE_TMP/aml_autoscript" > /dev/null
+  $MKIMAGE_TOOL_CMD "$INSTALL_SRC_DIR/aml_autoscript.src" "$OE_TMP/aml_autoscript" > /dev/null
   mcopy "$OE_TMP/aml_autoscript" "::/aml_autoscript"
 fi
 
