@@ -35,6 +35,12 @@ PKG_LONGDESC="U-Boot bootloader utility tools. This package includes the mkimage
 PKG_AUTORECONF="no"
 PKG_IS_ADDON="no"
 
+if [ "$TARGET_ARCH" = "aarch64" ]; then
+  UBOOT_TOOLS_ARCH="arm"
+else
+  UBOOT_TOOLS_ARCH="$TARGET_ARCH"
+fi
+
 unpack() {
   mkdir -p $BUILD/u-boot-tools-$PKG_VERSION
   tar jxf $SOURCES/$PKG_NAME/$PKG_SOURCE_NAME -C $BUILD/u-boot-tools-$PKG_VERSION --strip 1
@@ -42,7 +48,7 @@ unpack() {
 
 make_target() {
   make dummy_defconfig
-  make CROSS_COMPILE="$TARGET_PREFIX" ARCH="$TARGET_ARCH" env
+  make CROSS_COMPILE="$TARGET_PREFIX" ARCH="$UBOOT_TOOLS_ARCH" env
   make CROSS_COMPILE="$TARGET_PREFIX" cross_tools
 }
 
