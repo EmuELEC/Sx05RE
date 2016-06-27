@@ -1,9 +1,9 @@
 diff --git a/arch/arm/boot/dts/amlogic/meson8b_m201d.dtd b/arch/arm/boot/dts/amlogic/meson8b_m201d.dtd
 new file mode 100644
-index 0000000..b096fb6
+index 0000000..5f655ae
 --- /dev/null
 +++ b/arch/arm/boot/dts/amlogic/meson8b_m201d.dtd
-@@ -0,0 +1,1955 @@
+@@ -0,0 +1,1722 @@
 +/dts-v1/;
 +/// ***************************************************************************************\n
 +//$$ PROJECT="meson8b"
@@ -648,103 +648,6 @@ index 0000000..b096fb6
 +    
 +
 +/// ***************************************************************************************
-+///	-	I2C
-+//$$ MODULE="I2C"
-+//$$ DEVICE="I2C_AO"
-+//$$ L2 PROP_STR = "status"
-+//$$ L3 PROP_U32 2 ="reg"
-+//$$ L3 PROP_STR = "pinctrl-names"
-+//$$ L2 PROP_CHOICE "I2C_AO_pin_match" = "pinctrl-0"	
-+	i2c@c8100500{ /*I2C-AO*/
-+		compatible = "amlogic,aml_i2c";
-+		dev_name = "i2c-AO";
-+		status = "disable";
-+		reg = <0xc8100500 0x1d>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		device_id = <0>;
-+		pinctrl-names="default";
-+		pinctrl-0=<&ao_i2c_master>;
-+		use_pio = <0>;
-+		master_i2c_speed = <100000>;
-+	};
-+
-+//$$ DEVICE = "I2C_A"
-+//$$ L2 PROP_STR = "status"
-+//$$ L3 PROP_U32 2 ="reg"
-+//$$ L3 PROP_STR = "pinctrl-names"
-+//$$ L2 PROP_CHOICE "I2C_A_pin_match" = "pinctrl-0"
-+    i2c@c1108500{ /*I2C-A*/
-+		compatible = "amlogic,aml_i2c";
-+		dev_name = "i2c-A";
-+		status = "ok";
-+		reg = <0xc1108500 0x20>;
-+		device_id = <1>;
-+		pinctrl-names="default";
-+		pinctrl-0=<&a_i2c_master>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		use_pio = <0>;
-+		master_i2c_speed = <300000>;
-+	};
-+	
-+//$$ DEVICE="I2C_B"
-+//$$ L2 PROP_STR = "status"
-+//$$ L3 PROP_U32 2="reg"
-+//$$ L3 PROP_STR = "pinctrl-names"
-+//$$ L2 PROP_CHOICE "I2C_B_pin_match" = "pinctrl-0"	
-+	i2c@c11087c0{ /*I2C-B*/
-+		compatible = "amlogic,aml_i2c";
-+		dev_name = "i2c-B";
-+		status = "ok";
-+		reg = <0xc11087c0 0x20>;
-+		device_id = <2>;
-+		pinctrl-names="default";
-+		pinctrl-0=<&b_i2c_master>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		use_pio = <0>;
-+		master_i2c_speed = <300000>;
-+ 	};
-+
-+//$$ DEVICE="I2C_C"
-+//$$ L2 PROP_STR = "status"
-+//$$ L3 PROP_U32 2="reg"
-+//$$ L3 PROP_STR = "pinctrl-names"	
-+    i2c@c11087e0{ /*I2C-C*/
-+		compatible = "amlogic,aml_i2c";
-+		dev_name = "i2c-C";
-+		status = "ok";
-+		reg = <0xc11087e0 0x20>;
-+		device_id = <3>;
-+		pinctrl-names="default";
-+//		pinctrl-0=<&c_i2c_master>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		use_pio = <0>;
-+		master_i2c_speed = <300000>;
-+	};
-+
-+//$$ DEVICE="I2C_D"
-+//$$ L2 PROP_STR = "status"
-+//$$ L3 PROP_U32 2="reg"
-+//$$ L3 PROP_STR = "pinctrl-names"
-+//$$ L2 PROP_CHOICE "I2C_D_pin_match" = "pinctrl-0"	
-+	i2c@c1108d20{ /*I2C-D*/
-+		compatible = "amlogic,aml_i2c";
-+		dev_name = "i2c-D";
-+		status = "ok";
-+		reg = <0xc1108d20 0x20>;
-+		device_id = <4>;
-+		pinctrl-names="default";
-+		pinctrl-0=<&d_i2c_master>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		use_pio = <0>;
-+		master_i2c_speed = <300000>;
-+	};
-+
-+/// ***************************************************************************************
 +///	-	Power
 +//$$ MODULE="Power"
 +//$$ DEVICE="dvfs"
@@ -1059,96 +962,6 @@ index 0000000..b096fb6
 +        status = "okay";
 +        
 +    };
-+
-+/// ***************************************************************************************
-+///	-	Camera
-+//$$ MODULE="Camera"
-+///	-	aml_cams
-+//$$ DEVICE = "aml_cams"
-+//$$ L2 PROP_STR = "status"
-+//$$ L2 PROP_STR 2 = "pinctrl-names"
-+//$$ L2 PROP_CHOICE "Camera_pin_0_match" = "pinctrl-0"
-+//$$ L2 PROP_CHOICE "Camera_pin_1_match" = "pinctrl-1"
-+	aml_cams{
-+		compatible = "amlogic,cams_prober";
-+		status = "disable";
-+		pinctrl-names = "gpio","csi";
-+		pinctrl-0 = <&aml_cam_gpio_pins> ;
-+		pinctrl-1 = <&aml_cam_csi_pins> ;
-+
-+///	-	ar0543
-+//$$ DEVICE="ar0543"
-+//$$ L2 PROP_STR = "status"
-+//$$ L2 PROP_U32 = "front_back"
-+//$$ L2 PROP_STR = "i2c_bus"
-+//$$ L2 PROP_STR = "gpio_pwdn"
-+//$$ L2 PROP_STR = "gpio_rst"
-+//$$ L2 PROP_U32 = "mirror_flip"
-+//$$ L2 PROP_U32 = "vertical_flip"
-+//$$ L2 PROP_STR = "config_path"
-+//$$ L2 PROP_U32 = "mclk"
-+//$$ L2 PROP_STR = "bt_path"
-+//$$ L2 PROP_STR = "interface"
-+//$$ L2 PROP_STR = "clk_channel"
-+		cam_0{
-+			cam_name = "ar0543";
-+			front_back = <0>;
-+			i2c_bus = "i2c_bus_d";
-+			gpio_pwdn = "GPIOH_6";
-+			gpio_rst = "GPIOH_4";
-+			mirror_flip = <0>;
-+			vertical_flip = <0>;
-+			config_path = "/system/etc/camera_isp_cfg/ar0543_skt";
-+			mclk = <12000>;
-+			bt_path = "csi";
-+			interface = "mipi";
-+			clk_channel = "a";
-+			status = "okay";
-+		};
-+
-+///	-	ov5647
-+//$$ DEVICE="ov5647"
-+//$$ L2 PROP_STR = "status"
-+//$$ L2 PROP_U32 = "front_back"
-+//$$ L2 PROP_STR = "i2c_bus"
-+//$$ L2 PROP_STR = "gpio_pwdn"
-+//$$ L2 PROP_STR = "gpio_rst"
-+//$$ L2 PROP_U32 = "mirror_flip"
-+//$$ L2 PROP_U32 = "vertical_flip"
-+//$$ L2 PROP_STR = "bt_path"
-+//$$ L2 PROP_STR = "interface"
-+//$$ L2 PROP_STR = "clk_channel"
-+		cam_1{
-+			cam_name = "ov5647";
-+			front_back = <0>;
-+			i2c_bus = "i2c_bus_d";
-+			gpio_pwdn = "GPIOH_5";
-+			gpio_rst = "GPIOH_4";
-+			mirror_flip = <0>;
-+			vertical_flip = <0>;	
-+			config_path = "/system/etc/camera_isp_cfg/ov5647_cw0767";
-+			bt_path = "csi";
-+			interface = "mipi";
-+			clk_channel = "b";
-+			status = "okay";
-+		};
-+		
-+		cam_2{
-+			cam_name = "ar0833";
-+			front_back = <0>;
-+			i2c_bus = "i2c_bus_d";
-+			gpio_pwdn = "GPIOH_6";
-+			gpio_rst = "GPIOH_4";
-+			mirror_flip = <0>;
-+			vertical_flip = <0>;
-+			config_path = "/system/etc/camera_isp_cfg/ar0833_skt";
-+			mclk = <12000>;
-+			bt_path = "csi";
-+			interface = "mipi";
-+			clk_channel = "a";
-+			status = "okay";
-+		};
-+	};	
 +
 +/// ***************************************************************************************
 +///	-	Input
@@ -1524,10 +1337,15 @@ index 0000000..b096fb6
 +        status = "okay";
 +    };
 +
-+//    crypto_device{
-+//       compatible = "amlogic,crypto-device";
-+//       dev_name = "crypto_device";
-+//    };
++    aml_aes{
++       compatible = "amlogic,aes";
++       dev_name = "aml_aes";
++    };
++
++    aml_tdes{
++       compatible = "amlogic,des,tdes";
++       dev_name = "aml_tdes";
++    };
 +
 +/// **************************************************************************************
 +/// -   GPIO
@@ -1836,66 +1654,6 @@ index 0000000..b096fb6
 +            amlogic,pullupen=<1>;
 +        };
 +
-+//$$ MATCH "Camera_pin_0_match" = "&aml_cam_gpio_pins"
-+//$$ L2 PROP_U32 4 = "amlogic,setmask"
-+//$$ L2 PROP_STR 10 = "amlogic,pins"	
-+        aml_cam_gpio_pins: aml_cam_gpio_pins{
-+			amlogic,setmask=<3 0x80000
-+					         9 0x37c>;
-+			amlogic,pins = "GPIOH_9","GPIOY_6","GPIOY_7","GPIOY_8","GPIOY_9","GPIOY_10","GPIOY_11","GPIOY_12","GPIOY_14";
-+		};
-+		
-+//$$ MATCH "Camera_pin_1_match" = "&aml_cam_csi_pins"
-+//$$ L2 PROP_U32 2 = "amlogic,setmask"
-+//$$ L2 PROP_STR = "amlogic,pins"	
-+		aml_cam_csi_pins: aml_cam_csi_pins{
-+			amlogic,setmask=<3 0x80000>;
-+			amlogic,pins = "GPIOH_9";
-+		};
-+
-+//$$ MATCH "I2C_AO_pin_match" = "&ao_i2c_master"
-+//$$ L2 PROP_U32 2 = "amlogic,setmask"
-+//$$ L2 PROP_U32 2 = "amlogic,clrmask"
-+//$$ L2 PROP_STR 2 = "amlogic,pins"
-+		ao_i2c_master:ao_i2c{
-+			amlogic,setmask=<10 0x60>;
-+			amlogic,clrmask=<10 0x1800006>;
-+			amlogic,pins="GPIOAO_4","GPIOAO_5";
-+		};
-+
-+//$$ MATCH "I2C_A_pin_match" = "&a_i2c_master"
-+//$$ L2 PROP_U32 2 = "amlogic,setmask"
-+//$$ L2 PROP_U32 6 = "amlogic,clrmask"
-+//$$ L2 PROP_STR 2 = "amlogic,pins"
-+		a_i2c_master:a_i2c{
-+			amlogic,setmask=<9 0xC0000000>;
-+			amlogic,clrmask=<0 0x3C0300 
-+			                 6 0xC00000
-+			                 8 0x1800000>;
-+			amlogic,pins="GPIODV_24","GPIODV_25";
-+		};
-+
-+//$$ MATCH "I2C_B_pin_match" = "&b_i2c_master"
-+//$$ L2 PROP_U32 2 = "amlogic,setmask"
-+//$$ L2 PROP_U32 6 = "amlogic,clrmask"
-+//$$ L2 PROP_STR 2 = "amlogic,pins"
-+		b_i2c_master:b_i2c{
-+			amlogic,setmask=<9 0x30000000>;
-+			amlogic,clrmask=<0 0x480 
-+			                 6 0x300000
-+			                 8 0x10780000>;
-+			amlogic,pins="GPIODV_26","GPIODV_27";
-+		};
-+		
-+// MATCH "I2C_D_pin_match" = "&d_i2c_master"
-+// L2 PROP_U32 2 = "amlogic,setmask"
-+// L2 PROP_STR 2 = "amlogic,pins"
-+		d_i2c_master:d_i2c{
-+			amlogic,setmask=<4 0xc>;
-+			amlogic,clrmask=<6 0x3000>;
-+			amlogic,pins="GPIOH_7","GPIOH_8";
-+		};
-+
 +//$$ MATCH "remote_pin_0_match" = "&remote_pins"
 +//$$ L2 PROP_U32 2 = "amlogic,setmask"
 +//$$ L2 PROP_STR = "amlogic,pins"
@@ -1958,4 +1716,13 @@ index 0000000..b096fb6
 +                clock-names = "stmmaceth";
 +        };
 +
++/// ***************************************************************************************
++///	-	RNG
++//$$ MODULE="RNG"
++//$$ DEVICE="meson-rng"
++//$$ L2 PROP_STR = "status"
++	meson-rng{
++		compatible = "amlogic,meson-rng";
++		status = "ok";
++	};
 +}; /* end of / */
