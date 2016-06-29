@@ -1,3 +1,6 @@
+7.0.101
+- Enable automatic upgrades
+
 7.0.100
 - Initial addon
 

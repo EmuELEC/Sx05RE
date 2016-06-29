@@ -2,7 +2,7 @@
   DISTRONAME="LibreELEC"
 
 # short project description
-  DESCRIPTION="LibreELEC is a fast and user-friendly Kodi Entertainment Center distribution."
+  DESCRIPTION="LibreELEC is a fast and user-friendly Kodi media centre distribution."
 
 # Welcome Message for e.g. SSH Server (up to 5 Lines)
   GREETING0="##############################################"

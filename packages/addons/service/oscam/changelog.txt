@@ -1,2 +1,6 @@
+7.0.101
+- Update OSCam to 11233
+- fix the WeTek_Play problems
+
 7.0.100
 - initial LibreELEC version

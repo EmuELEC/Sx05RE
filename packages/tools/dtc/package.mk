@@ -1,7 +1,6 @@
-#!/bin/sh
 ################################################################################
-#      This file is part of LibreELEC - http://www.libreelec.tv
-#      Copyright (C) 2009-2016 Lukas Rusak (lrusak@libreelec.tv)
+#      This file is part of LibreELEC - https://libreelec.tv
+#      Copyright (C) 2016 Team LibreELEC
 #
 #  LibreELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -17,25 +16,24 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-echo "getting sources..."
-  if [ ! -d hyperion.git ]; then
-    git clone --depth 1 --recursive https://github.com/tvdzwan/hyperion hyperion.git
-  fi
+PKG_NAME="dtc"
+PKG_VERSION="beef80b"
+PKG_REV="1"
+PKG_ARCH="any"
+PKG_LICENSE="GPL"
+PKG_SITE="https://git.kernel.org/cgit/utils/dtc/dtc.git"
+PKG_URL="https://git.kernel.org/cgit/utils/dtc/dtc.git/snapshot/$PKG_VERSION.tar.xz"
+PKG_SOURCE_DIR="$PKG_VERSION"
+PKG_DEPENDS_TARGET="toolchain"
+PKG_PRIORITY="optional"
+PKG_SECTION="tools"
+PKG_SHORTDESC="The Device Tree Compiler"
+PKG_LONGDESC="The Device Tree Compiler"
+PKG_AUTORECONF="no"
 
-  cd hyperion.git
-    git pull
-    GIT_REV=`git log -n1 --format=%h`
-  cd ..
+PKG_MAKE_OPTS_TARGET="dtc"
 
-echo "copying sources..."
-  rm -rf hyperion-$GIT_REV
-  cp -R hyperion.git hyperion-$GIT_REV
-
-echo "cleaning sources..."
-  rm -rf hyperion-$GIT_REV/.git
-
-echo "packing sources..."
-  tar cvJf hyperion-$GIT_REV.tar.xz hyperion-$GIT_REV
-
-echo "remove temporary sourcedir..."
-  rm -rf hyperion-$GIT_REV
+makeinstall_target() {
+  mkdir -p $INSTALL/usr/bin
+    cp -P $ROOT/$PKG_BUILD/dtc $INSTALL/usr/bin
+}
