@@ -55,4 +55,4 @@ for part in /sys/block/*/queue/add_random; do
 done
 
 # Fix HEVC playback
-echo 16 > /sys/module/amvdec_h265/parameters/dynamic_buf_num_margin
+echo 0 > /sys/module/amvdec_h265/parameters/dynamic_buf_num_margin
