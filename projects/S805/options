@@ -32,7 +32,7 @@
   # Kernel to use. values can be:
   # default:  default mainline kernel
     LINUX="custom"
-    KERNEL_VERSION="5df008c"
+    KERNEL_VERSION="058e38b"
     KERNEL_URL="https://github.com/kszaq/linux/archive/$KERNEL_VERSION.tar.gz"
 
 ################################################################################
