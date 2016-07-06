@@ -1,22 +1,14 @@
 #!/bin/sh
 
-hdmimode=720p60Hz
+hdmimode=1080p60Hz
 
 for arg in $(cat /proc/cmdline); do
   case ${arg} in
-    hdmitx=*)
-      hdmitx="${arg#*=}"
-      ;;
     hdmimode=*)
       hdmimode=${arg#*=}
       ;;
   esac
 done
-
-# Force enable CEC if configuration parameter not present or empty
-if [ -z "$hdmitx" ]; then
-  echo 0xf > /sys/class/amhdmitx/amhdmitx0/cec_config
-fi
 
 # Set framebuffer geometry to match the resolution
 case $hdmimode in
