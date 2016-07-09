@@ -48,6 +48,3 @@ done
 
 # Fix HEVC playback
 echo 0 > /sys/module/amvdec_h265/parameters/dynamic_buf_num_margin
-
-# Enable kernel-level framerate and switch
-echo 2 > /sys/class/tv/policy_fr_auto
