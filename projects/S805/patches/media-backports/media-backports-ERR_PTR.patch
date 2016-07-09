@@ -1,0 +1,24 @@
+diff --git a/backport-include/linux/mm.h b/backport-include/linux/mm.h
+index 7e6f77c..48935e2 100644
+--- a/backport-include/linux/mm.h
++++ b/backport-include/linux/mm.h
+@@ -1,5 +1,6 @@
+ #ifndef __BACKPORT_MM_H
+ #define __BACKPORT_MM_H
++#include <linux/err.h>
+ #include_next <linux/mm.h>
+ 
+ #ifndef VM_NODUMP
+
+diff --git a/drivers/media/v4l2-core/v4l2-of.c b/drivers/media/v4l2-core/v4l2-of.c
+index b27cbb1..ee11aae 100644
+--- a/drivers/media/v4l2-core/v4l2-of.c
++++ b/drivers/media/v4l2-core/v4l2-of.c
+@@ -11,6 +11,7 @@
+  * it under the terms of version 2 of the GNU General Public License as
+  * published by the Free Software Foundation.
+  */
++#include <linux/err.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
