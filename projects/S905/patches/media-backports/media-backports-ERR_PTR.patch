@@ -1,0 +1,11 @@
+diff --git a/backport-include/linux/mm.h b/backport-include/linux/mm.h
+index 7e6f77c..48935e2 100644
+--- a/backport-include/linux/mm.h
++++ b/backport-include/linux/mm.h
+@@ -1,5 +1,6 @@
+ #ifndef __BACKPORT_MM_H
+ #define __BACKPORT_MM_H
++#include <linux/err.h>
+ #include_next <linux/mm.h>
+ 
+ #ifndef VM_NODUMP
