@@ -1,0 +1,25 @@
+From b2c2eadedaa56d46b18320001c636bcdca523d69 Mon Sep 17 00:00:00 2001
+From: kszaq <kszaquitto@gmail.com>
+Date: Sun, 10 Jul 2016 21:52:00 +0200
+Subject: [PATCH] drivers/amlogic/wifi/bcmdhd: use EARLYSUSPEND
+
+---
+ drivers/amlogic/wifi/bcmdhd/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/amlogic/wifi/bcmdhd/Makefile b/drivers/amlogic/wifi/bcmdhd/Makefile
+index 3d09861..10564e5 100644
+--- a/drivers/amlogic/wifi/bcmdhd/Makefile
++++ b/drivers/amlogic/wifi/bcmdhd/Makefile
+@@ -57,7 +57,7 @@ dhd-objs += $(DHDOFILES)
+ 
+ #ifeq ($(CONFIG_MACH_ODROID_4210),y)
+ DHDOFILES += dhd_gpio.o
+-DHDCFLAGS += -DCUSTOMER_HW -DDHD_OF_SUPPORT -DCUSTOMER_HW_AMLOGIC
++DHDCFLAGS += -DCUSTOMER_HW -DDHD_OF_SUPPORT -DCUSTOMER_HW_AMLOGIC -DDHD_USE_EARLYSUSPEND
+ #DHDCFLAGS += -DBCMWAPI_WPI -DBCMWAPI_WAI
+ #endif
+ 
+-- 
+1.8.3.1
+
