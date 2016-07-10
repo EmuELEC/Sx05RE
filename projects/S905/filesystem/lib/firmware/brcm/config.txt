@@ -1,6 +1,6 @@
 bcn_timeout=20
 kso_enable=0
-ccode=EU
+ccode=ALL
 regrev=38
 nv_by_chip=5 \
 43362 0 nvram_ap6181.txt \
