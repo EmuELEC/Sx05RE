@@ -151,7 +151,7 @@ new file mode 100644
 index 0000000..6495078
 --- /dev/null
 +++ b/src/libcec/adapter/AOCEC/AOCECAdapterCommunication.cpp
-@@ -0,0 +1,343 @@
+@@ -0,0 +1,344 @@
 +/*
 + * This file is part of the libCEC(R) library.
 + *
@@ -443,7 +443,8 @@ index 0000000..6495078
 +
 +    if (fd == INVALID_SOCKET_VALUE)
 +    {
-+      break;
++      Sleep(250);
++      continue;
 +    }
 +
 +    FD_ZERO(&rfds);
