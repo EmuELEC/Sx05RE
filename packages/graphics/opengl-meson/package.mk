@@ -24,17 +24,15 @@ PKG_SITE="http://openlinux.amlogic.com:8000/download/ARM/filesystem/"
 case $MESON_FAMILY in
   8)
     PKG_VERSION="8-r5p1-01rel0-armhf"
-    PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
     ;;
   6)
     PKG_VERSION="6-r5p1-01rel0-armhf"
-    PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
     ;;
   gxbb)
     PKG_VERSION="gxbb-r5p1-01rel0"
-    PKG_URL="http://sx05.eu/sources/$PKG_NAME-$PKG_VERSION.tar.gz"
     ;;
 esac
+PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="graphics"
