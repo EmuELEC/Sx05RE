@@ -42,7 +42,7 @@ index df50940..446e75a 100644
 +        break;
 +
 +      case AE_FMT_DTSHD:
-+        aml_digital_codec = 5;
++        aml_digital_codec = 8;
 +        break;
 +
 +      case AE_FMT_TRUEHD:
