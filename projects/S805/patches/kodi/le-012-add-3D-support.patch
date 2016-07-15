@@ -1,7 +1,7 @@
-From 013b91ed50d929cc40bc2b0ff9e30b1682f68d8c Mon Sep 17 00:00:00 2001
-From: "Chris \\\"Koying\\\" Browet" <cbro@semperpax.com>
+From 1183663a3279f4aad513c7b5189e7cb377d9b8b5 Mon Sep 17 00:00:00 2001
+From: "Chris \"Koying\" Browet" <cbro@semperpax.com>
 Date: Wed, 12 Nov 2014 20:52:14 +0100
-Subject: [PATCH 01/12] ADD: [aml] Automatic 3D HDMI switch
+Subject: [PATCH 01/14] ADD: [aml] Automatic 3D HDMI switch
 
 ---
  xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp |   9 +-
@@ -14,7 +14,7 @@ Subject: [PATCH 01/12] ADD: [aml] Automatic 3D HDMI switch
  7 files changed, 154 insertions(+), 11 deletions(-)
 
 diff --git a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
-index 1b9ddb8..1ed1161 100644
+index 7236444..532861e 100644
 --- a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
 +++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
 @@ -1680,6 +1680,7 @@ void CAMLCodec::CloseDecoder()
@@ -94,7 +94,7 @@ index f9f3c68..cac5425 100644
  
    virtual bool TestRender();
 diff --git a/xbmc/utils/AMLUtils.cpp b/xbmc/utils/AMLUtils.cpp
-index 5915e61..79192ad 100644
+index 1b54435..b4c5d1d 100644
 --- a/xbmc/utils/AMLUtils.cpp
 +++ b/xbmc/utils/AMLUtils.cpp
 @@ -25,7 +25,9 @@
@@ -292,17 +292,17 @@ index 87a9740..758af7d 100644
 1.8.3.1
 
 
-From 2850d2b32630ace6f8f420280c2c82562a15cb45 Mon Sep 17 00:00:00 2001
-From: "Chris \\\"Koying\\\" Browet" <cbro@semperpax.com>
+From 7cad80a9bc6055ed64c476c3f42740c54182f8c6 Mon Sep 17 00:00:00 2001
+From: "Chris \"Koying\" Browet" <cbro@semperpax.com>
 Date: Wed, 31 Dec 2014 15:08:12 +0100
-Subject: [PATCH 02/12] CHG: Extract SysfsUtils from the AML utils
+Subject: [PATCH 02/14] CHG: Extract SysfsUtils from the AML utils
 
 ---
  xbmc/utils/AMLUtils.cpp | 24 ++++++++++++------------
  1 file changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/xbmc/utils/AMLUtils.cpp b/xbmc/utils/AMLUtils.cpp
-index 79192ad..93e1baa 100644
+index b4c5d1d..f3db42b 100644
 --- a/xbmc/utils/AMLUtils.cpp
 +++ b/xbmc/utils/AMLUtils.cpp
 @@ -48,7 +48,7 @@ static void aml_hdmi_3D_mode(const std::string mode3d)
@@ -364,17 +364,17 @@ index 79192ad..93e1baa 100644
 1.8.3.1
 
 
-From 346bbdd80747d6772eb9eb17f62c23fa590d88bd Mon Sep 17 00:00:00 2001
+From e809d3783648fbf38e92cff560d9d4015ca61700 Mon Sep 17 00:00:00 2001
 From: Trent Nelson <trent.a.b.nelson@gmail.com>
 Date: Tue, 11 Mar 2014 17:22:39 -0600
-Subject: [PATCH 03/12] Fixes mode being set every frame.
+Subject: [PATCH 03/14] Fixes mode being set every frame.
 
 ---
  xbmc/utils/AMLUtils.cpp | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/xbmc/utils/AMLUtils.cpp b/xbmc/utils/AMLUtils.cpp
-index 93e1baa..dad4603 100644
+index f3db42b..a935e03 100644
 --- a/xbmc/utils/AMLUtils.cpp
 +++ b/xbmc/utils/AMLUtils.cpp
 @@ -137,11 +137,9 @@ void aml_set_stereo_mode(const int mode, const int view)
@@ -394,10 +394,179 @@ index 93e1baa..dad4603 100644
 1.8.3.1
 
 
-From 1ca78164951c175a153e4462b4354133fd82529c Mon Sep 17 00:00:00 2001
-From: "Chris \\\"koying\\\" Browet" <cbro@semperpax.com>
+From e91d9a54136f83eb6545e05d98d4d8c0ad14becc Mon Sep 17 00:00:00 2001
+From: "Chris \"Koying\" Browet" <cbro@semperpax.com>
+Date: Thu, 14 May 2015 20:43:09 +0200
+Subject: [PATCH 04/14] ADD: [aml] h264 MVC support
+
+---
+ xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp  | 34 ++++++++++------------
+ .../DVDCodecs/Video/DVDVideoCodecAmlogic.cpp       |  2 ++
+ 2 files changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
+index 532861e..e0c107f 100644
+--- a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
++++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
+@@ -430,12 +430,6 @@ static vformat_t codecid_to_vformat(enum AVCodecID id)
+     case AV_CODEC_ID_H264:
+       format = VFORMAT_H264;
+       break;
+-    /*
+-    case AV_CODEC_ID_H264MVC:
+-      // H264 Multiview Video Coding (3d blurays)
+-      format = VFORMAT_H264MVC;
+-      break;
+-    */
+     case AV_CODEC_ID_MJPEG:
+       format = VFORMAT_MJPEG;
+       break;
+@@ -524,11 +518,6 @@ static vdec_type_t codec_tag_to_vdec_type(unsigned int codec_tag)
+       // h264
+       dec_type = VIDEO_DEC_FORMAT_H264;
+       break;
+-    /*
+-    case AV_CODEC_ID_H264MVC:
+-      dec_type = VIDEO_DEC_FORMAT_H264;
+-      break;
+-    */
+     case AV_CODEC_ID_RV30:
+     case CODEC_TAG_RV30:
+       // realmedia 3
+@@ -1080,7 +1069,7 @@ int pre_header_feeding(am_private_t *para, am_packet_t *pkt)
+             }
+         }
+ 
+-        if (VFORMAT_H264 == para->video_format || VFORMAT_H264_4K2K == para->video_format) {
++        if (VFORMAT_H264 == para->video_format || VFORMAT_H264_4K2K == para->video_format || VFORMAT_H264MVC == para->video_format) {
+             ret = h264_write_header(para, pkt);
+             if (ret != PLAYER_SUCCESS) {
+                 return ret;
+@@ -1497,9 +1486,14 @@ bool CAMLCodec::OpenDecoder(CDVDStreamInfo &hints)
+   // handle extradata
+   am_private->video_format      = codecid_to_vformat(hints.codec);
+   if (am_private->video_format == VFORMAT_H264) {
+-      if (hints.width > 1920 || hints.height > 1088) {
+-        am_private->video_format = VFORMAT_H264_4K2K;
+-      }
++    if (hints.profile == 118 || hints.profile == 128 || hints.codec_tag == AV_CODEC_ID_H264MVC)
++    {
++      CLog::Log(LOGDEBUG, "CAMLCodec::OpenDecoder: MVC detected");
++      am_private->video_format = VFORMAT_H264MVC;
++      m_hints.stereo_mode = "top_bottom";
++    }
++    else if (hints.width > 1920 || hints.height > 1088)
++      am_private->video_format = VFORMAT_H264_4K2K;
+   }
+   switch (am_private->video_format)
+   {
+@@ -1519,8 +1513,8 @@ bool CAMLCodec::OpenDecoder(CDVDStreamInfo &hints)
+     am_private->video_codec_type = codec_tag_to_vdec_type(am_private->video_codec_id);
+ 
+   CLog::Log(LOGDEBUG, "CAMLCodec::OpenDecoder "
+-    "hints.width(%d), hints.height(%d), hints.codec(%d), hints.codec_tag(%d), hints.pid(%d)",
+-    hints.width, hints.height, hints.codec, hints.codec_tag, hints.pid);
++    "hints.width(%d), hints.height(%d), hints.codec(%d), hints.codec_tag(%d), hints.profile(%d), hints.pid(%d)",
++    hints.width, hints.height, hints.codec, hints.codec_tag, hints.profile, hints.pid);
+   CLog::Log(LOGDEBUG, "CAMLCodec::OpenDecoder hints.fpsrate(%d), hints.fpsscale(%d), hints.rfpsrate(%d), hints.rfpsscale(%d), video_rate(%d)",
+     hints.fpsrate, hints.fpsscale, hints.rfpsrate, hints.rfpsscale, am_private->video_rate);
+   CLog::Log(LOGDEBUG, "CAMLCodec::OpenDecoder hints.aspect(%f), video_ratio.num(%d), video_ratio.den(%d)",
+@@ -1622,6 +1616,9 @@ bool CAMLCodec::OpenDecoder(CDVDStreamInfo &hints)
+   // disable tsync, we are playing video disconnected from audio.
+   SysfsUtils::SetInt("/sys/class/tsync/enable", 0);
+ 
++  if (am_private->video_format == VFORMAT_H264MVC)
++    SetVideo3dMode(MODE_3D_BT);
++
+   am_private->am_pkt.codec = &am_private->vcodec;
+   pre_header_feeding(am_private, &am_private->am_pkt);
+ 
+@@ -1854,6 +1851,7 @@ bool CAMLCodec::GetPicture(DVDVideoPicture *pDvdVideoPicture)
+   pDvdVideoPicture->iFlags = DVP_FLAG_ALLOCATED;
+   pDvdVideoPicture->format = RENDER_FMT_BYPASS;
+   pDvdVideoPicture->iDuration = (double)(am_private->video_rate * DVD_TIME_BASE) / UNIT_FREQ;
++  strncpy(pDvdVideoPicture->stereo_mode, m_hints.stereo_mode.c_str(), sizeof(pDvdVideoPicture->stereo_mode)-1);
+ 
+   pDvdVideoPicture->dts = DVD_NOPTS_VALUE;
+   if (m_speed == DVD_PLAYSPEED_NORMAL)
+@@ -1898,7 +1896,7 @@ void CAMLCodec::SetSpeed(int speed)
+       break;
+     default:
+       m_dll->codec_resume(&am_private->vcodec);
+-      if ((am_private->video_format == VFORMAT_H264) || (am_private->video_format == VFORMAT_H264_4K2K))
++      if ((am_private->video_format == VFORMAT_H264) || (am_private->video_format == VFORMAT_H264_4K2K) || (am_private->video_format == VFORMAT_H264MVC))
+         m_dll->codec_set_cntl_mode(&am_private->vcodec, TRICKMODE_FFFB);
+       else
+         m_dll->codec_set_cntl_mode(&am_private->vcodec, TRICKMODE_I);
+diff --git a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp b/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
+index 263acde..652e08f 100644
+--- a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
++++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
+@@ -96,6 +96,8 @@ bool CDVDVideoCodecAmlogic::Open(CDVDStreamInfo &hints, CDVDCodecOptions &option
+         return false;
+       }
+       m_pFormatName = "am-h264";
++      if (m_hints.codec_tag == AV_CODEC_ID_H264MVC)
++        m_pFormatName = "am-h264mvc";
+       // convert h264-avcC to h264-annex-b as h264-avcC
+       // under streamers can have issues when seeking.
+       if (m_hints.extradata && *(uint8_t*)m_hints.extradata == 1)
+-- 
+1.8.3.1
+
+
+From 3ab2ba604322b75f58068686bcf7097107c193a9 Mon Sep 17 00:00:00 2001
+From: "Chris \"Koying\" Browet" <cbro@semperpax.com>
+Date: Thu, 14 May 2015 19:30:07 +0200
+Subject: [PATCH 05/14] FIX: [aml] show video sooner (fixes MVC)
+
+---
+ xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
+index e0c107f..7ade231 100644
+--- a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
++++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
+@@ -1649,6 +1649,7 @@ bool CAMLCodec::OpenDecoder(CDVDStreamInfo &hints)
+   // vcodec is open, update speed if it was
+   // changed before dvdplayer called OpenDecoder.
+   SetSpeed(m_speed);
++  ShowMainVideo(true);
+ 
+   return true;
+ }
+@@ -2199,11 +2200,7 @@ void CAMLCodec::SetVideoRect(const CRect &SrcRect, const CRect &DestRect)
+   }
+ 
+   if (!update)
+-  {
+-    // mainvideo 'should' be showing already if we get here, make sure.
+-    ShowMainVideo(true);
+     return;
+-  }
+ 
+   CRect gui, display;
+   gui = CRect(0, 0, CDisplaySettings::GetInstance().GetCurrentResolutionInfo().iWidth, CDisplaySettings::GetInstance().GetCurrentResolutionInfo().iHeight);
+@@ -2302,10 +2299,6 @@ void CAMLCodec::SetVideoRect(const CRect &SrcRect, const CRect &DestRect)
+   SysfsUtils::SetString("/sys/class/video/axis", video_axis);
+   // make sure we are in 'full stretch' so we can stretch
+   SysfsUtils::SetInt("/sys/class/video/screen_mode", 1);
+-
+-  // we only get called once gui has changed to something
+-  // that would show video playback, so show it.
+-  ShowMainVideo(true);
+ }
+ 
+ void CAMLCodec::RenderUpdateCallBack(const void *ctx, const CRect &SrcRect, const CRect &DestRect)
+-- 
+1.8.3.1
+
+
+From 84a51de4d1e215290ad44fad7c52973fe3ddb304 Mon Sep 17 00:00:00 2001
+From: "Chris \"koying\" Browet" <cbro@semperpax.com>
 Date: Fri, 8 May 2015 15:52:04 +0200
-Subject: [PATCH 04/12] ADD: [demux] support ssif
+Subject: [PATCH 06/14] ADD: [demux] support ssif
 
 ---
  .../cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp | 127 ++++++++++++++++++++-
@@ -406,7 +575,7 @@ Subject: [PATCH 04/12] ADD: [demux] support ssif
  3 files changed, 128 insertions(+), 4 deletions(-)
 
 diff --git a/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp b/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
-index db8e308..e813eaa 100644
+index 88d486b..c6eb80c 100644
 --- a/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
 +++ b/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
 @@ -174,6 +174,7 @@ CDVDDemuxFFmpeg::CDVDDemuxFFmpeg() : CDVDDemux()
@@ -475,7 +644,7 @@ index db8e308..e813eaa 100644
          {
            /* check so packet belongs to selected program */
            for (unsigned int i = 0; i < m_pFormatContext->programs[m_program]->nb_stream_indexes; i++)
-@@ -883,6 +903,80 @@ DemuxPacket* CDVDDemuxFFmpeg::Read()
+@@ -879,6 +899,80 @@ DemuxPacket* CDVDDemuxFFmpeg::Read()
          // content has changed
          stream = AddStream(pPacket->iStreamId);
        }
@@ -556,7 +725,7 @@ index db8e308..e813eaa 100644
      }
      if (!stream)
      {
-@@ -906,6 +1000,11 @@ bool CDVDDemuxFFmpeg::SeekTime(int time, bool backwords, double *startpts)
+@@ -902,6 +996,11 @@ bool CDVDDemuxFFmpeg::SeekTime(int time, bool backwords, double *startpts)
  
    m_pkt.result = -1;
    av_free_packet(&m_pkt.pkt);
@@ -568,7 +737,7 @@ index db8e308..e813eaa 100644
  
    CDVDInputStream::ISeekTime* ist = dynamic_cast<CDVDInputStream::ISeekTime*>(m_pInput);
    if (ist)
-@@ -973,6 +1072,11 @@ bool CDVDDemuxFFmpeg::SeekByte(int64_t pos)
+@@ -969,6 +1068,11 @@ bool CDVDDemuxFFmpeg::SeekByte(int64_t pos)
  
    m_pkt.result = -1;
    av_free_packet(&m_pkt.pkt);
@@ -580,7 +749,7 @@ index db8e308..e813eaa 100644
  
    return (ret >= 0);
  }
-@@ -1194,6 +1298,12 @@ CDemuxStream* CDVDDemuxFFmpeg::AddStream(int iId)
+@@ -1190,6 +1294,12 @@ CDemuxStream* CDVDDemuxFFmpeg::AddStream(int iId)
            st->iFpsScale = 0;
          }
  
@@ -593,7 +762,7 @@ index db8e308..e813eaa 100644
          st->iWidth = pStream->codec->width;
          st->iHeight = pStream->codec->height;
          st->fAspect = SelectAspect(pStream, st->bForcedAspect) * pStream->codec->width / pStream->codec->height;
-@@ -1233,6 +1343,17 @@ CDemuxStream* CDVDDemuxFFmpeg::AddStream(int iId)
+@@ -1229,6 +1339,17 @@ CDemuxStream* CDVDDemuxFFmpeg::AddStream(int iId)
        {
          stream = new CDemuxStream();
          stream->type = STREAM_DATA;
@@ -611,7 +780,7 @@ index db8e308..e813eaa 100644
          break;
        }
      case AVMEDIA_TYPE_SUBTITLE:
-@@ -1383,7 +1504,7 @@ void CDVDDemuxFFmpeg::AddStream(int iId, CDemuxStream* stream)
+@@ -1379,7 +1500,7 @@ void CDVDDemuxFFmpeg::AddStream(int iId, CDemuxStream* stream)
      res.first->second = stream;
    }
    if(g_advancedSettings.m_logLevel > LOG_LEVEL_NORMAL)
@@ -658,10 +827,10 @@ index bc3aa8c..170c9f8 100644
 1.8.3.1
 
 
-From bcfa2762cd821906207947f8b63cedf1dbc04576 Mon Sep 17 00:00:00 2001
+From edda1d1196495088b6eb2022acdb3e52b894e538 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Wed, 16 Sep 2015 19:05:12 +0100
-Subject: [PATCH 05/12] Make MVC a valid 3D filename tag
+Subject: [PATCH 07/14] Make MVC a valid 3D filename tag
 
 ---
  xbmc/guilib/StereoscopicsManager.cpp | 16 ++++++++++++++++
@@ -746,10 +915,10 @@ index 6475350..8efd698 100644
 1.8.3.1
 
 
-From aecc5b152264823f78a715dd262485e02bc236c7 Mon Sep 17 00:00:00 2001
+From 89a05ba3dd0fdaacfda95f37d2fd70de3c8c1a37 Mon Sep 17 00:00:00 2001
 From: Zidooer <dl@zidoo.tv>
 Date: Wed, 16 Sep 2015 21:05:04 +0100
-Subject: [PATCH 06/12] ADD: [demux] ssif patches from rk3368 platform
+Subject: [PATCH 08/14] ADD: [demux] ssif patches from rk3368 platform
 
 ---
  .../cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp |  3 ++-
@@ -757,10 +926,10 @@ Subject: [PATCH 06/12] ADD: [demux] ssif patches from rk3368 platform
  2 files changed, 29 insertions(+), 1 deletion(-)
 
 diff --git a/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp b/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
-index e813eaa..14d8b17 100644
+index c6eb80c..a4c5b15 100644
 --- a/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
 +++ b/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
-@@ -925,6 +925,7 @@ DemuxPacket* CDVDDemuxFFmpeg::Read()
+@@ -921,6 +921,7 @@ DemuxPacket* CDVDDemuxFFmpeg::Read()
                tsB = AV_NOPTS_VALUE;
                break;
              }
@@ -768,7 +937,7 @@ index e813eaa..14d8b17 100644
              mvcpkt = m_SSIFqueue.front();
              tsB = (mvcpkt->dts != AV_NOPTS_VALUE ? mvcpkt->dts : mvcpkt->pts);
            }
-@@ -1504,7 +1505,7 @@ void CDVDDemuxFFmpeg::AddStream(int iId, CDemuxStream* stream)
+@@ -1500,7 +1501,7 @@ void CDVDDemuxFFmpeg::AddStream(int iId, CDemuxStream* stream)
      res.first->second = stream;
    }
    if(g_advancedSettings.m_logLevel > LOG_LEVEL_NORMAL)
@@ -835,10 +1004,10 @@ index 05c8a77..6e5ff6a 100644
 1.8.3.1
 
 
-From 7a9deb58941fcd5fd80535e2d1308afe435e024e Mon Sep 17 00:00:00 2001
-From: "Chris \\\"Koying\\\" Browet" <cbro@semperpax.com>
+From 944f132500a41c239206fefe494c9895e7ba7dd2 Mon Sep 17 00:00:00 2001
+From: "Chris \"Koying\" Browet" <cbro@semperpax.com>
 Date: Sun, 10 Jan 2016 19:58:23 +0100
-Subject: [PATCH 07/12] FIX: [MVC;SSIF] append mvc part leftover as well
+Subject: [PATCH 09/14] FIX: [MVC;SSIF] append mvc part leftover as well
 
 Fixes MVC_green_macroblocks_00049.ssif
 ---
@@ -847,7 +1016,7 @@ Fixes MVC_green_macroblocks_00049.ssif
  2 files changed, 198 insertions(+), 82 deletions(-)
 
 diff --git a/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp b/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
-index 14d8b17..63e7b25 100644
+index a4c5b15..15b27df 100644
 --- a/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
 +++ b/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
 @@ -52,6 +52,8 @@
@@ -1072,7 +1241,7 @@ index 14d8b17..63e7b25 100644
        }
      }
      else
-@@ -905,78 +1062,22 @@ DemuxPacket* CDVDDemuxFFmpeg::Read()
+@@ -901,78 +1058,22 @@ DemuxPacket* CDVDDemuxFFmpeg::Read()
        }
        if (m_bSSIF && stream->iPhysicalId == 0x1011)
        {
@@ -1161,7 +1330,7 @@ index 14d8b17..63e7b25 100644
        }
      }
      if (!stream)
-@@ -1001,11 +1102,17 @@ bool CDVDDemuxFFmpeg::SeekTime(int time, bool backwords, double *startpts)
+@@ -997,11 +1098,17 @@ bool CDVDDemuxFFmpeg::SeekTime(int time, bool backwords, double *startpts)
  
    m_pkt.result = -1;
    av_free_packet(&m_pkt.pkt);
@@ -1182,7 +1351,7 @@ index 14d8b17..63e7b25 100644
  
    CDVDInputStream::ISeekTime* ist = dynamic_cast<CDVDInputStream::ISeekTime*>(m_pInput);
    if (ist)
-@@ -1073,11 +1180,17 @@ bool CDVDDemuxFFmpeg::SeekByte(int64_t pos)
+@@ -1069,11 +1176,17 @@ bool CDVDDemuxFFmpeg::SeekByte(int64_t pos)
  
    m_pkt.result = -1;
    av_free_packet(&m_pkt.pkt);
@@ -1230,17 +1399,17 @@ index c17a016..409da8e 100644
 1.8.3.1
 
 
-From a842fcec1e48beff29d1911087853f4bfaf9c809 Mon Sep 17 00:00:00 2001
+From 7ee8330ca8c67f3042f27a4a38f19714806aee60 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Mon, 18 Jan 2016 18:38:30 +0000
-Subject: [PATCH 08/12] ssif: tidy up the logic for merging ssif packets
+Subject: [PATCH 10/14] ssif: tidy up the logic for merging ssif packets
 
 ---
  .../cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp | 153 ++++++++++-----------
  1 file changed, 76 insertions(+), 77 deletions(-)
 
 diff --git a/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp b/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
-index 63e7b25..734c004 100644
+index 15b27df..88e7b7a 100644
 --- a/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
 +++ b/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
 @@ -52,7 +52,7 @@
@@ -1444,7 +1613,7 @@ index 63e7b25..734c004 100644
      }
      else
      {
-@@ -1065,6 +1052,9 @@ DemuxPacket* CDVDDemuxFFmpeg::Read()
+@@ -1061,6 +1048,9 @@ DemuxPacket* CDVDDemuxFFmpeg::Read()
          DemuxPacket* newpkt = movePacket(pPacket);
          m_H264queue.push(newpkt);
  
@@ -1454,7 +1623,7 @@ index 63e7b25..734c004 100644
          pPacket = GetMVCPacket();
        }
      }
-@@ -1075,6 +1065,9 @@ DemuxPacket* CDVDDemuxFFmpeg::Read()
+@@ -1071,6 +1061,9 @@ DemuxPacket* CDVDDemuxFFmpeg::Read()
          DemuxPacket* newpkt = movePacket(pPacket);
          m_MVCqueue.push(newpkt);
  
@@ -1464,7 +1633,7 @@ index 63e7b25..734c004 100644
          pPacket = GetMVCPacket();
          if (pPacket->iSize)
            stream = GetStreamInternal(pPacket->iStreamId);
-@@ -1102,6 +1095,9 @@ bool CDVDDemuxFFmpeg::SeekTime(int time, bool backwords, double *startpts)
+@@ -1098,6 +1091,9 @@ bool CDVDDemuxFFmpeg::SeekTime(int time, bool backwords, double *startpts)
  
    m_pkt.result = -1;
    av_free_packet(&m_pkt.pkt);
@@ -1474,7 +1643,7 @@ index 63e7b25..734c004 100644
    while (!m_H264queue.empty())
    {
      CDVDDemuxUtils::FreeDemuxPacket(m_H264queue.front());
-@@ -1180,6 +1176,9 @@ bool CDVDDemuxFFmpeg::SeekByte(int64_t pos)
+@@ -1176,6 +1172,9 @@ bool CDVDDemuxFFmpeg::SeekByte(int64_t pos)
  
    m_pkt.result = -1;
    av_free_packet(&m_pkt.pkt);
@@ -1488,10 +1657,10 @@ index 63e7b25..734c004 100644
 1.8.3.1
 
 
-From 482344cd022a9ca0c929f1da72d7182047baa9c7 Mon Sep 17 00:00:00 2001
+From cb51bf73333e06c3e7f5cdaf91e9d7bcb00a55b6 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sat, 6 Feb 2016 16:29:09 +0000
-Subject: [PATCH 09/12] fixup! [3d] Automatically enable 3D for ssif
+Subject: [PATCH 11/14] fixup! [3d] Automatically enable 3D for ssif
 
 ---
  xbmc/guilib/StereoscopicsManager.cpp | 12 ++++++------
@@ -1531,10 +1700,10 @@ index 1ad4add..10cb68e 100644
 1.8.3.1
 
 
-From a5a34a0d57e130390779bfe105cf4b51fb0afb9a Mon Sep 17 00:00:00 2001
+From 55696be41e6fb94b2a8517aeb3ef8d14da2f7916 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sun, 21 Jun 2015 17:11:09 +0100
-Subject: [PATCH 10/12] Revert "[3D] don't back out from 3D handling on
+Subject: [PATCH 12/14] Revert "[3D] don't back out from 3D handling on
  resolution changes if we're switching to a different 3D mode"
 
 This reverts commit 3c4c236a799dab8369b4bb74ff9993bc58a61a72.
@@ -1572,10 +1741,10 @@ index a1b8812..87e71de 100644
 1.8.3.1
 
 
-From 1c35578daddf895c9b9f9ce28257c255598f8424 Mon Sep 17 00:00:00 2001
+From 7edce7264fdfe9884be52f2389ffb99e177451fe Mon Sep 17 00:00:00 2001
 From: Jamie Coldhill <wrxtasy@amnet.net.au>
 Date: Thu, 2 Jun 2016 02:35:03 +0800
-Subject: [PATCH 11/12] 3D: Fix for Linux AML HasHW3DInterlaced
+Subject: [PATCH 13/14] 3D: Fix for Linux AML HasHW3DInterlaced
 
 ---
  xbmc/utils/SystemInfo.cpp | 2 +-
@@ -1598,10 +1767,10 @@ index efae19e..6fb3216 100644
 1.8.3.1
 
 
-From 491997d2d0a89293c70d4fa0b0c3bac9101ddd58 Mon Sep 17 00:00:00 2001
+From 2416a02e8e32c75937039f3c8002ba551648b9ff Mon Sep 17 00:00:00 2001
 From: Jamie Coldhill <wrxtasy@amnet.net.au>
 Date: Thu, 2 Jun 2016 02:49:03 +0800
-Subject: [PATCH 12/12] 3D: Forgotten Includes and further de-androidification
+Subject: [PATCH 14/14] 3D: Forgotten Includes and further de-androidification
 
 ---
  xbmc/utils/SystemInfo.cpp | 3 ---
