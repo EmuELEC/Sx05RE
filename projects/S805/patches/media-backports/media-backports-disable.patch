@@ -1,0 +1,12 @@
+diff --git a/defconfigs/media b/defconfigs/media
+index c8f2e4d..99664b4 100644
+--- a/defconfigs/media
++++ b/defconfigs/media
+@@ -418,7 +418,6 @@ CPTCFG_VIDEO_OV9650=m
+ CPTCFG_VIDEO_PVRUSB2=m
+ CPTCFG_VIDEO_PXA27x=m
+ CPTCFG_VIDEO_S3C_CAMIF=m
+-CPTCFG_VIDEO_S5C73M3=m
+ CPTCFG_VIDEO_S5K4ECGX=m
+ CPTCFG_VIDEO_S5K6AA=m
+ CPTCFG_VIDEO_S5P_FIMC=m
