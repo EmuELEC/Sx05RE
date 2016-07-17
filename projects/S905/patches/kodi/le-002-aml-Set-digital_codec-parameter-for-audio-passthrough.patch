@@ -1,15 +1,14 @@
-From 03c0936cbf144992403d771cf7d6ecd820034aa8 Mon Sep 17 00:00:00 2001
+From 9b4000519fcfbd79fc37aeb08d5afb088be2991b Mon Sep 17 00:00:00 2001
 From: kszaq <kszaquitto@gmail.com>
 Date: Sat, 28 Mar 2015 22:53:16 +0100
-Subject: [PATCH 02/26] [aml] Set digital_codec parameter to notify HDMI about
- audio format
+Subject: [PATCH] Set digital_codec parameter to notify HDMI about audio format
 
 ---
- xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp | 32 ++++++++++++++++++++++++++++-
- 1 file changed, 31 insertions(+), 1 deletion(-)
+ xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp | 30 ++++++++++++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
 
 diff --git a/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp b/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp
-index df50940..446e75a 100644
+index e22db7a..4d1b159 100644
 --- a/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp
 +++ b/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp
 @@ -38,6 +38,7 @@
@@ -18,9 +17,9 @@ index df50940..446e75a 100644
  #include "utils/AMLUtils.h"
 +#include "utils/SysfsUtils.h"
  #endif
-
-
-@@ -526,7 +526,37 @@ bool CAESinkALSA::Initialize(AEAudioFormat &format, std::string &device)
+ 
+ 
+@@ -527,7 +528,34 @@ bool CAESinkALSA::Initialize(AEAudioFormat &format, std::string &device)
    if (aml_present())
    {
      aml_set_audio_passthrough(m_passthrough);
@@ -50,10 +49,7 @@ index df50940..446e75a 100644
 +        break;
 +
 +      default:
-+        if (inconfig.channels > 2)
-+          aml_digital_codec = 6;
-+        else
-+          aml_digital_codec = 0;
++        aml_digital_codec = 0;
 +    }
 +    SysfsUtils::SetInt("/sys/class/audiodsp/digital_codec", aml_digital_codec);
    }
