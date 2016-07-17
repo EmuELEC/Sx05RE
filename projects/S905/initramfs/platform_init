@@ -20,9 +20,22 @@ case $hdmimode in
   smpte24hz*)      export X=3840 Y=2160 ;;
 esac
 
+# Get max supported display resolution by hdmi device
+maxRes=$(tail -n1 /sys/class/amhdmitx/amhdmitx0/disp_cap | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//');
+if [ -z "$maxRes" ]; then
+  maxRes="$hdmimode";
+fi
+case "$maxRes" in
+  480*)                export X_VIRT=720  Y_VIRT=960  ;;
+  576*)                export X_VIRT=720  Y_VIRT=1152 ;;
+  720*)                export X_VIRT=1280 Y_VIRT=1440 ;;
+  1080*)               export X_VIRT=1920 Y_VIRT=2160 ;;
+  4k2k*hz|2160p*)      export X_VIRT=3840 Y_VIRT=4320 ;;
+  4k2ksmpte|smpte24hz) export X_VIRT=4096 Y_VIRT=4320 ;;
+esac
+
 M="0 0 $(($X - 1)) $(($Y - 1))"
-Y_VIRT=$(($Y * 2))
-fbset -fb /dev/fb0 -g $X $Y $X $Y_VIRT 32
+fbset -fb /dev/fb0 -g $X $Y $X_VIRT $Y_VIRT 32
 fbset -fb /dev/fb1 -g 32 32 32 32 32
 echo $hdmimode > /sys/class/display/mode
 echo 0 > /sys/class/graphics/fb0/free_scale
