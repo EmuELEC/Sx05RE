@@ -1,3 +1,9 @@
+7.0.103
+- automatically update driver to latest version on first install
+  show driver version in addon settings
+  allow update for aarch64 architecture
+  german translation
+
 7.0.102
 - system wait-for-online preference is now respected
 
