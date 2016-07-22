@@ -1,0 +1,6 @@
+7.0.101
+- Updated to version 3.0.5985
+- Removed mono build dependency
+
+7.0.100
+- Initial release
