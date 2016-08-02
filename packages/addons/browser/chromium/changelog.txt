@@ -1,3 +1,6 @@
+7.0.103
+- add xdotool
+
 7.0.102
 - add unclutter
 
