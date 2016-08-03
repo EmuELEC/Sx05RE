@@ -61,6 +61,8 @@ trap cleanup SIGINT
   UUID_2=$(date '+%M%S')
   FAT_VOL_ID="${UUID_1}${UUID_2}"
   UUID_SYSTEM="${UUID_1}-${UUID_2}"
+  FAT_VOL_LABEL="BOOT"
+  EXT_VOL_LABEL="DISK"
 
 # create an image
   echo
@@ -117,7 +119,7 @@ fi
   if [ "$BOOTLOADER" = "syslinux" ]; then
     mformat -v "$FAT_VOL_ID" -N "$FAT_VOL_ID" ::
   elif [ "$BOOTLOADER" = "bcm2835-bootloader" -o "$BOOTLOADER" = "u-boot" ]; then
-    mformat ::
+    mformat -v "$FAT_VOL_LABEL" ::
   fi
   sync
 
@@ -251,7 +253,7 @@ fi
 # create filesystem on part2
   echo "image: creating filesystem on part2..."
   mke2fs -F -q -t ext4 -m 0 "$OE_TMP/part2.ext4"
-  tune2fs -U $UUID_STORAGE "$OE_TMP/part2.ext4" >"$SAVE_ERROR" 2>&1 || show_error
+  tune2fs -L "$EXT_VOL_LABEL" -U $UUID_STORAGE "$OE_TMP/part2.ext4" >"$SAVE_ERROR" 2>&1 || show_error
   e2fsck -n "$OE_TMP/part2.ext4" >"$SAVE_ERROR" 2>&1 || show_error
   sync
 
