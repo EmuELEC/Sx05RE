@@ -40,6 +40,5 @@ run_program("/tmp/backuptool.sh", "restore");
 
 set_bootloader_env("upgrade_step", "2");
 set_bootloader_env("force_auto_update", "false");
-set_bootloader_env("libreonnand", "1");
 
 ui_print("LibreELEC Installed Successfully");

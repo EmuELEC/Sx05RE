@@ -7,17 +7,45 @@ for arg in $(cat /proc/cmdline); do
     hdmimode=*)
       hdmimode=${arg#*=}
       ;;
+    bootfromsd)
+      bootfromsd=1
+      ;;
+    bootfromusb)
+      bootfromusb=1
+      ;;
+    BOOT_IMAGE=*)
+      BOOT_IMAGE=${arg#*=}
+      ;;
+    boot=*)
+      boot=${arg#*=}
+      ;;
+    disk=*)
+      disk=${arg#*=}
+      ;;
   esac
 done
 
+# Add information where to run LibreELEC from
+if [ -z "$BOOT_IMAGE" -o -z "$boot" -o -z "$disk" ]; then
+  cmdline=$(cat /proc/cmdline)
+  if [ -n "$bootfromsd" ]; then
+    cmdline="$cmdline BOOT_IMAGE=kernel.img boot=/dev/mmcblk0p1 disk=/dev/mmcblk0p2"
+  elif [ -n "$bootfromusb" ]; then
+    cmdline="$cmdline BOOT_IMAGE=kernel.img boot=LABEL=BOOT disk=LABEL=DISK"
+  else
+    cmdline="$cmdline BOOT_IMAGE=/dev/boot boot=/dev/system disk=/dev/data"
+  fi
+  echo "$cmdline" > /proc/cmdline
+fi
+
 # Set framebuffer geometry to match the resolution
 case $hdmimode in
-  480*)            export X=720  Y=480  ;;
-  576*)            export X=720  Y=576  ;;
-  720p*)           export X=1280 Y=720  ;;
-  1080*)           export X=1920 Y=1080 ;;
-  2160p*)          export X=3840 Y=2160 ;;
-  smpte24hz*)      export X=3840 Y=2160 ;;
+  480*)            X=720  Y=480  ;;
+  576*)            X=720  Y=576  ;;
+  720p*)           X=1280 Y=720  ;;
+  1080*)           X=1920 Y=1080 ;;
+  2160p*)          X=3840 Y=2160 ;;
+  smpte24hz*)      X=3840 Y=2160 ;;
 esac
 
 # Get max supported display resolution by hdmi device
@@ -26,12 +54,12 @@ if [ -z "$maxRes" ]; then
   maxRes="$hdmimode";
 fi
 case "$maxRes" in
-  480*)                export X_VIRT=720  Y_VIRT=960  ;;
-  576*)                export X_VIRT=720  Y_VIRT=1152 ;;
-  720*)                export X_VIRT=1280 Y_VIRT=1440 ;;
-  1080*)               export X_VIRT=1920 Y_VIRT=2160 ;;
-  4k2k*hz|2160p*)      export X_VIRT=3840 Y_VIRT=4320 ;;
-  4k2ksmpte|smpte24hz) export X_VIRT=4096 Y_VIRT=4320 ;;
+  480*)                X_VIRT=720  Y_VIRT=960  ;;
+  576*)                X_VIRT=720  Y_VIRT=1152 ;;
+  720*)                X_VIRT=1280 Y_VIRT=1440 ;;
+  1080*)               X_VIRT=1920 Y_VIRT=2160 ;;
+  4k2k*hz|2160p*)      X_VIRT=3840 Y_VIRT=4320 ;;
+  4k2ksmpte|smpte24hz) X_VIRT=4096 Y_VIRT=4320 ;;
 esac
 
 fbset -fb /dev/fb0 -g $X $Y $X_VIRT $Y_VIRT 32
