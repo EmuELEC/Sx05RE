@@ -1,6 +1,16 @@
 show_progress(0.500000, 3);
 set_bootloader_env("upgrade_step", "3");
 
+# Format data partition if previous installation is Android
+mount("ext4", "EMMC", "/dev/block/system", "/system");
+if
+  sha1_check(read_file("/system/build.prop"))
+then
+  ui_print("Wiping data");
+  format("ext4", "EMMC", "/dev/block/data", "0", "/data");
+endif;
+unmount("/system");
+
 ui_print("Writing kernel image");
 assert(package_extract_file("KERNEL", "/tmp/boot.img"),
     write_raw_image("/tmp/boot.img", "boot"),
