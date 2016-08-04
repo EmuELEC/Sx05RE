@@ -36,7 +36,7 @@ esac
 
 fbset -fb /dev/fb0 -g $X $Y $X_VIRT $Y_VIRT 32
 fbset -fb /dev/fb1 -g 32 32 32 32 32
-echo $hdmimode > /sys/class/display/mode
+# echo $hdmimode > /sys/class/display/mode
 echo 0 > /sys/class/graphics/fb0/free_scale
 echo 0 > /sys/class/graphics/fb1/free_scale
 echo 1 > /sys/class/video/disable_video
