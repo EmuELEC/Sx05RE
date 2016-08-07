@@ -1,0 +1,12 @@
+diff --git a/Makefile.ffmpeg b/Makefile.ffmpeg
+index d387eb6..321508c 100644
+--- a/Makefile.ffmpeg
++++ b/Makefile.ffmpeg
+@@ -48,7 +48,7 @@ YASM_SHA1      = b7574e9f0826bedef975d64d3825f75fbaeef55e
+ 
+ LIBX264        = x264-snapshot-20160217-2245
+ LIBX264_TB     = $(LIBX264).tar.bz2
+-LIBX264_URL    = http://ftp.via.ecp.fr/pub/videolan/x264/snapshots/$(LIBX264_TB)
++LIBX264_URL    = http://ftp.videolan.org/x264/snapshots/$(LIBX264_TB)
+ LIBX264_SHA1   = e3b9d6f3372c9052fac3bffe7175518bb269a359
+ LIBX264_DIFFS  = libx264.configure.diff

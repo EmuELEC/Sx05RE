@@ -1,0 +1,6 @@
+7.0.101
+- Upgrade WebGrab+Plus to 56.28.pre
+- Upgrade siteini.pack to 20160729
+
+7.0.100
+- Initial addon
