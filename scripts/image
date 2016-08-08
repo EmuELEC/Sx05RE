@@ -267,18 +267,23 @@ fi
     done
     DTB_BLOBS=($(ls arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/*.dtb 2>/dev/null || true))
     DTB_BLOBS_COUNT="${#DTB_BLOBS[@]}"
+    DTB_BLOB_OUTPUT="arch/$TARGET_KERNEL_ARCH/boot/dtb.img"
+    MKBOOTIMG_SECOND="--second $DTB_BLOB_OUTPUT"
     if [ "$DTB_BLOBS_COUNT" -gt 1 ]; then
-      $ROOT/tools/dtbTool/dtbTool -o arch/$TARGET_KERNEL_ARCH/boot/dtb.img -p scripts/dtc/ arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/
-      MKBOOTIMG_SECOND="--second arch/$TARGET_KERNEL_ARCH/boot/dtb.img"
+      $ROOT/tools/dtbTool/dtbTool -o $DTB_BLOB_OUTPUT -p scripts/dtc/ arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/
     elif [ "$DTB_BLOBS_COUNT" -eq 1 ]; then
-      MKBOOTIMG_SECOND="--second $DTB_BLOBS"
+      cp -f arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/*.dtb $DTB_BLOB_OUTPUT
     else
       MKBOOTIMG_SECOND=""
     fi
     mkbootimg --kernel arch/$TARGET_KERNEL_ARCH/boot/$KERNEL_TARGET --ramdisk $ROOT/$BUILD/image/initramfs.cpio \
       $MKBOOTIMG_SECOND $MKBOOTIMG_OPTIONS --output arch/$TARGET_KERNEL_ARCH/boot/boot.img
     echo "...done"
+    if [ -f $DTB_BLOB_OUTPUT ]; then
+      cp -f $DTB_BLOB_OUTPUT $TARGET_IMG/$IMAGE_NAME.dtb
+    fi
     popd > /dev/null
+
     cp -PR $BUILD/linux-$(kernel_version)/arch/$TARGET_KERNEL_ARCH/boot/boot.img $TARGET_IMG/$IMAGE_NAME.kernel
   else
     cp -PR $BUILD/linux-$(kernel_version)/arch/$TARGET_KERNEL_ARCH/boot/$KERNEL_TARGET $TARGET_IMG/$IMAGE_NAME.kernel
