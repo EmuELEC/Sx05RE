@@ -1,8 +1,8 @@
 diff --git a/system/keymaps/keyboard.xml b/system/keymaps/keyboard.xml
-index 45682a2..b8ce91b 100644
+index 9833cff..31f2d08 100644
 --- a/system/keymaps/keyboard.xml
 +++ b/system/keymaps/keyboard.xml
-@@ -96,7 +96,7 @@
+@@ -91,7 +91,7 @@
        <backslash>ToggleFullScreen</backslash>
        <home>FirstPage</home>
        <end>LastPage</end>
@@ -10,4 +10,17 @@ index 45682a2..b8ce91b 100644
 +      <power>XBMC.Suspend()</power>
        <sleep>ActivateWindow(shutdownmenu)</sleep>
        <!-- PVR windows -->
-       <e>XBMC.ActivateWindowAndFocus(MyPVR, 31,0, 10,0)</e>
+       <e>ActivateWindow(TVGuide)</e>
+diff --git a/xbmc/powermanagement/linux/LogindUPowerSyscall.cpp b/xbmc/powermanagement/linux/LogindUPowerSyscall.cpp
+index 4e5bcc6..1058a7e 100644
+--- a/xbmc/powermanagement/linux/LogindUPowerSyscall.cpp
++++ b/xbmc/powermanagement/linux/LogindUPowerSyscall.cpp
+@@ -52,7 +52,7 @@ CLogindUPowerSyscall::CLogindUPowerSyscall()
+ 
+   m_canPowerdown = LogindCheckCapability("CanPowerOff");
+   m_canReboot    = LogindCheckCapability("CanReboot");
+-  m_canHibernate = LogindCheckCapability("CanHibernate");
++  m_canHibernate = false;
+   m_canSuspend   = LogindCheckCapability("CanSuspend");
+ 
+   InhibitDelayLock();
