@@ -1,6 +1,6 @@
 #!/bin/sh
 
-hdmimode=1080p60Hz
+hdmimode=1080p60hz
 
 for arg in $(cat /proc/cmdline); do
   case ${arg} in
@@ -34,14 +34,10 @@ case "$maxRes" in
   4k2ksmpte|smpte24hz) export X_VIRT=4096 Y_VIRT=4320 ;;
 esac
 
-M="0 0 $(($X - 1)) $(($Y - 1))"
 fbset -fb /dev/fb0 -g $X $Y $X_VIRT $Y_VIRT 32
 fbset -fb /dev/fb1 -g 32 32 32 32 32
 echo $hdmimode > /sys/class/display/mode
 echo 0 > /sys/class/graphics/fb0/free_scale
-echo 1 > /sys/class/graphics/fb0/freescale_mode
-echo $M > /sys/class/graphics/fb0/free_scale_axis
-echo $M > /sys/class/graphics/fb0/window_axis
 echo 0 > /sys/class/graphics/fb1/free_scale
 echo 1 > /sys/class/video/disable_video
 
