@@ -1,0 +1,30 @@
+From 3522bab028d8cf5c2923b995aa1663fdec527c7b Mon Sep 17 00:00:00 2001
+From: kszaq <kszaquitto@gmail.com>
+Date: Fri, 12 Aug 2016 20:01:34 +0200
+Subject: [PATCH] DVDVideoCodecAmlogic: Do not H/W decode Hi10P
+
+---
+ xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp b/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
+index e1ce5a3..07789d4 100644
+--- a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
++++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
+@@ -90,6 +90,13 @@ bool CDVDVideoCodecAmlogic::Open(CDVDStreamInfo &hints, CDVDCodecOptions &option
+       m_pFormatName = "am-mpeg2";
+       break;
+     case AV_CODEC_ID_H264:
++      switch(hints.profile)
++      {
++        case FF_PROFILE_H264_HIGH_10:
++        case FF_PROFILE_H264_HIGH_10_INTRA:
++          // Amlogic can decode Hi10P but with lots of artifacts
++          return false;
++      }
+       if ((!aml_support_h264_4k2k()) && ((m_hints.width > 1920) || (m_hints.height > 1088)))
+       {
+         // 4K is supported only on Amlogic S802/S812 chip
+-- 
+1.8.3.1
+
