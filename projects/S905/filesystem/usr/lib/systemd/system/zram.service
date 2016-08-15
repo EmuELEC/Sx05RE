@@ -1,6 +1,5 @@
 [Unit]
 Description=ZRAM service
-Before=swap.service
 
 [Service]
 Type=simple
@@ -19,4 +18,4 @@ swapon -p 10 /dev/zram2 ; \
 swapon -p 10 /dev/zram3 "
 
 [Install]
-WantedBy=basic.target
+WantedBy=swap.service
