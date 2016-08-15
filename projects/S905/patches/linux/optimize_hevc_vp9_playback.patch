@@ -1,0 +1,62 @@
+diff --git a/drivers/amlogic/amports/vh265.c b/drivers/amlogic/amports/vh265.c
+index e962733..839170b 100644
+--- a/drivers/amlogic/amports/vh265.c
++++ b/drivers/amlogic/amports/vh265.c
+@@ -215,7 +215,7 @@ static u32 dynamic_buf_num_margin;
+ #else
+ static u32 buf_alloc_width;
+ static u32 buf_alloc_height;
+-static u32 dynamic_buf_num_margin = 7;
++static u32 dynamic_buf_num_margin = 16;
+ #endif
+ static u32 buf_alloc_size;
+ static u32 re_config_pic_flag;
+@@ -236,7 +236,7 @@ bit[3]: 1, if blackout is not 1, do not release current
+ /* set to 1 for fast play;
+ 	set to 8 for other case of "keep last frame"
+ */
+-static u32 buffer_mode = 1;
++static u32 buffer_mode = 8;
+ /* buffer_mode_dbg: debug only*/
+ static u32 buffer_mode_dbg = 0xffff0000;
+ /**/
+@@ -260,7 +260,7 @@ static u32 i_only_flag;
+ use_cma: 1, use both reserver memory and cma for buffers
+ 2, only use cma for buffers
+ */
+-static u32 use_cma = 2;
++static u32 use_cma = 1;
+ 
+ static u32 max_decoding_time;
+ /*
+diff --git a/drivers/amlogic/amports/vvp9.c b/drivers/amlogic/amports/vvp9.c
+index d129327..46df836 100644
+--- a/drivers/amlogic/amports/vvp9.c
++++ b/drivers/amlogic/amports/vvp9.c
+@@ -1691,7 +1691,7 @@ static u32 dynamic_buf_num_margin;
+ #else
+ static u32 buf_alloc_width;
+ static u32 buf_alloc_height;
+-static u32 dynamic_buf_num_margin = 7;
++static u32 dynamic_buf_num_margin = 16;
+ #endif
+ static u32 buf_alloc_depth = 10;
+ static u32 buf_alloc_size;
+@@ -1712,7 +1712,7 @@ bit[3]: 1, if blackout is not 1, do not release current
+ /* set to 1 for fast play;
+ 	set to 8 for other case of "keep last frame"
+ */
+-static u32 buffer_mode = 1;
++static u32 buffer_mode = 8;
+ /* buffer_mode_dbg: debug only*/
+ static u32 buffer_mode_dbg = 0xffff0000;
+ /**/
+@@ -1727,7 +1727,7 @@ static u32 i_only_flag;
+ use_cma: 1, use both reserver memory and cma for buffers
+ 2, only use cma for buffers
+ */
+-static u32 use_cma = 2;
++static u32 use_cma = 1;
+ 
+ static u32 max_decoding_time;
+ /*
