@@ -38,6 +38,9 @@ elif ! grep -q /dev/system /proc/mounts ; then
   if [ -f /tmp/system/etc/remote.conf ] ; then
     cp /tmp/system/etc/remote.conf /flash/remote.conf
     SOURCEREMOTECONF="/flash/remote.conf"
+  elif [ -f /tmp/system/remote.conf ] ; then
+    cp /tmp/system/remote.conf /flash/remote.conf
+    SOURCEREMOTECONF="/flash/remote.conf"
   fi
   umount /tmp/system
   REMAP="yes"
