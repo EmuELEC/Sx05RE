@@ -1,0 +1,3 @@
+[submodule "projects/S905/packages/device-trees/sources"]
+	path = projects/S905/packages/device-trees/sources
+	url = https://github.com/kszaq/s905-device-trees.git
