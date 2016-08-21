@@ -113,10 +113,11 @@ post_install() {
 
   # rename to new folder
   rm -fr "$KDIR_THIS"
-  mv "$KDIR_ROOT" "$KDIR_THIS"
+  # mv "$KDIR_ROOT" "$KDIR_THIS"
 
   # rename sys folder back
-  mv "$KDIR_SYS" "$KDIR_ROOT"
+  # mv "$KDIR_SYS" "$KDIR_ROOT"
+  rm -fr "$KDIR_SYS"
 
-  echo "${KVER}-$KNAME_THIS" >>$INSTALL/lib/modules/.kernel_modules_dir
+  # echo "${KVER}-$KNAME_THIS" >>$INSTALL/lib/modules/.kernel_modules_dir
 }
