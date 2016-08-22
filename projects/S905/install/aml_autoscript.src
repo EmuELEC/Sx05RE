@@ -7,5 +7,9 @@ setenv librefromusb 'if usb start 0; then if fatload usb 0 ${loadaddr} kernel.im
 setenv librefromnand 'setenv bootargs ${bootargs} BOOT_IMAGE=/dev/boot boot=/dev/system disk=/dev/data'
 setenv bootcmd 'if test ${bootfromnand} = 1; then setenv bootfromnand 0; saveenv; else run librefromsd; run librefromusb; fi; run librefromnand; run storeboot'
 saveenv
+run storeargs
 run librefromsd
 run librefromusb
+if fatload mmc 0 ${loadaddr} recovery.img; then fatload mmc 0 ${dtb_mem_addr} dtb.img; wipeisb; bootm ${loadaddr}; fi
+run recovery_from_udisk
+run recovery_from_flash
