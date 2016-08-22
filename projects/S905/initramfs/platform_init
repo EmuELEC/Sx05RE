@@ -43,9 +43,7 @@ case $hdmimode in
   480*)            X=720  Y=480  ;;
   576*)            X=720  Y=576  ;;
   720p*)           X=1280 Y=720  ;;
-  1080*)           X=1920 Y=1080 ;;
-  2160p*)          X=3840 Y=2160 ;;
-  smpte24hz*)      X=3840 Y=2160 ;;
+  *)               X=1920 Y=1080 ;;
 esac
 
 # Get max supported display resolution by hdmi device
@@ -57,9 +55,7 @@ case "$maxRes" in
   480*)                X_VIRT=720  Y_VIRT=960  ;;
   576*)                X_VIRT=720  Y_VIRT=1152 ;;
   720*)                X_VIRT=1280 Y_VIRT=1440 ;;
-  1080*)               X_VIRT=1920 Y_VIRT=2160 ;;
-  4k2k*hz|2160p*)      X_VIRT=3840 Y_VIRT=4320 ;;
-  4k2ksmpte|smpte24hz) X_VIRT=4096 Y_VIRT=4320 ;;
+  *)                   X_VIRT=1920 Y_VIRT=2160 ;;
 esac
 
 fbset -fb /dev/fb0 -g $X $Y $X_VIRT $Y_VIRT 32
