@@ -244,10 +244,12 @@ elif [ "$BOOTLOADER" = "u-boot" ]; then
     done
 fi # bootloader
 
-if [ -f "$INSTALL_SRC_DIR/aml_autoscript.src" ]; then
-  $MKIMAGE_TOOL_CMD "$INSTALL_SRC_DIR/aml_autoscript.src" "$OE_TMP/aml_autoscript" > /dev/null
-  mcopy "$OE_TMP/aml_autoscript" "::/aml_autoscript"
-fi
+for src in $INSTALL_SRC_DIR/*autoscript.src ; do
+  if [ -e "$src" ] ; then
+    $MKIMAGE_TOOL_CMD "$src" "$OE_TMP/$(basename $src .src)" > /dev/null
+    mcopy "$OE_TMP/$(basename $src .src)" ::
+  fi
+done
 
 # extract part2 from image to format and copy files
   echo "image: extracting part2 from image..."
