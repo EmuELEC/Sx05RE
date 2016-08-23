@@ -65,6 +65,17 @@ echo 0 > /sys/class/graphics/fb0/free_scale
 echo 0 > /sys/class/graphics/fb1/free_scale
 echo 1 > /sys/class/video/disable_video
 
+# Enable scaling for 4K output
+case $hdmimode in
+  4k*|smpte*|2160*)
+    echo 0 0 1919 1079 > /sys/class/graphics/fb0/free_scale_axis
+    echo 0 0 3839 2159 > /sys/class/graphics/fb0/window_axis
+    echo 1920 > /sys/class/graphics/fb0/scale_width
+    echo 1080 > /sys/class/graphics/fb0/scale_height
+    echo 0x10001 > /sys/class/graphics/fb0/free_scale
+  ;;
+esac
+
 # Include deinterlacer into default VFM map
 echo rm default > /sys/class/vfm/map
 echo add default decoder ppmgr deinterlace amvideo > /sys/class/vfm/map
