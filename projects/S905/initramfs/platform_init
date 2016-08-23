@@ -46,19 +46,7 @@ case $hdmimode in
   *)               X=1920 Y=1080 ;;
 esac
 
-# Get max supported display resolution by hdmi device
-maxRes=$(tail -n1 /sys/class/amhdmitx/amhdmitx0/disp_cap | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//');
-if [ -z "$maxRes" ]; then
-  maxRes="$hdmimode";
-fi
-case "$maxRes" in
-  480*)                X_VIRT=720  Y_VIRT=960  ;;
-  576*)                X_VIRT=720  Y_VIRT=1152 ;;
-  720*)                X_VIRT=1280 Y_VIRT=1440 ;;
-  *)                   X_VIRT=1920 Y_VIRT=2160 ;;
-esac
-
-fbset -fb /dev/fb0 -g $X $Y $X_VIRT $Y_VIRT 32
+fbset -fb /dev/fb0 -g $X $Y 1920 2160 32
 fbset -fb /dev/fb1 -g 32 32 32 32 32
 # echo $hdmimode > /sys/class/display/mode
 echo 0 > /sys/class/graphics/fb0/free_scale
