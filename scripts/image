@@ -494,8 +494,6 @@ fi
         fi
         if [ -f $INSTALL_SRC_DIR/files/aml_autoscript ]; then
           cp $INSTALL_SRC_DIR/files/aml_autoscript .
-        elif [ -f "$INSTALL_SRC_DIR/aml_autoscript.src" ]; then
-          $MKIMAGE_TOOL_CMD "$INSTALL_SRC_DIR/aml_autoscript.src" aml_autoscript > /dev/null
         fi
         zip -q $TARGET_IMG/$IMAGE_NAME.zip *
         popd > /dev/null
