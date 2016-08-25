@@ -20,9 +20,6 @@ if
 then
   ui_print("Writing device tree from ledtb.img");
   write_dtb_image("/sdcard/ledtb.img");
-else
-  ui_print("Writing device tree from install ZIP");
-  write_dtb_image(package_extract_file("dtb.img"));
 endif;
 
 ui_print("Writing kernel image");
