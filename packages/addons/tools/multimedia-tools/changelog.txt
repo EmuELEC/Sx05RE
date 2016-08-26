@@ -1,3 +1,6 @@
+7.0.104
+- Rebuild alsamixer with ncurses
+
 7.0.103
 - Add alsamixer
 - Update mpg123 to 1.23.6
