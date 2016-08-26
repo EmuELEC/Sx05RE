@@ -8,5 +8,6 @@ nv_by_chip=5 \
 43362 0 nvram_ap6181.txt \
 43362 1 nvram_ap6210.txt \
 43430 0 nvram_ap6212.txt \
+17221 6 nvram_ap6255.txt \
 17200 4 nvram_ap6330.txt \
 17209 1 nvram_ap6335e.txt
