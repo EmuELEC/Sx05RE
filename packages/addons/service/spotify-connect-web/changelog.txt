@@ -1,3 +1,6 @@
+7.0.102
+- Add passwordless/mutiuser login
+
 7.0.101
 - Use mixer card index
 - Add instructions to the addon settings
