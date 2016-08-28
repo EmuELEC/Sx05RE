@@ -1,0 +1,23 @@
+From 35234a7ff3f0786b46569affb811b35f36e4d94c Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Wed, 17 Aug 2016 16:10:14 +0100
+Subject: [PATCH] GUIImage: Avoid hidden animation resources not being freed
+
+See: http://forum.kodi.tv/showthread.php?tid=216729
+---
+ xbmc/guilib/GUIImage.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/xbmc/guilib/GUIImage.cpp b/xbmc/guilib/GUIImage.cpp
+index ce1b68b..d4971da 100644
+--- a/xbmc/guilib/GUIImage.cpp
++++ b/xbmc/guilib/GUIImage.cpp
+@@ -71,7 +71,7 @@ void CGUIImage::UpdateInfo(const CGUIListItem *item)
+     return; // nothing to do
+ 
+   // don't allow image to change while animating out
+-  if (HasProcessed() && IsAnimating(ANIM_TYPE_HIDDEN) && !IsVisibleFromSkin())
++  if (HasProcessed() && IsAnimating(ANIM_TYPE_HIDDEN) && IsVisibleFromSkin())
+     return;
+ 
+   if (item)
