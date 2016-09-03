@@ -4,6 +4,7 @@
 
     TARGET_ARCH="aarch64"
     TARGET_CPU="cortex-a53"
+    TARGET_CPU_FLAGS="+crc+fp+simd"
 
   # Bootloader to use (syslinux / u-boot / bcm2835-bootloader)
     BOOTLOADER="u-boot"
