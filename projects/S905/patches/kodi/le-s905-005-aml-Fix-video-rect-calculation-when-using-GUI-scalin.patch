@@ -1,0 +1,30 @@
+From 58237c3d4cd0c7e50c9fef6bafa6f39f35587de7 Mon Sep 17 00:00:00 2001
+From: Alex Deryskyba <alex@codesnake.com>
+Date: Sun, 4 Sep 2016 20:41:44 +0200
+Subject: [PATCH 03/10] [aml] Fix video rect calculation when using GUI
+ scaling under Linux
+
+---
+ xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp |    5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
+index 7236444..8f93db8 100644
+--- a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
++++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
+@@ -2204,12 +2204,7 @@ void CAMLCodec::SetVideoRect(const CRect &SrcRect, const CRect &DestRect)
+   gui = CRect(0, 0, CDisplaySettings::GetInstance().GetCurrentResolutionInfo().iWidth, CDisplaySettings::GetInstance().GetCurrentResolutionInfo().iHeight);
+   std::string display_mode;
+   SysfsUtils::GetString("/sys/class/display/mode", display_mode);
+-
+-#ifdef TARGET_ANDROID
+   display = m_display_rect;
+-#else
+-  display = gui;
+-#endif
+   if (gui != display)
+   {
+    if (StringUtils::StartsWith(display_mode, "1080") || StringUtils::StartsWith(display_mode, "720"))
+-- 
+1.7.10.4
+
