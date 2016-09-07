@@ -1,0 +1,70 @@
+From eb8e53cd327f6ee8a36a52ecb7b81599b4045edc Mon Sep 17 00:00:00 2001
+From: kszaq <kszaquitto@gmail.com>
+Date: Wed, 7 Sep 2016 16:30:00 +0200
+Subject: [PATCH] DVDVideoCodecAmlogic: Do not H/W decode 10-bit HEVC if
+ hardware doesn't support it
+
+---
+ .../dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp  |  4 ++++
+ xbmc/utils/AMLUtils.cpp                                 | 17 +++++++++++++++++
+ xbmc/utils/AMLUtils.h                                   |  1 +
+ 3 files changed, 22 insertions(+)
+
+diff --git a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp b/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
+index 07789d4..e4c6905 100644
+--- a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
++++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
+@@ -163,6 +163,10 @@ bool CDVDVideoCodecAmlogic::Open(CDVDStreamInfo &hints, CDVDCodecOptions &option
+         // HEVC supported only on S805 and S812.
+         return false;
+       }
++      if ((hints.profile == FF_PROFILE_HEVC_MAIN_10) && !aml_support_hevc_10bit())
++      {
++        return false;
++      }
+       m_pFormatName = "am-h265";
+       if (m_hints.extradata)
+       {
+diff --git a/xbmc/utils/AMLUtils.cpp b/xbmc/utils/AMLUtils.cpp
+index 7d6a568..bf41d14 100644
+--- a/xbmc/utils/AMLUtils.cpp
++++ b/xbmc/utils/AMLUtils.cpp
+@@ -288,6 +288,23 @@ bool aml_support_hevc_4k2k()
+   return (has_hevc_4k2k == 1);
+ }
+ 
++bool aml_support_hevc_10bit()
++{
++  static int has_hevc_10bit = -1;
++
++  if (has_hevc_10bit == -1)
++  {
++    CRegExp regexp;
++    regexp.RegComp("hevc:.*10bit");
++    std::string valstr;
++    if (SysfsUtils::GetString("/sys/class/amstream/vcodec_profile", valstr) != 0)
++      has_hevc_10bit = 0;
++    else
++      has_hevc_10bit = (regexp.RegFind(valstr) >= 0) ? 1 : 0;
++  }
++  return (has_hevc_10bit == 1);
++}
++
+ bool aml_support_h264_4k2k()
+ {
+   static int has_h264_4k2k = -1;
+diff --git a/xbmc/utils/AMLUtils.h b/xbmc/utils/AMLUtils.h
+index 3b5f588..f29b334 100644
+--- a/xbmc/utils/AMLUtils.h
++++ b/xbmc/utils/AMLUtils.h
+@@ -49,6 +49,7 @@ void aml_set_stereo_mode(const int mode, const int view);
+ bool aml_wired_present();
+ bool aml_support_hevc();
+ bool aml_support_hevc_4k2k();
++bool aml_support_hevc_10bit();
+ bool aml_support_h264_4k2k();
+ void aml_set_audio_passthrough(bool passthrough);
+ bool aml_IsHdmiConnected();
+-- 
+1.8.3.1
+
