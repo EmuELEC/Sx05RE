@@ -1,17 +1,17 @@
-From 3522bab028d8cf5c2923b995aa1663fdec527c7b Mon Sep 17 00:00:00 2001
+From ca7f35f7606f6ac7fa93867584ef7c394ac6f26a Mon Sep 17 00:00:00 2001
 From: kszaq <kszaquitto@gmail.com>
 Date: Fri, 12 Aug 2016 20:01:34 +0200
 Subject: [PATCH] DVDVideoCodecAmlogic: Do not H/W decode Hi10P
 
 ---
- xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp | 7 +++++++
- 1 file changed, 7 insertions(+)
+ .../cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp b/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
-index e1ce5a3..07789d4 100644
+index 263acde..b27dd13 100644
 --- a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
 +++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
-@@ -90,6 +90,13 @@ bool CDVDVideoCodecAmlogic::Open(CDVDStreamInfo &hints, CDVDCodecOptions &option
+@@ -90,6 +90,18 @@ bool CDVDVideoCodecAmlogic::Open(CDVDStreamInfo &hints, CDVDCodecOptions &option
        m_pFormatName = "am-mpeg2";
        break;
      case AV_CODEC_ID_H264:
@@ -19,6 +19,11 @@ index e1ce5a3..07789d4 100644
 +      {
 +        case FF_PROFILE_H264_HIGH_10:
 +        case FF_PROFILE_H264_HIGH_10_INTRA:
++        case FF_PROFILE_H264_HIGH_422:
++        case FF_PROFILE_H264_HIGH_422_INTRA:
++        case FF_PROFILE_H264_HIGH_444_PREDICTIVE:
++        case FF_PROFILE_H264_HIGH_444_INTRA:
++        case FF_PROFILE_H264_CAVLC_444:
 +          // Amlogic can decode Hi10P but with lots of artifacts
 +          return false;
 +      }
