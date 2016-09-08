@@ -23,6 +23,10 @@ ATTRS{vendor}=="0x02d0", ATTRS{device}=="0x4330", \
 ATTRS{vendor}=="0x02d0", ATTRS{device}=="0x4335", \
   ENV{brcm_device}="bcm4335c0"
 
+### Broadcom bcm4356a2 bluetooth device
+ATTRS{vendor}=="0x02d0", ATTRS{device}=="0x4356", \
+  ENV{brcm_device}="bcm4356a2"
+
 ### Broadcom bcm4345c0 bluetooth device
 ATTRS{vendor}=="0x02d0", ATTRS{device}=="0xa9bf", \
   ENV{brcm_device}="bcm4345c0"
