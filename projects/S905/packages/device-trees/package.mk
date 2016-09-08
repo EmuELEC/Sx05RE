@@ -25,6 +25,8 @@ PKG_DEPENDS_TARGET="toolchain linux"
 
 PKG_AUTORECONF="no"
 
+EXTRA_TREES=(gxbb_p201.dtb)
+
 make_target() {
   pushd $ROOT/$BUILD/linux-$(kernel_version) > /dev/null
 
@@ -49,6 +51,12 @@ make_target() {
       LDFLAGS="" make $DTB_NAME
       mv arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/$DTB_NAME $TARGET_IMG
     fi
+  done
+
+  # Kernel-tree trees
+  for f in ${EXTRA_TREES[@]}; do
+    LDFLAGS="" make $f
+    mv arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/$f $TARGET_IMG
   done
 
   popd > /dev/null
