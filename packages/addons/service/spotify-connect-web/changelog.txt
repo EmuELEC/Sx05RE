@@ -1,3 +1,6 @@
+7.0.103
+- Handle PCM specified as a:CARD=c,DEV=d
+
 7.0.102
 - Add passwordless/mutiuser login
 
