@@ -33,13 +33,13 @@ install_to_nand() {
     mkdir -p /tmp/system
 
     mount -o rw,remount /flash
-    if [ -b /dev/dtb ] ; then
+    if [ -e /dev/dtb ] ; then
       echo -n "Backing up device tree..."
       dd if="/dev/dtb" of="/flash/dtb$BACKUP_DATE.img" status=none && sync
       echo "done."
     fi
 
-    if [ -b /dev/recovery ] ; then
+    if [ -e /dev/recovery ] ; then
       echo -n "Backing up recovery partition..."
       dd if="/dev/recovery" of="/flash/recovery$BACKUP_DATE.img" bs=64K status=none && sync
       echo "done."
