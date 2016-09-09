@@ -1,2 +1,5 @@
+7.0.101
+-Add inotify-tools, mc
+
 7.0.100
 - Initial Release
