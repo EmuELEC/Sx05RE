@@ -1,13 +1,16 @@
-commit 3b9433f806e9e713e290835b91ffc7b4d128f81e
-Author: Jamie Coldhill <wrxtasy@amnet.net.au>
-Date:   Fri Jun 10 01:04:36 2016 +0800
-
-    2160p: Calculate 2160p Video Axis coordinates
-
 diff --git a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
-index fde0f70..e7cdf16 100644
+index 7236444..130b9c9 100644
 --- a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
 +++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
+@@ -1628,7 +1628,7 @@ bool CAMLCodec::OpenDecoder(CDVDStreamInfo &hints)
+ 
+   Create();
+ 
+-  m_display_rect = CRect(0, 0, CDisplaySettings::GetInstance().GetCurrentResolutionInfo().iWidth, CDisplaySettings::GetInstance().GetCurrentResolutionInfo().iHeight);
++  m_display_rect = CRect(0, 0, CDisplaySettings::GetInstance().GetCurrentResolutionInfo().iScreenWidth, CDisplaySettings::GetInstance().GetCurrentResolutionInfo().iScreenHeight);
+ 
+   std::string strScaler;
+   SysfsUtils::GetString("/sys/class/ppmgr/ppscaler", strScaler);
 @@ -2204,6 +2204,8 @@ void CAMLCodec::SetVideoRect(const CRect &SrcRect, const CRect &DestRect)
  
    CRect gui, display;
@@ -26,18 +29,26 @@ index fde0f70..e7cdf16 100644
      float xscale = display.Width() / gui.Width();
      float yscale = display.Height() / gui.Height();
      if (m_stereo_mode == RENDER_STEREO_MODE_SPLIT_VERTICAL)
-@@ -2222,6 +2226,24 @@ void CAMLCodec::SetVideoRect(const CRect &SrcRect, const CRect &DestRect)
+@@ -2222,6 +2226,32 @@ void CAMLCodec::SetVideoRect(const CRect &SrcRect, const CRect &DestRect)
      dst_rect.x2 *= xscale;
      dst_rect.y1 *= yscale;
      dst_rect.y2 *= yscale;
 +   }
 +  }
 +
-+  if (gui.Width() != 3840)
++  if ((gui.Width() != 3840) && (gui.Width() != 4096))
 +  {
-+   if (StringUtils::StartsWith(display_mode, "2160"))
++   if (StringUtils::StartsWith(display_mode, "2160") || StringUtils::StartsWith(display_mode, "smpte"))
 +   {
-+    float xscale = (3840 / DestRect.Width());
++    float xscale = 0;
++    if (StringUtils::StartsWith(display_mode, "2160"))
++    {
++     xscale = (3840 / DestRect.Width());
++    }
++    if (StringUtils::StartsWith(display_mode, "smpte"))
++    {
++     xscale = (4096 / DestRect.Width());
++    }
 +    float yscale = xscale;
 +    if (m_stereo_mode == RENDER_STEREO_MODE_SPLIT_VERTICAL)
 +      xscale /= 2.0;
