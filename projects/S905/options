@@ -38,8 +38,9 @@
   # Kernel to use. values can be:
   # default:  default mainline kernel
     LINUX="custom"
-    KERNEL_VERSION="bca261f"
-    KERNEL_URL="https://github.com/kszaq/linux/archive/$KERNEL_VERSION.tar.gz"
+    KERNEL_VERSION="48d3a2f"
+    KERNEL_URL="https://github.com/kszaq/linux-amlogic-le/archive/$KERNEL_VERSION.tar.gz"
+    KERNEL_SOURCE_DIR="linux-amlogic-le-$KERNEL_VERSION*"
 
 ################################################################################
 # setup build defaults
