@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<advancedsettings>
+  <showexitbutton>false</showexitbutton>
+  <cputempcommand>cputemp</cputempcommand>
+  <gputempcommand>gputemp</gputempcommand>
+  <samba>
+    <clienttimeout>30</clienttimeout>
+  </samba>
+  <pvr>
+    <minvideocachelevel>5</minvideocachelevel>
+    <minaudiocachelevel>20</minaudiocachelevel>
+  </pvr>
+</advancedsettings>
