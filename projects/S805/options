@@ -54,9 +54,6 @@
   # SquashFS compression method (gzip / lzo / xz / lz4)
     SQUASHFS_COMPRESSION="lzo"
 
-  # SquashFS block size (default: 131072)
-    SQUASHFS_BLOCK_SIZE="16384"
-
 ################################################################################
 # setup project defaults
 ################################################################################
@@ -138,9 +135,6 @@
   # set the addon dirs
     ADDON_PATH="$ADDON_VERSION/WeTek_Play/$TARGET_ARCH"
     ADDON_URL="$ADDON_SERVER_URL/$ADDON_PATH"
-
-  # Hardware random number generator daemon
-    HW_RNG="yes"
 
   # OEM packages for OEM's (yes / no)
     OEM_SUPPORT="yes"
