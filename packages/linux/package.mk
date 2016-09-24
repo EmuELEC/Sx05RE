@@ -53,6 +53,7 @@ case "$LINUX" in
   custom)
     PKG_VERSION="$KERNEL_VERSION"
     PKG_URL="$KERNEL_URL"
+    PKG_SOURCE_DIR="$KERNEL_SOURCE_DIR"
     ;;
   *)
     PKG_VERSION="4.4.13"
