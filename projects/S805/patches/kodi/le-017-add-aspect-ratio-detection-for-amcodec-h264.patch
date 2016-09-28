@@ -542,3 +542,42 @@ index 71d117f..5886c58 100644
 -- 
 2.9.3
 
+From 0e35077aa24348f03406d6e389ea52f302a2234a Mon Sep 17 00:00:00 2001
+From: kszaq <kszaquitto@gmail.com>
+Date: Wed, 28 Sep 2016 20:32:00 +0200
+Subject: [PATCH] DVDVideoCodecAmlogic: Use aspect ratio tracking only for
+ videos without embedded aspect ratio information
+
+This should lower CPU usage for all videos with aspect ratio hint.
+---
+ .../dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp     | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp b/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
+index 558fd13..a6f1130 100644
+--- a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
++++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
+@@ -108,11 +108,15 @@ bool CDVDVideoCodecAmlogic::Open(CDVDStreamInfo &hints, CDVDCodecOptions &option
+         // 4K is supported only on Amlogic S802/S812 chip
+         return false;
+       }
+-      m_h264_sequence_pts = 0;
+-      m_h264_sequence = new h264_sequence;
+-      m_h264_sequence->width  = m_hints.width;
+-      m_h264_sequence->height = m_hints.height;
+-      m_h264_sequence->ratio  = m_hints.aspect;
++
++      if (m_hints.aspect == 0.0f)
++      {
++        m_h264_sequence_pts = 0;
++        m_h264_sequence = new h264_sequence;
++        m_h264_sequence->width  = m_hints.width;
++        m_h264_sequence->height = m_hints.height;
++        m_h264_sequence->ratio  = m_hints.aspect;
++      }
+ 
+       m_pFormatName = "am-h264";
+       if (m_hints.codec_tag == AV_CODEC_ID_H264MVC)
+-- 
+1.8.3.1
+
