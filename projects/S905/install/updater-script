@@ -5,18 +5,12 @@ package_extract_file("backuptool.sh", "/tmp/backuptool.sh");
 set_metadata("/tmp/backuptool.sh", "uid", 0, "gid", 0, "mode", 0755, "capabilities", 0x0);
 run_program("/tmp/backuptool.sh", "backup");
 
-# Format data partition if previous installation is Android
-mount("ext4", "EMMC", "/dev/block/system", "/system");
-if
-  sha1_check(read_file("/system/build.prop"))
-then
-  ui_print("Wiping data");
-  format("ext4", "EMMC", "/dev/block/data", "0", "/data");
-endif;
-unmount("/system");
+# Format data partition
+ui_print("Wiping data");
+format("ext4", "EMMC", "/dev/block/data", "0", "/data");
 
 if
-  sha1_check(read_file("/sdcard/ledtb.img"))
+  read_file("/sdcard/ledtb.img")
 then
   ui_print("Writing device tree from ledtb.img");
   write_dtb_image("/sdcard/ledtb.img");
