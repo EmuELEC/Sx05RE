@@ -19,6 +19,9 @@
 ################################################################################
 
 [ -z "$SYSTEM_ROOT" ] && SYSTEM_ROOT=""
+[ -z "$BOOT_ROOT" ] && BOOT_ROOT="/flash"
+[ -z "$UPDATE_DIR" ] && UPDATE_DIR="/storage/.update"
+DTB_UPDATE="$UPDATE_DIR/dtb.img"
 
 for arg in $(cat /proc/cmdline); do
   case $arg in
@@ -32,6 +35,18 @@ for arg in $(cat /proc/cmdline); do
           $SYSTEM_ROOT/usr/sbin/fatlabel $($SYSTEM_ROOT/sbin/findfs $boot) "BOOT"
           ;;
       esac
+
+      if [ -f $DTB_UPDATE ] ; then
+        case $boot in
+          /dev/boot)
+            dd if=$DTB_UPDATE of="/dev/dtb" bs=256k
+            ;;
+          /dev/mmc*|LABEL=*)
+            mount -o rw,remount $BOOT_ROOT
+            cp -f $DTB_UPDATE $BOOT_ROOT
+            ;;
+        esac
+      fi
       ;;
     disk=*)
       disk="${arg#*=}"
