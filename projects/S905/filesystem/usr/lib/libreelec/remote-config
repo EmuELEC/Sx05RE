@@ -51,9 +51,11 @@ fi
 if [ "$REMOTECONFPRESENT" = "yes" ]; then
   cp "$SOURCEREMOTECONF" "$TMPREMOTECONF"
   if [ "$REMAP" = "yes" ]; then
-    sed -i 's/ 63/ 90/
+    sed -i 's/ 15/ 1/
+            s/ 63/ 90/
             s/ 97/ 28/
             s/ 102/ 172/
+            s/ 104/ 115/
             s/ 109/ 114/
             s/ 125/ 46/
             s/ 142/ 116/
