@@ -8,5 +8,4 @@ saveenv
 run storeargs
 run librefromsd
 run librefromusb
-if fatload mmc 0 ${loadaddr} recovery.img; then bootm ${loadaddr}; fi
-run recovery_from_flash
+run recovery
