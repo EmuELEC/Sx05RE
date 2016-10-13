@@ -1,0 +1,15 @@
+diff --git a/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp b/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
+index 734c004..6106d82 100644
+--- a/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
++++ b/xbmc/cores/dvdplayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
+@@ -430,8 +430,8 @@ bool CDVDDemuxFFmpeg::Open(CDVDInputStream* pInput, bool streaminfo, bool filein
+     av_opt_set_int(m_pFormatContext, "analyzeduration", 500000, 0);
+ 
+   bool skipCreateStreams = false;
+-  bool isBluray = pInput->IsStreamType(DVDSTREAM_TYPE_BLURAY);
+-  if (iformat && (strcmp(iformat->name, "mpegts") == 0) && !fileinfo && !isBluray)
++  bool isLiveTV = (pInput->IsStreamType(DVDSTREAM_TYPE_TV) || pInput->IsStreamType(DVDSTREAM_TYPE_PVRMANAGER));
++  if (iformat && (strcmp(iformat->name, "mpegts") == 0) && !fileinfo && isLiveTV)
+   {
+     av_opt_set_int(m_pFormatContext, "analyzeduration", 500000, 0);
+     m_checkvideo = true;
