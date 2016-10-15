@@ -38,7 +38,7 @@ for arg in $(cat /proc/cmdline); do
 
       if [ -f $DTB_UPDATE ] ; then
         case $boot in
-          /dev/boot)
+          /dev/system)
             dd if=$DTB_UPDATE of="/dev/dtb" bs=256k
             ;;
           /dev/mmc*|LABEL=*)
