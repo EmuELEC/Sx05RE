@@ -13,17 +13,6 @@ index aee654a..03e1882 100644
  #ifdef NEED_GET_USER_PAGES_UNLOCKED
 diff --git a/v4l/compat.h b/v4l/compat.h
 index 03e1882..1580ae5 100644
---- a/v4l/compat.h
-+++ b/v4l/compat.h
-@@ -1447,7 +1447,7 @@ static inline bool ether_addr_equal(const u8 *addr1, const u8 *addr2)
- #endif
- 
- #ifdef NEED_SMP_MB_AFTER_ATOMIC
--#define smp_mb__after_atomic smp_mb__after_clear_bit
-+// #define smp_mb__after_atomic smp_mb__after_clear_bit
- #endif
- 
- #ifdef NEED_DEVM_KMALLOC_ARRAY
 diff --git a/v4l/versions.txt b/v4l/versions.txt
 index 0a84755..4bb122f 100644
 --- a/v4l/versions.txt
