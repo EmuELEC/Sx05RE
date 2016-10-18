@@ -1,0 +1,43 @@
+From 3b206ed8b81fbea692406da59ce8937c6ed08d35 Mon Sep 17 00:00:00 2001
+From: kszaq <kszaquitto@gmail.com>
+Date: Tue, 18 Oct 2016 05:32:00 +0200
+Subject: [PATCH] aml: fix vq dropping and high bitrate playback
+
+- don't buffer if DataSize is greater than m_vbufsize/3
+- wait longer if hardware buffer is full (credits to Davilla)
+---
+ xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
+index 7236444..303ab22 100644
+--- a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
++++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
+@@ -1817,12 +1817,21 @@ int CAMLCodec::Decode(uint8_t *pData, size_t iSize, double dts, double pts)
+     target_timesize = 2.0;
+ 
+   // keep hw buffered demux above 1 second
+-  if (GetTimeSize() < target_timesize && m_speed == DVD_PLAYSPEED_NORMAL)
++  if (GetTimeSize() < target_timesize && GetDataSize() < m_vbufsize/3 && m_speed == DVD_PLAYSPEED_NORMAL)
+     return VC_BUFFER;
+ 
+-  // wait until we get a new frame or 25ms,
++  // we must wait here or we can consume
++  // all buffered dvd player video demux packets.
++  // wait long if hw buffers greater than our limit.
++  // wait short if not.
+   if (m_old_pictcnt == m_cur_pictcnt)
+-    m_ready_event.WaitMSec(25);
++  {
++    int wait_time = 25;
++    if (GetTimeSize() > target_timesize)
++      wait_time = 100;
++    m_ready_event.Reset();
++    m_ready_event.WaitMSec(wait_time);
++  }
+ 
+   // we must return VC_BUFFER or VC_PICTURE,
+   // default to VC_BUFFER.
+-- 
+1.8.3.1
+
