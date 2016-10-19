@@ -2,7 +2,7 @@ set_bootloader_env("upgrade_step", "3");
 
 ui_print("Backing up device tree and remote.conf");
 package_extract_file("backuptool.sh", "/tmp/backuptool.sh");
-set_metadata("/tmp/backuptool.sh", "uid", 0, "gid", 0, "mode", 0755, "capabilities", 0x0);
+set_metadata("/tmp/backuptool.sh", "mode", 0755);
 run_program("/tmp/backuptool.sh", "backup");
 
 # Format data partition
