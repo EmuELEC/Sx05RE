@@ -10,15 +10,3 @@ diff -Naur a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp b/xbmc/cores/dvdp
  
    // translate from generic to firemware version dependent
    m_dll->codec_init_para(&am_private->gcodec, &am_private->vcodec);
-diff -Naur a/xbmc/guilib/GUIFontTTFGL.cpp b/xbmc/guilib/GUIFontTTFGL.cpp
---- a/xbmc/guilib/GUIFontTTFGL.cpp	2016-02-02 23:09:39.000000000 +0100
-+++ b/xbmc/guilib/GUIFontTTFGL.cpp	2016-02-10 06:59:49.261293006 +0100
-@@ -232,7 +232,7 @@
-       glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glMatrixModview.Get());
- 
-       // Bind the buffer to the OpenGL context's GL_ARRAY_BUFFER binding point
--      glBindBuffer(GL_ARRAY_BUFFER, (GLuint) m_vertexTrans[i].vertexBuffer->bufferHandle);
-+      glBindBuffer(GL_ARRAY_BUFFER, (unsigned long) m_vertexTrans[i].vertexBuffer->bufferHandle);
- 
-       // Do the actual drawing operation, split into groups of characters no
-       // larger than the pre-determined size of the element array
