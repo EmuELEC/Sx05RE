@@ -1,100 +1,33 @@
-From c679ade10558c6d228e33f2bfd36f5d60d752c5f Mon Sep 17 00:00:00 2001
+From 7097ce7b51e603514233115e8889d11c9a715c12 Mon Sep 17 00:00:00 2001
 From: kszaq <kszaquitto@gmail.com>
 Date: Sun, 4 Sep 2016 00:51:03 +0200
-Subject: [PATCH] [aml] Multichannel-PCM and HD Audio passthrough
+Subject: [PATCH] aml: If we don't want passthrough, is should be redirected to device 0
 
-1. If we want passthrough, is should be redirected to device 1. To make sure device 1 output is enabled, set device 0 to stereo.
-2. Set digital_codec parameter to notify sound driver about audio format.
-3. Amlogic wants 48kHz for EAC3 passthrough.
-4. Identify Amlogic audio output as HDMI.
 ---
- xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp | 56 ++++++++++++++++++++++++++---
- 1 file changed, 52 insertions(+), 4 deletions(-)
+ xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp b/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp
-index e22db7a..80b1286 100644
+index e22db7a..87e79c0 100644
 --- a/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp
 +++ b/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp
-@@ -38,6 +38,7 @@
- #include "settings/AdvancedSettings.h"
- #if defined(HAS_LIBAMCODEC)
- #include "utils/AMLUtils.h"
-+#include "utils/SysfsUtils.h"
- #endif
- 
- 
-@@ -523,13 +524,54 @@ bool CAESinkALSA::Initialize(AEAudioFormat &format, std::string &device)
+@@ -523,13 +523,9 @@ bool CAESinkALSA::Initialize(AEAudioFormat &format, std::string &device)
    {
      m_passthrough   = false;
    }
 -#if defined(HAS_LIBAMCODEC)
 -  if (aml_present())
-+
-+  if (device.find("M8AUDIO") != std::string::npos)
-   {
-+    int aml_digital_codec = 0;
-+
-+    if (m_passthrough)
-+    {
-+      /* Open 2 channels at device 0 to enable device 1 output to HDMI */
-+      ALSAConfig m_inconfig, m_outconfig;
-+      snd_config_t *config;
-+      m_inconfig = inconfig;
-+      m_inconfig.channels = 2;
-+      snd_config_copy(&config, snd_config);
-+      OpenPCMDevice("hw:AMLM8AUDIO,0", "", m_inconfig.channels, &m_pcm, config);
-+      snd_config_delete(config);
-+      InitializeHW(m_inconfig, m_outconfig);
-+
-+      /* Passthrough is supported only by device 1 */
-+      device = "hw:AMLM8AUDIO,1";
-+
-+      switch(format.m_dataFormat)
-+      {
-+        case AE_FMT_AC3:
-+          aml_digital_codec = 2;
-+          break;
-+
-+        case AE_FMT_DTS:
-+          aml_digital_codec = 3;
-+          break;
-+
-+        case AE_FMT_EAC3:
-+          aml_digital_codec = 4;
-+          inconfig.sampleRate = 48000;
-+          break;
-+
-+        case AE_FMT_DTSHD:
-+          aml_digital_codec = 8;
-+          break;
-+
-+        case AE_FMT_TRUEHD:
-+          aml_digital_codec = 7;
-+          break;
-+      }
-+    }
-+
-     aml_set_audio_passthrough(m_passthrough);
+-  {
+-    aml_set_audio_passthrough(m_passthrough);
 -    device = "default";
-+    SysfsUtils::SetInt("/sys/class/audiodsp/digital_codec", aml_digital_codec);
-   }
+-  }
 -#endif
++
++  if (!m_passthrough && (device.find("M8AUDIO") != std::string::npos))
++    device = "hw:AMLM8AUDIO,0";
  
    if (inconfig.channels == 0)
    {
-@@ -1536,6 +1578,12 @@ void CAESinkALSA::EnumerateDevice(AEDeviceInfoList &list, const std::string &dev
-       info.m_dataFormats.push_back(i);
-   }
- 
-+  if (info.m_displayName.find("M8AUDIO") != std::string::npos)
-+  {
-+    info.m_displayNameExtra = "HDMI";
-+    info.m_deviceType = AE_DEVTYPE_HDMI;
-+  }
-+
-   if (info.m_deviceType == AE_DEVTYPE_HDMI)
-   {
-     // regarding data formats we don't trust ELD
 -- 
 1.8.3.1
 
