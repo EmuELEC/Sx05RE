@@ -60,7 +60,7 @@ if [ "$KODIPLAYER_DRIVER" = "bcm2835-driver" ]; then
 fi
 
 case "$TARGET_ARCH" in
-  arm)
+  arm|aarch64)
       FFMPEG_CPU=""
       FFMPEG_TABLES="--enable-hardcoded-tables"
       FFMPEG_PIC="--enable-pic"
