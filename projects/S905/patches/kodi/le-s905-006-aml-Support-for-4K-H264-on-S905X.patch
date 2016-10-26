@@ -1,0 +1,91 @@
+From ec84aa71830490de948bd93c947267536bdd514f Mon Sep 17 00:00:00 2001
+From: kszaq <kszaquitto@gmail.com>
+Date: Fri, 30 Sep 2016 12:56:24 +0200
+Subject: [PATCH] aml: Support for 4K H264 on S905X
+
+S905X (and possibly newer chips) need to use VFORMAT_H264 for 4K decoding instead
+of VFORMAT_H264_4K2K. We can determine which one to use by probing vcodec_profile:
+
+S905:
+h264:;
+h264_4k2k:;
+
+S905X:
+h264:4k;
+h264_4k2k:;
+---
+ xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp |  9 +++++----
+ xbmc/utils/AMLUtils.cpp                             | 15 +++++++++------
+ xbmc/utils/AMLUtils.h                               |  2 +-
+ 3 files changed, 15 insertions(+), 11 deletions(-)
+
+diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp b/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
+index 69e7500..cd59480 100644
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
+@@ -1497,10 +1497,11 @@ bool CAMLCodec::OpenDecoder(CDVDStreamInfo &hints)
+     am_private->video_rotation_degree = 3;
+   // handle extradata
+   am_private->video_format      = codecid_to_vformat(hints.codec);
+-  if (am_private->video_format == VFORMAT_H264) {
+-      if (hints.width > 1920 || hints.height > 1088) {
+-        am_private->video_format = VFORMAT_H264_4K2K;
+-      }
++  if ((am_private->video_format == VFORMAT_H264) &&
++      (hints.width > 1920 || hints.height > 1088) &&
++      (aml_support_h264_4k2k() == 1))
++  {
++    am_private->video_format = VFORMAT_H264_4K2K;
+   }
+   switch (am_private->video_format)
+   {
+diff --git a/xbmc/utils/AMLUtils.cpp b/xbmc/utils/AMLUtils.cpp
+index b85cf8d..9ac293c 100644
+--- a/xbmc/utils/AMLUtils.cpp
++++ b/xbmc/utils/AMLUtils.cpp
+@@ -208,7 +208,7 @@ bool aml_support_hevc_10bit()
+   return (has_hevc_10bit == 1);
+ }
+ 
+-bool aml_support_h264_4k2k()
++int aml_support_h264_4k2k()
+ {
+   static int has_h264_4k2k = -1;
+ 
+@@ -216,12 +216,15 @@ bool aml_support_h264_4k2k()
+   {
+     std::string valstr;
+     if (SysfsUtils::GetString("/sys/class/amstream/vcodec_profile", valstr) != 0)
+-    {
+-      return false;
+-    }
+-    return (valstr.find("h264_4k2k:") != std::string::npos);
++      has_h264_4k2k = 0;
++    else if (valstr.find("h264:4k") != std::string::npos)
++      has_h264_4k2k = 2;
++    else if (valstr.find("h264_4k2k:") != std::string::npos)
++      has_h264_4k2k = 1;
++    else
++      has_h264_4k2k = 0;
+   }
+-  return (has_h264_4k2k == 1);
++  return has_h264_4k2k;
+ }
+ 
+ void aml_set_audio_passthrough(bool passthrough)
+diff --git a/xbmc/utils/AMLUtils.h b/xbmc/utils/AMLUtils.h
+index 57b9dce..de1053f 100644
+--- a/xbmc/utils/AMLUtils.h
++++ b/xbmc/utils/AMLUtils.h
+@@ -48,7 +48,7 @@ bool aml_wired_present();
+ bool aml_support_hevc();
+ bool aml_support_hevc_4k2k();
+ bool aml_support_hevc_10bit();
+-bool aml_support_h264_4k2k();
++int  aml_support_h264_4k2k();
+ void aml_set_audio_passthrough(bool passthrough);
+ bool aml_IsHdmiConnected();
+ bool aml_mode_to_resolution(const char *mode, RESOLUTION_INFO *res);
+-- 
+1.8.3.1
+

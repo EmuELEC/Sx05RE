@@ -1,0 +1,42 @@
+diff --git a/drivers/amlogic/display/vout/vout_serve.c b/drivers/amlogic/display/vout/vout_serve.c
+index fae61b3..1e6a7d6 100644
+--- a/drivers/amlogic/display/vout/vout_serve.c
++++ b/drivers/amlogic/display/vout/vout_serve.c
+@@ -638,6 +638,8 @@ static int __init get_vout_init_mode(char *str)
+ 	char *option;
+ 	int count = 3;
+ 	char find = 0;
++	char str2[1024];
++	char *ptr2 = str2;
+ 
+ 	/* init void vout_mode_uboot name */
+ 	memset(vout_mode_uboot, 0, sizeof(vout_mode_uboot));
+@@ -645,6 +647,10 @@ static int __init get_vout_init_mode(char *str)
+ 	if (NULL == str)
+ 		return -EINVAL;
+ 
++	strcpy(str2, str);
++	strcat(str2, ",en"); // logo was already displayed by uboot
++	ptr = ptr2 = str2;
++
+ 	do {
+ 		if (!isalpha(*ptr) && !isdigit(*ptr)) {
+ 			find = 1;
+@@ -656,7 +662,7 @@ static int __init get_vout_init_mode(char *str)
+ 
+ 	sep[0] = *ptr;
+ 	sep[1] = '\0';
+-	while ((count--) && (option = strsep(&str, sep))) {
++	while ((count--) && (option = strsep(&ptr2, sep))) {
+ 		/* vout_log_info("%s\n", option); */
+ 		str2lower(option);
+ 		vout_init_mode_parse(option);
+@@ -664,7 +670,7 @@ static int __init get_vout_init_mode(char *str)
+ 
+ 	return 0;
+ }
+-__setup("vout=", get_vout_init_mode);
++__setup("hdmimode=", get_vout_init_mode);
+ 
+ MODULE_AUTHOR("Platform-BJ <platform.bj@amlogic.com>");
+ MODULE_DESCRIPTION("VOUT Server Module");
