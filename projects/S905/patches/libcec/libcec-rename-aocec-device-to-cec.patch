@@ -1,0 +1,13 @@
+diff --git a/libcec.orig/include/cectypes.h b/include/cectypes.h
+index e344c4f..881a805 100644
+--- a/libcec.orig/include/cectypes.h
++++ b/include/cectypes.h
+@@ -311,7 +311,7 @@ namespace CEC {
+ /*!
+  * the path to use for the AOCEC HDMI CEC device
+  */
+-#define CEC_AOCEC_PATH		"/dev/aocec"
++#define CEC_AOCEC_PATH		"/dev/cec"
+ 
+ /*!
+  * the name of the virtual COM port to use for the AOCEC' CEC wire

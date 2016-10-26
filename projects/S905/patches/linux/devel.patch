@@ -1,0 +1,737 @@
+diff --git a/arch/arm64/boot/dts/meson64_odroidc2.dts b/arch/arm64/boot/dts/meson64_odroidc2.dts
+index 74745dad..7df305c 100644
+--- a/arch/arm64/boot/dts/meson64_odroidc2.dts
++++ b/arch/arm64/boot/dts/meson64_odroidc2.dts
+@@ -802,8 +802,15 @@
+         };
+ };
+ &i2c_a {
+-  status = "disabled";
+-  /*p200: multiplex with usb PWR, disbaled*/
++    status = "okay";
++
++    /* Hardkernel I2C RTC */
++    pcf8563: pcf8563@51    {
++        status = "okay";
++        compatible = "nxp,pcf8563";
++        reg = <0x51>;
++        #clock-cells = <0>;
++    };
+ };
+ /*
+ &i2c_b {
+diff --git a/drivers/amlogic/amports/video.c b/drivers/amlogic/amports/video.c
+index 2d31e7c..b1fa1c6 100644
+--- a/drivers/amlogic/amports/video.c
++++ b/drivers/amlogic/amports/video.c
+@@ -131,6 +131,7 @@ bool platform_type = 1;
+ int bit_depth_flag = 8;
+ 
+ bool omx_secret_mode = false;
++EXPORT_SYMBOL(omx_secret_mode);
+ #define DEBUG_FLAG_FFPLAY	(1<<0)
+ #define DEBUG_FLAG_CALC_PTS_INC	(1<<1)
+ 
+diff --git a/drivers/amlogic/ppmgr/ppmgr_drv.c b/drivers/amlogic/ppmgr/ppmgr_drv.c
+index 54e5da0..ce59207 100644
+--- a/drivers/amlogic/ppmgr/ppmgr_drv.c
++++ b/drivers/amlogic/ppmgr/ppmgr_drv.c
+@@ -1226,6 +1226,7 @@ void get_ppmgr_buf_info(unsigned int *start, unsigned int *size)
+ 	*start = ppmgr_device.buffer_start;
+ 	*size = ppmgr_device.buffer_size;
+ }
++EXPORT_SYMBOL(get_ppmgr_buf_info);
+ 
+ static int ppmgr_open(struct inode *inode, struct file *file)
+ {
+diff --git a/drivers/amlogic/video_dev/Kconfig b/drivers/amlogic/video_dev/Kconfig
+index bdae148..94a2a2f 100644
+--- a/drivers/amlogic/video_dev/Kconfig
++++ b/drivers/amlogic/video_dev/Kconfig
+@@ -4,6 +4,7 @@ config V4L_AMLOGIC_VIDEO
+ 	tristate "Amlogic v4l video device support"
+ 	select VIDEO_DEV
+ 	select VIDEO_V4L2
++	select VIDEOBUF_GEN
+ 	select VIDEOBUF_RESOURCE
+ 	default n
+ 	---help---
+@@ -14,6 +15,7 @@ config V4L_AMLOGIC_VIDEO2
+ 	select VIDEO_DEV
+ 	select VIDEOBUF_GEN
+ 	select VIDEO_V4L2_COMMON
++	select VIDEOBUF_GEN
+ 	select VIDEOBUF_RESOURCE
+ 	select AM_GE2D
+     	default n
+diff --git a/sound/soc/aml/m8/aml_audio_hw.c b/sound/soc/aml/m8/aml_audio_hw.c
+index 6851e61..70e3f70 100644
+--- a/sound/soc/aml/m8/aml_audio_hw.c
++++ b/sound/soc/aml/m8/aml_audio_hw.c
+@@ -995,6 +995,8 @@ void audio_out_i2s_enable(unsigned flag)
+ 		/* Maybe cause POP noise */
+ 		/* audio_i2s_unmute(); */
+ 	} else {
++		aml_write_cbus(AIU_RST_SOFT, 0x01);
++		aml_read_cbus(AIU_I2S_SYNC);
+ 		aml_cbus_update_bits(AIU_MEM_I2S_CONTROL, 0x3 << 1, 0);
+ 
+ 		/* Maybe cause POP noise */
+diff --git a/sound/soc/aml/m8/aml_i2s.h b/sound/soc/aml/m8/aml_i2s.h
+index 20d3a8b..7614a8d 100644
+--- a/sound/soc/aml/m8/aml_i2s.h
++++ b/sound/soc/aml/m8/aml_i2s.h
+@@ -18,6 +18,8 @@
+ #ifndef __AML_I2S_H__
+ #define __AML_I2S_H__
+ 
++#include <linux/mutex.h>
++
+ /* #define debug_printk */
+ #ifdef debug_printk
+ #define dug_printk(fmt, args...)  printk(fmt, ## args)
+@@ -81,6 +83,8 @@ struct aml_runtime_data {
+ 	void *buf; /* tmp buffer for playback or capture */
+ 	int active;
+ 	unsigned int xrun_num;
++	struct mutex chmap_lock;
++	int chmap_layout;
+ };
+ 
+ #endif
+diff --git a/sound/soc/aml/m8/aml_i2s_dai.c b/sound/soc/aml/m8/aml_i2s_dai.c
+index 1701856..63770a6 100644
+--- a/sound/soc/aml/m8/aml_i2s_dai.c
++++ b/sound/soc/aml/m8/aml_i2s_dai.c
+@@ -38,6 +38,7 @@
+ #include <sound/control.h>
+ #include <sound/soc.h>
+ #include <sound/pcm_params.h>
++#include <sound/tlv.h>
+ #include "aml_i2s_dai.h"
+ #include "aml_pcm.h"
+ #include "aml_i2s.h"
+@@ -49,6 +50,50 @@ struct aml_dai_info dai_info[3] = { {0} };
+ 
+ static int i2s_pos_sync;
+ 
++struct channel_speaker_allocation {
++        int channels;
++        int speakers[8];
++};
++
++#define NA	SNDRV_CHMAP_NA
++#define FL	SNDRV_CHMAP_FL
++#define FR	SNDRV_CHMAP_FR
++#define RL	SNDRV_CHMAP_RL
++#define RR	SNDRV_CHMAP_RR
++#define LFE	SNDRV_CHMAP_LFE
++#define FC	SNDRV_CHMAP_FC
++#define RLC	SNDRV_CHMAP_RLC
++#define RRC	SNDRV_CHMAP_RRC
++#define RC	SNDRV_CHMAP_RC
++#define FLC	SNDRV_CHMAP_FLC
++#define FRC	SNDRV_CHMAP_FRC
++#define FLH	SNDRV_CHMAP_TFL
++#define FRH	SNDRV_CHMAP_TFR
++#define FLW	SNDRV_CHMAP_FLW
++#define FRW	SNDRV_CHMAP_FRW
++#define TC	SNDRV_CHMAP_TC
++#define FCH	SNDRV_CHMAP_TFC
++
++static struct channel_speaker_allocation channel_allocations[] = {
++/*      	       channel:   7     6    5    4    3     2    1    0  */
++{ .channels = 2,  .speakers = {  NA,   NA,  NA,  NA,  NA,   NA,  FR,  FL } },
++                                 /* 2.1 */
++{ .channels = 3,  .speakers = {  NA,   NA,  NA,  NA,  NA,  LFE,  FR,  FL } },
++                                 /* surround40 */
++{ .channels = 4,  .speakers = {  NA,   NA,  RR,  RL,  NA,   NA,  FR,  FL } },
++                                 /* surround41 */
++{ .channels = 5,  .speakers = {  NA,   NA,  RR,  RL,  NA,  LFE,  FR,  FL } },
++                                 /* surround50 */
++{ .channels = 5,  .speakers = {  NA,   NA,  RR,  RL,  FC,   NA,  FR,  FL } },
++                                 /* surround51 */
++{ .channels = 6,  .speakers = {  NA,   NA,  RR,  RL,  FC,  LFE,  FR,  FL } },
++                                 /* 6.1 */
++{ .channels = 7,  .speakers = {  NA,   RC,  RR,  RL,  FC,  LFE,  FR,  FL } },
++                                 /* surround71 */
++{ .channels = 8,  .speakers = { RRC,  RLC,  RR,  RL,  FC,  LFE,  FR,  FL } },
++};
++
++
+ /* extern int set_i2s_iec958_samesource(int enable); */
+ #define DEFAULT_SAMPLERATE 48000
+ #define DEFAULT_MCLK_RATIO_SR 256
+@@ -80,14 +125,191 @@ static void aml_hw_i2s_init(struct snd_pcm_runtime *runtime)
+ 			 runtime->channels);
+ }
+ 
++static int aml_dai_i2s_chmap_ctl_tlv(struct snd_kcontrol *kcontrol, int op_flag,
++                                     unsigned int size, unsigned int __user *tlv)
++{
++    unsigned int __user *dst;
++    int count = 0;
++    int i;
++
++    if (size < 8)
++        return -ENOMEM;
++
++    if (put_user(SNDRV_CTL_TLVT_CONTAINER, tlv))
++        return -EFAULT;
++
++    size -= 8;
++    dst = tlv + 2;
++
++    for (i = 0; i < ARRAY_SIZE(channel_allocations); i++)
++    {
++        struct channel_speaker_allocation *ch = &channel_allocations[i];
++        int num_chs = 0;
++        int chs_bytes;
++        int c;
++
++        for (c = 0; c < 8; c++)
++        {
++            if (ch->speakers[c])
++                num_chs++;
++        }
++
++        chs_bytes = num_chs * 4;
++        if (size < 8)
++            return -ENOMEM;
++
++        if (put_user(SNDRV_CTL_TLVT_CHMAP_FIXED, dst) ||
++            put_user(chs_bytes, dst + 1))
++            return -EFAULT;
++
++        dst += 2;
++        size -= 8;
++        count += 8;
++
++        if (size < chs_bytes)
++            return -ENOMEM;
++
++        size -= chs_bytes;
++        count += chs_bytes;
++
++        for (c = 0; c < 8; c++)
++        {
++            int sp = ch->speakers[7 - c];
++            if (sp)
++            {
++                if (put_user(sp, dst))
++                    return -EFAULT;
++                dst++;
++            }
++        }
++    }
++
++    if (put_user(count, tlv + 1))
++        return -EFAULT;
++
++    return 0;
++}
++
++static int aml_dai_i2s_chmap_ctl_get(struct snd_kcontrol *kcontrol,
++                                     struct snd_ctl_elem_value *ucontrol)
++{
++
++    struct snd_pcm_chmap *info = snd_kcontrol_chip(kcontrol);
++    unsigned int idx = snd_ctl_get_ioffidx(kcontrol, &ucontrol->id);
++    struct snd_pcm_substream *substream = snd_pcm_chmap_substream(info, idx);
++    struct snd_pcm_runtime *runtime = substream->runtime;
++    struct aml_runtime_data *prtd = (struct aml_runtime_data *)runtime->private_data;
++    int res = 0, channel;
++
++    if (mutex_lock_interruptible(&prtd->chmap_lock))
++        return -EINTR;
++
++    // we need 8 channels
++    if (runtime->channels != 8)
++    {
++        pr_err("channel count should be 8, we got %d aborting\n", runtime->channels);
++        res = -EINVAL;
++        goto unlock;
++    }
++
++    for (channel=0; channel<8; channel++)
++    {
++        ucontrol->value.integer.value[7 - channel] = channel_allocations[prtd->chmap_layout].speakers[channel];
++    }
++
++unlock:
++    mutex_unlock(&prtd->chmap_lock);
++    return res;
++}
++
++static int aml_dai_i2s_chmap_ctl_put(struct snd_kcontrol *kcontrol,
++                                     struct snd_ctl_elem_value *ucontrol)
++{
++
++    struct snd_pcm_chmap *info = snd_kcontrol_chip(kcontrol);
++    unsigned int idx = snd_ctl_get_ioffidx(kcontrol, &ucontrol->id);
++    struct snd_pcm_substream *substream = snd_pcm_chmap_substream(info, idx);
++    struct snd_pcm_runtime *runtime = substream->runtime;
++    struct aml_runtime_data *prtd = (struct aml_runtime_data *)runtime->private_data;
++    int res = 0, channel, layout, matches, matched_layout;
++
++    if (mutex_lock_interruptible(&prtd->chmap_lock))
++        return -EINTR;
++
++    // we need 8 channels
++    if (runtime->channels != 8)
++    {
++        pr_err("channel count should be 8, we got %d aborting\n", runtime->channels);
++        res = -EINVAL;
++        goto unlock;
++    }
++
++    // now check if the channel setup matches one of our layouts
++    for (layout = 0; layout < ARRAY_SIZE(channel_allocations); layout++)
++    {
++        matches = 1;
++
++        for (channel = 0; channel < substream->runtime->channels; channel++)
++        {
++            int sp = ucontrol->value.integer.value[channel];
++            int chan = channel_allocations[layout].speakers[7 - channel];
++
++            if (sp != chan)
++            {
++                matches = 0;
++                break;
++            }
++        }
++
++        if (matches)
++        {
++            matched_layout = layout;
++            break;
++        }
++    }
++
++
++    // default to first layout if we didnt find any
++    if (!matches)
++        matched_layout = 0;
++
++    pr_info("Setting a %d channel layout matching layout #%d\n", runtime->channels, matched_layout);
++
++    prtd->chmap_layout = matched_layout;
++
++unlock:
++    mutex_unlock(&prtd->chmap_lock);
++    return res;
++}
++
++static struct snd_kcontrol *aml_dai_i2s_chmap_kctrl_get(struct snd_pcm_substream *substream)
++{
++    int str;
++
++    if ((substream) && (substream->pcm))
++    {
++        for (str=0; str<2; str++)
++        {
++            if (substream->pcm->streams[str].chmap_kctl)
++            {
++                return substream->pcm->streams[str].chmap_kctl;
++            }
++        }
++    }
++
++    return 0;
++}
++
+ static int aml_dai_i2s_startup(struct snd_pcm_substream *substream,
+ 			       struct snd_soc_dai *dai)
+ {
+-	int ret = 0;
++        int ret = 0, i;
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 	struct aml_runtime_data *prtd =
+ 	    (struct aml_runtime_data *)runtime->private_data;
+ 	struct audio_stream *s;
++	struct snd_pcm_chmap *chmap;
++	struct snd_kcontrol *kctl;
+ 
+ 	if (prtd == NULL) {
+ 		prtd =
+@@ -108,6 +330,29 @@ static int aml_dai_i2s_startup(struct snd_pcm_substream *substream,
+ 	} else {
+ 		s->device_type = AML_AUDIO_I2SIN;
+ 	}
++
++
++	// Alsa Channel Mapping API handling
++	if (!aml_dai_i2s_chmap_kctrl_get(substream))
++	{
++	    ret = snd_pcm_add_chmap_ctls(substream->pcm, SNDRV_PCM_STREAM_PLAYBACK, NULL, 8, 0, &chmap);
++
++	    if (ret < 0)
++	    {
++	      pr_err("aml_dai_i2s_startup error %d\n", ret);
++	      goto out;
++	    }
++
++	    kctl = chmap->kctl;
++	    for (i = 0; i < kctl->count; i++)
++	      kctl->vd[i].access |= SNDRV_CTL_ELEM_ACCESS_WRITE;
++
++	    kctl->get = aml_dai_i2s_chmap_ctl_get;
++	    kctl->put = aml_dai_i2s_chmap_ctl_put;
++	    kctl->tlv.c = aml_dai_i2s_chmap_ctl_tlv;
++	}
++
++	mutex_init(&prtd->chmap_lock);
+ 	return 0;
+  out:
+ 	return ret;
+@@ -169,6 +414,7 @@ static int aml_dai_i2s_prepare(struct snd_pcm_substream *substream,
+ 		s->device_type = AML_AUDIO_I2SIN;
+ 	} else {
+ 		s->device_type = AML_AUDIO_I2SOUT;
++		IEC958_mode_codec = 0;
+ 		aml_hw_i2s_init(runtime);
+ 		/* i2s/958 share the same audio hw buffer when PCM mode */
+ 		if (IEC958_mode_codec == 0) {
+diff --git a/sound/soc/aml/m8/aml_m8.c b/sound/soc/aml/m8/aml_m8.c
+index 475c39e..c834d34 100644
+--- a/sound/soc/aml/m8/aml_m8.c
++++ b/sound/soc/aml/m8/aml_m8.c
+@@ -55,6 +55,7 @@
+ static int i2sbuf[32 + 16];
+ static void aml_i2s_play(void)
+ {
++#if 0
+ 	audio_util_set_dac_i2s_format(AUDIO_ALGOUT_DAC_FORMAT_DSP);
+ #ifdef CONFIG_SND_AML_SPLIT_MODE
+ 	audio_set_i2s_mode(AIU_I2S_MODE_PCM16, 2);
+@@ -65,6 +66,7 @@ static void aml_i2s_play(void)
+ 	audio_set_aiubuf((virt_to_phys(i2sbuf) + 63) & (~63), 128, 2);
+ 	audio_out_i2s_enable(1);
+ 
++#endif
+ }
+ 
+ static void aml_audio_start_timer(struct aml_audio_private_data *p_aml_audio,
+diff --git a/sound/soc/aml/m8/aml_spdif_dai.c b/sound/soc/aml/m8/aml_spdif_dai.c
+index a76c952..405d223 100644
+--- a/sound/soc/aml/m8/aml_spdif_dai.c
++++ b/sound/soc/aml/m8/aml_spdif_dai.c
+@@ -74,6 +74,7 @@ static int flag_samesrc = -1;
+ 
+ void aml_spdif_play(int samesrc)
+ {
++#if 0
+ 	if (is_meson_gxtvbb_cpu() == false) {
+ 		static int iec958buf[32 + 16];
+ 		struct _aiu_958_raw_setting_t set;
+@@ -127,6 +128,7 @@ void aml_spdif_play(int samesrc)
+ 		aout_notifier_call_chain(AOUT_EVENT_IEC_60958_PCM, &substream);
+ 		audio_hw_958_enable(1);
+ 	}
++#endif
+ }
+ 
+ static void aml_spdif_play_stop(void)
+@@ -181,86 +183,73 @@ void aml_hw_iec958_init(struct snd_pcm_substream *substream, int samesrc)
+ {
+ 	struct _aiu_958_raw_setting_t set;
+ 	struct _aiu_958_channel_status_t chstat;
+-	unsigned i2s_mode, iec958_mode;
+-	unsigned start, size;
+-	int sample_rate;
++	unsigned iec958_mode;
+ 	struct snd_dma_buffer *buf = &substream->dma_buffer;
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+-	if (buf == NULL && runtime == NULL) {
++	if (buf == NULL || runtime == NULL) {
+ 		pr_info("buf/%p runtime/%p\n", buf, runtime);
+ 		return;
+ 	}
+ 
+-	i2s_mode = AIU_I2S_MODE_PCM16;
+-	sample_rate = AUDIO_CLK_FREQ_48;
++	iec958_mode = AIU_958_MODE_PCM16;
+ 	memset((void *)(&set), 0, sizeof(set));
+ 	memset((void *)(&chstat), 0, sizeof(chstat));
+ 	set.chan_stat = &chstat;
+-	switch (runtime->rate) {
+-	case 192000:
+-		sample_rate = AUDIO_CLK_FREQ_192;
+-		break;
+-	case 176400:
+-		sample_rate = AUDIO_CLK_FREQ_1764;
+-		break;
+-	case 96000:
+-		sample_rate = AUDIO_CLK_FREQ_96;
+-		break;
+-	case 88200:
+-		sample_rate = AUDIO_CLK_FREQ_882;
+-		break;
+-	case 48000:
+-		sample_rate = AUDIO_CLK_FREQ_48;
+-		break;
+-	case 44100:
+-		sample_rate = AUDIO_CLK_FREQ_441;
+-		break;
+-	case 32000:
+-		sample_rate = AUDIO_CLK_FREQ_32;
+-		break;
+-	case 8000:
+-		sample_rate = AUDIO_CLK_FREQ_8;
+-		break;
+-	case 11025:
+-		sample_rate = AUDIO_CLK_FREQ_11;
+-		break;
+-	case 16000:
+-		sample_rate = AUDIO_CLK_FREQ_16;
+-		break;
+-	case 22050:
+-		sample_rate = AUDIO_CLK_FREQ_22;
+-		break;
+-	case 12000:
+-		sample_rate = AUDIO_CLK_FREQ_12;
+-		break;
+-	case 24000:
+-		sample_rate = AUDIO_CLK_FREQ_22;
+-		break;
+-	default:
+-		sample_rate = AUDIO_CLK_FREQ_441;
+-		break;
+-	};
++
++	if (!samesrc) {
++		unsigned i2s_mode = AIU_I2S_MODE_PCM16;
++		switch (runtime->format) {
++		case SNDRV_PCM_FORMAT_S32:
++			i2s_mode = AIU_I2S_MODE_PCM32;
++			break;
++		case SNDRV_PCM_FORMAT_S24:
++			i2s_mode = AIU_I2S_MODE_PCM24;
++			break;
++		case SNDRV_PCM_FORMAT_S16:
++			i2s_mode = AIU_I2S_MODE_PCM16;
++			break;
++		}
++		audio_out_i2s_enable(0);
++		audio_util_set_dac_i2s_format(AUDIO_ALGOUT_DAC_FORMAT_DSP);
++#ifdef CONFIG_SND_AML_SPLIT_MODE
++		audio_set_i2s_mode(i2s_mode, (runtime->format == SNDRV_PCM_FORMAT_S16) ? 2 : runtime->channels);
++#else
++		audio_set_i2s_mode(i2s_mode);
++#endif
++		audio_set_aiubuf(runtime->dma_addr, runtime->dma_bytes, (runtime->format == SNDRV_PCM_FORMAT_S16) ? 2 : runtime->channels);
++	}
++
+ 	audio_hw_958_enable(0);
+-	pr_info("aml_hw_iec958_init,runtime->rate=%d, same source mode(%d)\n",
+-	       runtime->rate, samesrc);
++	pr_info("aml_hw_iec958_init,runtime->rate=%d, runtime->channels=%d, same source mode(%d)\n",
++	       runtime->rate, runtime->channels, samesrc);
+ 
+-	if (old_samplerate != sample_rate || samesrc != flag_samesrc) {
+-		old_samplerate = sample_rate;
+-		flag_samesrc = samesrc;
++	if (runtime->rate == 192000 && runtime->channels == 2 && runtime->format == SNDRV_PCM_FORMAT_S16) {
++		aml_set_spdif_clk((runtime->rate >> 2) * 512, samesrc); /* EAC3 */
++	} else {
+ 		aml_set_spdif_clk(runtime->rate * 512, samesrc);
+ 	}
+ 
+ 	/* Todo, div can be changed, for most case, div = 2 */
+ 	/* audio_set_spdif_clk_div(); */
+ 	/* 958 divisor: 0=no div; 1=div by 2; 2=div by 3; 3=div by 4. */
+-	if (IEC958_mode_codec == 4  || IEC958_mode_codec == 5 ||
+-	IEC958_mode_codec == 7 || IEC958_mode_codec == 8) {
++	if (runtime->rate == 192000 && runtime->channels == 8 && runtime->format == SNDRV_PCM_FORMAT_S16) {
++		IEC958_mode_codec = 8; /* TrueHD/DTS-HD MA */
++		pr_info("set 4x audio clk for 958\n");
++		aml_cbus_update_bits(AIU_CLK_CTRL, 3 << 4, 0 << 4);
++	} else if (runtime->rate == 192000 && runtime->channels == 2 && runtime->format == SNDRV_PCM_FORMAT_S16) {
++		IEC958_mode_codec = 4; /* EAC3 */
+ 		pr_info("set 4x audio clk for 958\n");
+ 		aml_cbus_update_bits(AIU_CLK_CTRL, 3 << 4, 0 << 4);
+ 	} else if (samesrc) {
++		IEC958_mode_codec = 0;
+ 		pr_info("share the same clock\n");
+ 		aml_cbus_update_bits(AIU_CLK_CTRL, 3 << 4, 1 << 4);
++	} else if (runtime->rate == 48000 && runtime->channels == 2 && runtime->format == SNDRV_PCM_FORMAT_S16) {
++		IEC958_mode_codec = 2; /* AC3/DTS */
++		pr_info("set normal 512 fs /4 fs\n");
++		aml_cbus_update_bits(AIU_CLK_CTRL, 3 << 4, 3 << 4);
+ 	} else {
++		IEC958_mode_codec = 0;
+ 		pr_info("set normal 512 fs /4 fs\n");
+ 		aml_cbus_update_bits(AIU_CLK_CTRL, 3 << 4, 3 << 4);
+ 	}
+@@ -271,127 +260,62 @@ void aml_hw_iec958_init(struct snd_pcm_substream *substream, int samesrc)
+ 	audio_i2s_958_same_source(0);
+ 
+ 	switch (runtime->format) {
+-	case SNDRV_PCM_FORMAT_S32_LE:
+-		i2s_mode = AIU_I2S_MODE_PCM32;
++	case SNDRV_PCM_FORMAT_S32:
++		iec958_mode = AIU_958_MODE_PCM32;
+ 		break;
+-	case SNDRV_PCM_FORMAT_S24_LE:
+-		i2s_mode = AIU_I2S_MODE_PCM24;
++	case SNDRV_PCM_FORMAT_S24:
++		iec958_mode = AIU_958_MODE_PCM24;
+ 		break;
+-	case SNDRV_PCM_FORMAT_S16_LE:
+-		i2s_mode = AIU_I2S_MODE_PCM16;
++	case SNDRV_PCM_FORMAT_S16:
++		iec958_mode = AIU_958_MODE_PCM16;
+ 		break;
+ 	}
++	if (IEC958_mode_codec > 0) {
++		iec958_mode = AIU_958_MODE_PCM_RAW;
++	}
+ 
+-	/* audio_set_i2s_mode(i2s_mode); */
+-	/* case 1,raw mode enabled */
+-	if (IEC958_mode_codec && IEC958_mode_codec != 9) {
+-		if (IEC958_mode_codec == 1) {
+-			/* dts, use raw sync-word mode */
+-			iec958_mode = AIU_958_MODE_RAW;
+-			pr_info("iec958 mode RAW\n");
+-		} else {
+-			/* ac3,use the same pcm mode as i2s configuration */
+-			iec958_mode = AIU_958_MODE_PCM_RAW;
+-			pr_info("iec958 mode %s\n",
+-				(i2s_mode == AIU_I2S_MODE_PCM32) ? "PCM32_RAW"
+-				: ((I2S_MODE == AIU_I2S_MODE_PCM24) ?
+-				"PCM24_RAW"	: "PCM16_RAW"));
+-		}
++	/* AES1+0 */
++	if (iec958_mode == AIU_958_MODE_PCM_RAW) {
++		set.chan_stat->chstat0_l = 0x8206;
+ 	} else {
+-		if (i2s_mode == AIU_I2S_MODE_PCM32)
+-			iec958_mode = AIU_958_MODE_PCM32;
+-		else if (i2s_mode == AIU_I2S_MODE_PCM24)
+-			iec958_mode = AIU_958_MODE_PCM24;
+-		else
+-			iec958_mode = AIU_958_MODE_PCM16;
+-		pr_info("iec958 mode %s\n",
+-		       (i2s_mode ==
+-			AIU_I2S_MODE_PCM32) ? "PCM32" : ((i2s_mode ==
+-							  AIU_I2S_MODE_PCM24) ?
+-							 "PCM24" : "PCM16"));
++		set.chan_stat->chstat0_l = 0x8204;
+ 	}
+-	if (iec958_mode == AIU_958_MODE_PCM16
+-	    || iec958_mode == AIU_958_MODE_PCM24
+-	    || iec958_mode == AIU_958_MODE_PCM32
+-	    || IEC958_mode_codec == 9) {
+-		set.chan_stat->chstat0_l = 0x0100;
+-		set.chan_stat->chstat0_r = 0x0100;
+-		set.chan_stat->chstat1_l = 0x200;
+-		set.chan_stat->chstat1_r = 0x200;
+-		if (sample_rate == AUDIO_CLK_FREQ_882) {
+-			pr_info("sample_rate==AUDIO_CLK_FREQ_882\n");
+-			set.chan_stat->chstat1_l = 0x800;
+-			set.chan_stat->chstat1_r = 0x800;
+-		}
+-
+-		if (sample_rate == AUDIO_CLK_FREQ_96) {
+-			pr_info("sample_rate==AUDIO_CLK_FREQ_96\n");
+-			set.chan_stat->chstat1_l = 0xa00;
+-			set.chan_stat->chstat1_r = 0xa00;
+-		}
+-		start = buf->addr;
+-		size = snd_pcm_lib_buffer_bytes(substream);
+-		audio_set_958outbuf(start, size, 0);
+-		/* audio_set_i2s_mode(AIU_I2S_MODE_PCM16); */
+-		/* audio_set_aiubuf(start, size); */
++	set.chan_stat->chstat0_r = set.chan_stat->chstat0_l;
++
++	/* AES3+2 */
++	if (IEC958_mode_codec == 8) {
++		set.chan_stat->chstat1_l = 0x0900;
++	} else if (runtime->rate == 192000) {
++		set.chan_stat->chstat1_l = 0x0e00;
++	} else if (runtime->rate == 176400) {
++		set.chan_stat->chstat1_l = 0x0c00;
++	} else if (runtime->rate == 96000) {
++		set.chan_stat->chstat1_l = 0x0a00;
++	} else if (runtime->rate == 88200) {
++		set.chan_stat->chstat1_l = 0x0800;
++	} else if (runtime->rate == 48000) {
++		set.chan_stat->chstat1_l = 0x0200;
++	} else if (runtime->rate == 44100) {
++		set.chan_stat->chstat1_l = 0x0000;
++	} else if (runtime->rate == 32000) {
++		set.chan_stat->chstat1_l = 0x0300;
+ 	} else {
+-
+-		set.chan_stat->chstat0_l = 0x1902;
+-		set.chan_stat->chstat0_r = 0x1902;
+-		if (IEC958_mode_codec == 4 || IEC958_mode_codec == 5) {
+-			/* DD+ */
+-			if (runtime->rate == 32000) {
+-				set.chan_stat->chstat1_l = 0x300;
+-				set.chan_stat->chstat1_r = 0x300;
+-			} else if (runtime->rate == 44100) {
+-				set.chan_stat->chstat1_l = 0xc00;
+-				set.chan_stat->chstat1_r = 0xc00;
+-			} else {
+-				set.chan_stat->chstat1_l = 0Xe00;
+-				set.chan_stat->chstat1_r = 0Xe00;
+-			}
+-		} else {
+-			/* DTS,DD */
+-			if (runtime->rate == 32000) {
+-				set.chan_stat->chstat1_l = 0x300;
+-				set.chan_stat->chstat1_r = 0x300;
+-			} else if (runtime->rate == 44100) {
+-				set.chan_stat->chstat1_l = 0;
+-				set.chan_stat->chstat1_r = 0;
+-			} else {
+-				set.chan_stat->chstat1_l = 0x200;
+-				set.chan_stat->chstat1_r = 0x200;
+-			}
+-		}
+-		start = buf->addr;
+-		size = snd_pcm_lib_buffer_bytes(substream);
+-		audio_set_958outbuf(start, size,
+-				    (iec958_mode == AIU_958_MODE_RAW) ? 1 : 0);
+-		memset((void *)buf->area, 0, size);
++		set.chan_stat->chstat1_l = 0x0100;
+ 	}
++	set.chan_stat->chstat1_r = set.chan_stat->chstat1_l;
++
++	audio_set_958outbuf(buf->addr, snd_pcm_lib_buffer_bytes(substream), 0);
+ 	audio_set_958_mode(iec958_mode, &set);
+ 
+-	if (IEC958_mode_codec == 2) {
+-		aout_notifier_call_chain(AOUT_EVENT_RAWDATA_AC_3, substream);
+-	} else if (IEC958_mode_codec == 3) {
+-		aout_notifier_call_chain(AOUT_EVENT_RAWDATA_DTS, substream);
+-	} else if (IEC958_mode_codec == 4) {
+-		aout_notifier_call_chain(AOUT_EVENT_RAWDATA_DOBLY_DIGITAL_PLUS,
+-					 substream);
+-	} else if (IEC958_mode_codec == 5) {
++	/* notify hdmi to set audio type */
++	if (IEC958_mode_codec == 8) {
++		/* TrueHD/DTS-HD MA */
++		aout_notifier_call_chain(AOUT_EVENT_RAWDATA_DTS_HD_MA, substream);
++	} else if (iec958_mode == AIU_958_MODE_PCM_RAW) {
++		/* AC3/DTS/EAC3 */
+ 		aout_notifier_call_chain(AOUT_EVENT_RAWDATA_DTS_HD, substream);
+-	} else if (IEC958_mode_codec == 7 || IEC958_mode_codec == 8) {
+-		aml_write_cbus(AIU_958_CHSTAT_L0, 0x1902);
+-		aml_write_cbus(AIU_958_CHSTAT_L1, 0x900);
+-		aml_write_cbus(AIU_958_CHSTAT_R0, 0x1902);
+-		aml_write_cbus(AIU_958_CHSTAT_R1, 0x900);
+-		if (IEC958_mode_codec == 8)
+-			aout_notifier_call_chain(AOUT_EVENT_RAWDATA_DTS_HD_MA,
+-			substream);
+-		else
+-			aout_notifier_call_chain(AOUT_EVENT_RAWDATA_MAT_MLP,
+-			substream);
+ 	} else {
++		/* PCM */
+ 		aout_notifier_call_chain(AOUT_EVENT_IEC_60958_PCM, substream);
+ 	}
+ }
