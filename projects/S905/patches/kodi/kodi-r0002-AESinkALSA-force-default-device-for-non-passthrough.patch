@@ -1,0 +1,15 @@
+diff --git a/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp b/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp
+index 6a9066b..4d7f85d 100644
+--- a/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp
++++ b/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp
+@@ -535,8 +535,8 @@ bool CAESinkALSA::Initialize(AEAudioFormat &format, std::string &device)
+     m_passthrough   = false;
+   }
+ #if defined(HAS_LIBAMCODEC)
+-  if (!m_passthrough && device.find("hdmi:CARD=AMLM8AUDIO") != std::string::npos)
++  if (aml_present())
+   {
+-    device = "default";
++    aml_set_audio_passthrough(m_passthrough);
+   }
+ #endif
