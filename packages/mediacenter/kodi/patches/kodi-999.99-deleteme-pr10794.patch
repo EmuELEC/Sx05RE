@@ -1,0 +1,24 @@
+From 4f95561c54be88cc47735d4d9f3104c75d0ef00b Mon Sep 17 00:00:00 2001
+From: Thomas Amland <thomas.amland@gmail.com>
+Date: Thu, 27 Oct 2016 19:15:41 +0200
+Subject: [PATCH] [addons] make sure temp dir exists before running
+ CFileOperationJob
+
+---
+ xbmc/addons/FilesystemInstaller.cpp | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/xbmc/addons/FilesystemInstaller.cpp b/xbmc/addons/FilesystemInstaller.cpp
+index db3f0ac..3483727 100644
+--- a/xbmc/addons/FilesystemInstaller.cpp
++++ b/xbmc/addons/FilesystemInstaller.cpp
+@@ -40,6 +40,9 @@ bool CFilesystemInstaller::InstallToFilesystem(const std::string& archive, const
+   auto newAddonData = URIUtils::AddFileToFolder(m_tempFolder, StringUtils::CreateUUID());
+   auto oldAddonData = URIUtils::AddFileToFolder(m_tempFolder, StringUtils::CreateUUID());
+ 
++  if (!CDirectory::Create(newAddonData))
++    return false;
++
+   if (!UnpackArchive(archive, newAddonData))
+   {
+     CLog::Log(LOGERROR, "Failed to unpack archive '%s' to '%s'", archive.c_str(), newAddonData.c_str());
