@@ -21,7 +21,8 @@
 [ -z "$SYSTEM_ROOT" ] && SYSTEM_ROOT=""
 [ -z "$BOOT_ROOT" ] && BOOT_ROOT="/flash"
 [ -z "$UPDATE_DIR" ] && UPDATE_DIR="/storage/.update"
-DTB_UPDATE="$UPDATE_DIR/dtb.img"
+UPDATE_DTB_IMG="$UPDATE_DIR/dtb.img"
+UPDATE_DTB=`ls -1 "$UPDATE_DIR"/*.dtb 2>/dev/null | head -n 1`
 
 for arg in $(cat /proc/cmdline); do
   case $arg in
@@ -36,14 +37,21 @@ for arg in $(cat /proc/cmdline); do
           ;;
       esac
 
-      if [ -f $DTB_UPDATE ] ; then
+      if [ -f $UPDATE_DTB_IMG ] ; then
+        UPDATE_DTB_SOURCE="$UPDATE_DTB_IMG"
+      elif [ -f $UPDATE_DTB ] ; then
+        UPDATE_DTB_SOURCE="$UPDATE_DTB"
+      fi
+
+      if [ -f $UPDATE_DTB_SOURCE ] ; then
+        echo "Updating device tree from $UPDATE_DTB_SOURCE..."
         case $boot in
           /dev/system)
-            dd if=$DTB_UPDATE of="/dev/dtb" bs=256k
+            dd if=$UPDATE_DTB_SOURCE of="/dev/dtb" bs=256k
             ;;
           /dev/mmc*|LABEL=*)
             mount -o rw,remount $BOOT_ROOT
-            cp -f $DTB_UPDATE $BOOT_ROOT
+            cp -f $UPDATE_DTB_SOURCE "$BOOT_ROOT/dtb.img"
             ;;
         esac
       fi
