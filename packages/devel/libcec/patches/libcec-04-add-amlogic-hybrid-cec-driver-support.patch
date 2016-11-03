@@ -50,7 +50,7 @@ index 9bf4a89..1b69d0b 100644
  /*!
 + * the path to use for the AOCEC HDMI CEC device
 + */
-+#define CEC_AOCEC_PATH		"/dev/cec"
++#define CEC_AOCEC_PATH		"/dev/aocec"
 +
 +/*!
 + * the name of the virtual COM port to use for the AOCEC' CEC wire
