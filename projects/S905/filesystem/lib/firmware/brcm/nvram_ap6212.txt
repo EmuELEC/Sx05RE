@@ -1,4 +1,4 @@
-#AP6212_NVRAM_V1.0_20140603
+#AP6212_NVRAM_V1.0.1_20160606
 # 2.4 GHz, 20 MHz BW mode
 
 # The following parameter values are just placeholders, need to be updated.
@@ -51,4 +51,4 @@ deadman_to=0xffffffff
 muxenab=0x10
 # CLDO PWM voltage settings - 0x4 - 1.1 volt
 #cldo_pwm=0x4
-
+glitch_based_crsmin=1
