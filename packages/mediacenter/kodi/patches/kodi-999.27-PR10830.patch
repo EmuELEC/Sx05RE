@@ -1,0 +1,44 @@
+From ae0ebb38028bff9444d16651364bde1c73abb5b6 Mon Sep 17 00:00:00 2001
+From: "Chris \"Koying\" Browet" <cbro@semperpax.com>
+Date: Mon, 31 Oct 2016 16:24:24 +0100
+Subject: [PATCH] FIX: [rar] deadlock with cbr + net vfs (credit notspiff)
+
+from notspiff:
+
+specifically we are called off-thread with the main thread waiting on us while holding the gui lock. so it will deadlock on obtaining dialog. the bt was funkily confusing though, as it will actually show a "downstream" deadlock on the rar manager, as there's two concurrent calls to it (to preload/load images). the deadlock that was triggered in the debugger was the second call to the rar manager spinning on the rar manager lock, which is held by the first call to rar manager, which again is spinning on the gui lock.
+
+oh, and using a "exotic" vfs was only part of the problem to the extent that it's slower so the timeout on the progress dialog kicked in.
+---
+ xbmc/filesystem/RarManager.cpp | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/xbmc/filesystem/RarManager.cpp b/xbmc/filesystem/RarManager.cpp
+index 21dca8b..87693ef 100644
+--- a/xbmc/filesystem/RarManager.cpp
++++ b/xbmc/filesystem/RarManager.cpp
+@@ -19,6 +19,7 @@
+  */
+ 
+ #include "system.h"
++#include "Application.h"
+ #include "RarManager.h"
+ #include "Util.h"
+ #include "utils/CharsetConverter.h"
+@@ -74,7 +75,7 @@ class progress_info
+   }
+   ~progress_info()
+   {
+-    if (shown)
++    if (shown && g_application.IsCurrentThread())
+     {
+       // close progress dialog
+       CGUIDialogProgress* dlg = (CGUIDialogProgress*)g_windowManager.GetWindow(WINDOW_DIALOG_PROGRESS);
+@@ -88,7 +89,7 @@ class progress_info
+   bool progress(int progress, const char *text)
+   {
+     bool cont(true);
+-    if (shown || showTime.IsTimePast())
++    if ((shown || showTime.IsTimePast()) && g_application.IsCurrentThread())
+     {
+       // grab the busy and show it
+       CGUIDialogProgress* dlg = (CGUIDialogProgress*)g_windowManager.GetWindow(WINDOW_DIALOG_PROGRESS);

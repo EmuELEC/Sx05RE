@@ -1,0 +1,29 @@
+From 28611019205e56b18af25dc91714501e2ec7ba9c Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Sun, 6 Nov 2016 12:23:51 +0000
+Subject: [PATCH] DVDOverlaySSA: Fix Leak with SSA subtitles
+
+This fixes the long standing memory leak:
+http://trac.kodi.tv/ticket/15820
+
+CDVDSubtitlesLibass is reference counted and only releases libass
+reasources (typically hundreds of MBs) when count gets to zero.
+
+But the resource is incorrectly acquired after being created
+with a reference count of zero, so is never released.
+---
+ xbmc/cores/dvdplayer/DVDSubtitles/DVDSubtitleParserSSA.cpp | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/xbmc/cores/dvdplayer/DVDSubtitles/DVDSubtitleParserSSA.cpp b/xbmc/cores/dvdplayer/DVDSubtitles/DVDSubtitleParserSSA.cpp
+index 849e6ef..d9a3c58 100644
+--- a/xbmc/cores/dvdplayer/DVDSubtitles/DVDSubtitleParserSSA.cpp
++++ b/xbmc/cores/dvdplayer/DVDSubtitles/DVDSubtitleParserSSA.cpp
+@@ -54,7 +54,6 @@ bool CDVDSubtitleParserSSA::Open(CDVDStreamInfo &hints)
+     if (curEvent)
+     {
+       CDVDOverlaySSA* overlay = new CDVDOverlaySSA(m_libass);
+-      overlay->Acquire(); // increase ref count with one so that we can hold a handle to this overlay
+ 
+       overlay->iPTSStartTime = (double)curEvent->Start * (DVD_TIME_BASE / 1000);
+       overlay->iPTSStopTime  = (double)(curEvent->Start + curEvent->Duration) * (DVD_TIME_BASE / 1000);

@@ -1,0 +1,23 @@
+From a9be0d0cbfe0f0371c8dedcecb81f22a9bcaab9f Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Sat, 5 Nov 2016 17:09:58 +0000
+Subject: [PATCH] GUIFontTTFGL: Fix texture leak in subtitles
+
+With mkv file with S_TEXT/UTF8, we leak one texture of
+1024x64x32bpp (256K) for every file that is played.
+---
+ xbmc/guilib/GUIFontTTFGL.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/xbmc/guilib/GUIFontTTFGL.cpp b/xbmc/guilib/GUIFontTTFGL.cpp
+index c4aaa3b..60296c2 100644
+--- a/xbmc/guilib/GUIFontTTFGL.cpp
++++ b/xbmc/guilib/GUIFontTTFGL.cpp
+@@ -53,6 +53,7 @@ CGUIFontTTFGL::~CGUIFontTTFGL(void)
+   // destructed before the CGUIFontTTFGL goes out of scope, because
+   // our virtual methods won't be accessible after this point
+   m_dynamicCache.Flush();
++  DeleteHardwareTexture();
+ }
+ 
+ bool CGUIFontTTFGL::FirstBegin()
