@@ -91,9 +91,26 @@ install_to_nand() {
       echo "done."
     fi
 
-    echo "All done! Rebooting in 10s..."
-    sleep 10
-    rebootfromnand
+    read -p "Do you want to copy your user data to internal data partition? [Y/n] " choice
+    case "$choice" in
+      [nN]*)
+        ;;
+      *)
+        echo -n "Stopping Kodi..."
+        systemctl stop kodi
+        echo "done."
+        echo "Copying user data..."
+        mkdir -p /tmp/data
+        mount -o rw /dev/data /tmp/data
+        cp -av /storage/. /tmp/data/
+        echo -n "Restarting Kodi..."
+        systemctl start kodi
+        echo "done."
+        ;;
+    esac
+
+    echo "All done! You can now continue using your LE system or type \"rebootfromnand\" to reboot from internal memory."
+    echo "WARNING: If your internal memory layout is different from standard Amlogic, you have to reboot and perform this operation again!"
 
   else
     echo "No LE image found on /flash! Exiting..."
