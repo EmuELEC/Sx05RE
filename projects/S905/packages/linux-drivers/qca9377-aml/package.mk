@@ -59,8 +59,8 @@ make_target() {
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL/lib/modules/$PKG_NAME
-  find $ROOT/$PKG_BUILD/ -name cfg80211.ko -exec cp {} $INSTALL/lib/modules/$PKG_NAME \;
-  find $ROOT/$PKG_BUILD/ -name compat.ko -exec cp {} $INSTALL/lib/modules/$PKG_NAME \;
-  find $ROOT/$PKG_BUILD/ -name wlan.ko -exec cp {} $INSTALL/lib/modules/$PKG_NAME \;
+  mkdir -p $INSTALL/lib/modules/$(get_module_dir)/$PKG_NAME
+  find $ROOT/$PKG_BUILD/ -name cfg80211.ko -exec cp {} $INSTALL/lib/modules/$(get_module_dir)/$PKG_NAME/cfg80211_qca.ko \;
+  find $ROOT/$PKG_BUILD/ -name compat.ko -exec cp {} $INSTALL/lib/modules/$(get_module_dir)/$PKG_NAME \;
+  find $ROOT/$PKG_BUILD/ -name wlan.ko -exec cp {} $INSTALL/lib/modules/$(get_module_dir)/$PKG_NAME \;
 }
