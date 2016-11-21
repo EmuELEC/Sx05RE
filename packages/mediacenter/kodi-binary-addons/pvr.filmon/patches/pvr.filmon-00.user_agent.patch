@@ -1,0 +1,48 @@
+From 2765e682529e32bb1d43e54ecf4bfa40941c5be1 Mon Sep 17 00:00:00 2001
+From: mcaptur <mark.captur@gmail.com>
+Date: Tue, 15 Nov 2016 04:21:09 +0100
+Subject: [PATCH] Change user agent as filmon was blocking old one
+
+---
+ pvr.filmon/addon.xml.in  | 2 +-
+ pvr.filmon/changelog.txt | 3 +++
+ src/FilmonAPI.cpp        | 2 +-
+ 3 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/pvr.filmon/addon.xml.in b/pvr.filmon/addon.xml.in
+index ba8b2f6..89d5abc 100644
+--- a/pvr.filmon/addon.xml.in
++++ b/pvr.filmon/addon.xml.in
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <addon
+   id="pvr.filmon"
+-  version="0.7.6"
++  version="0.7.7"
+   name="PVR Filmon Client"
+   provider-name="Stephen Denham">
+   <requires>
+diff --git a/pvr.filmon/changelog.txt b/pvr.filmon/changelog.txt
+index 78eb53f..b49a92c 100644
+--- a/pvr.filmon/changelog.txt
++++ b/pvr.filmon/changelog.txt
+@@ -1,3 +1,6 @@
++0.7.7
++Updated User Agent to login to FilmOn
++
+ 0.7.6
+ Updated Language files from Transifex
+ 
+diff --git a/src/FilmonAPI.cpp b/src/FilmonAPI.cpp
+index 19f4d12..b50ee13 100644
+--- a/src/FilmonAPI.cpp
++++ b/src/FilmonAPI.cpp
+@@ -214,7 +214,7 @@ bool filmonAPIkeepAlive(void) {
+ 
+ // Session
+ bool filmonAPIgetSessionKey(void) {
+-	bool res = filmonRequest("tv/api/init?channelProvider=ipad&app_id=IGlsbSBuVCJ7UDwZBl0eBR4JGgEBERhRXlBcWl0CEw==");
++	bool res = filmonRequest("tv/api/init?channelProvider=ipad&app_id=IGlsbSBuVCJ7UDwZBl0eBR4JGgEBERhRXlBcWl0CEw==|User-Agent=Mozilla%2F5.0%20(Windows%3B%20U%3B%20Windows%20NT%205.1%3B%20en-GB%3B%20rv%3A1.9.0.3)%20Gecko%2F2008092417%20Firefox%2F3.0.3");
+ 	if (res == true) {
+ 		Json::Value root;
+ 		Json::Reader reader;
