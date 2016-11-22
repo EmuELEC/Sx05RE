@@ -1,0 +1,30 @@
+From 42602ea88232e54d04088efc4007738a5382f0b1 Mon Sep 17 00:00:00 2001
+From: croniccorey <cronmod.dev@gmail.com>
+Date: Mon, 5 Oct 2015 21:52:10 -0400
+Subject: [PATCH] [AMLCodec] Fix playback window size when using freescale in Linux
+
+---
+ xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
+index 7236444..2ada728 100644
+--- a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
++++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
+@@ -2208,7 +2208,12 @@ void CAMLCodec::SetVideoRect(const CRect &SrcRect, const CRect &DestRect)
+ #ifdef TARGET_ANDROID
+   display = m_display_rect;
+ #else
+-  display = gui;
++  std::string use_freescale;
++  SysfsUtils::GetString("/sys/class/graphics/fb0/free_scale", use_freescale);
++  if (use_freescale.find("[0x0]") == std::string::npos)
++    display = m_display_rect;
++  else
++    display = gui;
+ #endif
+   if (gui != display)
+   {
+-- 
+1.8.3.1
+

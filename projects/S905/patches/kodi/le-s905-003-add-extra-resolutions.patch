@@ -1,0 +1,481 @@
+diff --git a/xbmc/utils/AMLUtils.cpp b/xbmc/utils/AMLUtils.cpp
+index acd1352..76ccbb0 100644
+--- a/xbmc/utils/AMLUtils.cpp
++++ b/xbmc/utils/AMLUtils.cpp
+@@ -438,7 +438,7 @@ bool aml_mode_to_resolution(const char *mode, RESOLUTION_INFO *res)
+     res->fRefreshRate = 60;
+     res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
+   }
+-  else if ((StringUtils::EqualsNoCase(fromMode, "480cvbs")) || (StringUtils::EqualsNoCase(fromMode, "480i")))
++  else if (StringUtils::StartsWith(fromMode, "480i") || StringUtils::EqualsNoCase(fromMode, "480cvbs"))
+   {
+     res->iWidth = 720;
+     res->iHeight= 480;
+@@ -447,25 +447,43 @@ bool aml_mode_to_resolution(const char *mode, RESOLUTION_INFO *res)
+     res->fRefreshRate = 60;
+     res->dwFlags = D3DPRESENTFLAG_INTERLACED;
+   }
+-  else if ((StringUtils::EqualsNoCase(fromMode, "576cvbs")) || (StringUtils::EqualsNoCase(fromMode, "576i")))
++  else if (StringUtils::StartsWith(fromMode, "480p"))
+   {
+     res->iWidth = 720;
+-    res->iHeight= 576;
++    res->iHeight= 480;
+     res->iScreenWidth = 720;
+-    res->iScreenHeight= 576;
+-    res->fRefreshRate = 50;
+-    res->dwFlags = D3DPRESENTFLAG_INTERLACED;
++    res->iScreenHeight= 480;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
+   }
+-  else if (StringUtils::EqualsNoCase(fromMode, "480p"))
++  else if (StringUtils::EqualsNoCase(fromMode, "640x480p60hz"))
+   {
+-    res->iWidth = 720;
++    res->iWidth = 640;
+     res->iHeight= 480;
+-    res->iScreenWidth = 720;
++    res->iScreenWidth = 640;
++    res->iScreenHeight= 480;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "800x480p60hz"))
++  {
++    res->iWidth = 800;
++    res->iHeight= 480;
++    res->iScreenWidth = 800;
+     res->iScreenHeight= 480;
+     res->fRefreshRate = 60;
+     res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
+   }
+-  else if (StringUtils::EqualsNoCase(fromMode, "576p"))
++  else if (StringUtils::StartsWith(fromMode, "576i") || StringUtils::EqualsNoCase(fromMode, "576cvbs"))
++  {
++    res->iWidth = 720;
++    res->iHeight= 576;
++    res->iScreenWidth = 720;
++    res->iScreenHeight= 576;
++    res->fRefreshRate = 50;
++    res->dwFlags = D3DPRESENTFLAG_INTERLACED;
++  }
++  else if (StringUtils::StartsWith(fromMode, "576p"))
+   {
+     res->iWidth = 720;
+     res->iHeight= 576;
+@@ -474,13 +492,67 @@ bool aml_mode_to_resolution(const char *mode, RESOLUTION_INFO *res)
+     res->fRefreshRate = 50;
+     res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
+   }
+-  else if (StringUtils::EqualsNoCase(fromMode, "720p") || StringUtils::EqualsNoCase(fromMode, "720p60hz"))
++  else if (StringUtils::EqualsNoCase(fromMode, "800x600p60hz"))
++  {
++    res->iWidth = 800;
++    res->iHeight= 600;
++    res->iScreenWidth = 800;
++    res->iScreenHeight= 600;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "1024x600p60hz"))
++  {
++    res->iWidth = 1024;
++    res->iHeight= 600;
++    res->iScreenWidth = 1024;
++    res->iScreenHeight= 600;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "720p23hz")) // fake
+   {
+     res->iWidth = 1280;
+     res->iHeight= 720;
+     res->iScreenWidth = 1280;
+     res->iScreenHeight= 720;
+-    res->fRefreshRate = 60;
++    res->fRefreshRate = 23.98;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "720p24hz")) // fake
++  {
++    res->iWidth = 1280;
++    res->iHeight= 720;
++    res->iScreenWidth = 1280;
++    res->iScreenHeight= 720;
++    res->fRefreshRate = 24;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "720p25hz")) // fake
++  {
++    res->iWidth = 1280;
++    res->iHeight= 720;
++    res->iScreenWidth = 1280;
++    res->iScreenHeight= 720;
++    res->fRefreshRate = 25;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "720p29hz")) // fake
++  {
++    res->iWidth = 1280;
++    res->iHeight= 720;
++    res->iScreenWidth = 1280;
++    res->iScreenHeight= 720;
++    res->fRefreshRate = 29.97;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "720p30hz")) // fake
++  {
++    res->iWidth = 1280;
++    res->iHeight= 720;
++    res->iScreenWidth = 1280;
++    res->iScreenHeight= 720;
++    res->fRefreshRate = 30;
+     res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
+   }
+   else if (StringUtils::EqualsNoCase(fromMode, "720p50hz"))
+@@ -492,6 +564,96 @@ bool aml_mode_to_resolution(const char *mode, RESOLUTION_INFO *res)
+     res->fRefreshRate = 50;
+     res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
+   }
++  else if (StringUtils::EqualsNoCase(fromMode, "720p59hz")) // real ?
++  {
++    res->iWidth = 1280;
++    res->iHeight= 720;
++    res->iScreenWidth = 1280;
++    res->iScreenHeight= 720;
++    res->fRefreshRate = 59.94;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "720p") || StringUtils::EqualsNoCase(fromMode, "720p60hz"))
++  {
++    res->iWidth = 1280;
++    res->iHeight= 720;
++    res->iScreenWidth = 1280;
++    res->iScreenHeight= 720;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "1024x768p60hz"))
++  {
++    res->iWidth = 1024;
++    res->iHeight= 768;
++    res->iScreenWidth = 1024;
++    res->iScreenHeight= 768;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "1360x768p60hz"))
++  {
++    res->iWidth = 1360;
++    res->iHeight= 768;
++    res->iScreenWidth = 1360;
++    res->iScreenHeight= 768;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "1366x768p60hz"))
++  {
++    res->iWidth = 1366;
++    res->iHeight= 768;
++    res->iScreenWidth = 1366;
++    res->iScreenHeight= 768;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "1280x800p60hz"))
++  {
++    res->iWidth = 1280;
++    res->iHeight= 800;
++    res->iScreenWidth = 1280;
++    res->iScreenHeight= 800;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "1280x1024"))
++  {
++    res->iWidth = 1280;
++    res->iHeight= 1024;
++    res->iScreenWidth = 1280;
++    res->iScreenHeight= 1024;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "1440x900p60hz"))
++  {
++    res->iWidth = 1440;
++    res->iHeight= 900;
++    res->iScreenWidth = 1440;
++    res->iScreenHeight= 900;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "1600x900p60hz"))
++  {
++    res->iWidth = 1600;
++    res->iHeight= 900;
++    res->iScreenWidth = 1600;
++    res->iScreenHeight= 900;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "1680x1050p60hz"))
++  {
++    res->iWidth = 1680;
++    res->iHeight= 1050;
++    res->iScreenWidth = 1680;
++    res->iScreenHeight= 1050;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
+   else if (StringUtils::EqualsNoCase(fromMode, "1080p") || StringUtils::EqualsNoCase(fromMode, "1080p60hz"))
+   {
+     res->iWidth = 1920;
+@@ -519,6 +681,24 @@ bool aml_mode_to_resolution(const char *mode, RESOLUTION_INFO *res)
+     res->fRefreshRate = 24;
+     res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
+   }
++  else if (StringUtils::EqualsNoCase(fromMode, "1080p25hz"))
++  {
++    res->iWidth = 1920;
++    res->iHeight= 1080;
++    res->iScreenWidth = 1920;
++    res->iScreenHeight= 1080;
++    res->fRefreshRate = 25;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "1080p29hz")) // fake
++  {
++    res->iWidth = 1920;
++    res->iHeight= 1080;
++    res->iScreenWidth = 1920;
++    res->iScreenHeight= 1080;
++    res->fRefreshRate = 29.97;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
+   else if (StringUtils::EqualsNoCase(fromMode, "1080p30hz"))
+   {
+     res->iWidth = 1920;
+@@ -573,15 +753,87 @@ bool aml_mode_to_resolution(const char *mode, RESOLUTION_INFO *res)
+     res->fRefreshRate = 59.940;
+     res->dwFlags = D3DPRESENTFLAG_INTERLACED;
+   }
+-  else if (StringUtils::EqualsNoCase(fromMode, "4k2ksmpte") || StringUtils::EqualsNoCase(fromMode, "smpte24hz"))
++  else if (StringUtils::EqualsNoCase(fromMode, "2560x1080p60hz"))
+   {
+-    res->iWidth = 1920;
++    res->iWidth = 2560;
+     res->iHeight= 1080;
++    res->iScreenWidth = 2560;
++    res->iScreenHeight= 1080;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "1920x1200p60hz"))
++  {
++    res->iWidth = 1920;
++    res->iHeight= 1200;
++    res->iScreenWidth = 1200;
++    res->iScreenHeight= 1200;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "2560x1440p60hz"))
++  {
++    res->iWidth = 2560;
++    res->iHeight= 1440;
++    res->iScreenWidth = 2560;
++    res->iScreenHeight= 1440;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "2560x1600p60hz"))
++  {
++    res->iWidth = 2560;
++    res->iHeight= 1600;
++    res->iScreenWidth = 2560;
++    res->iScreenHeight= 1600;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "4k2ksmpte") || StringUtils::EqualsNoCase(fromMode, "smpte24hz"))
++  {
++    res->iWidth = 1280;
++    res->iHeight= 675;
+     res->iScreenWidth = 4096;
+     res->iScreenHeight= 2160;
+     res->fRefreshRate = 24;
+     res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
+   }
++  else if (StringUtils::EqualsNoCase(fromMode, "smpte25hz"))
++  {
++    res->iWidth = 1280;
++    res->iHeight= 675;
++    res->iScreenWidth = 4096;
++    res->iScreenHeight= 2160;
++    res->fRefreshRate = 25;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "smpte30hz"))
++  {
++    res->iWidth = 1280;
++    res->iHeight= 675;
++    res->iScreenWidth = 4096;
++    res->iScreenHeight= 2160;
++    res->fRefreshRate = 30;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::StartsWith(fromMode, "smpte50hz"))
++  {
++    res->iWidth = 1280;
++    res->iHeight= 675;
++    res->iScreenWidth = 4096;
++    res->iScreenHeight= 2160;
++    res->fRefreshRate = 50;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::StartsWith(fromMode, "smpte60hz"))
++  {
++    res->iWidth = 1280;
++    res->iHeight= 675;
++    res->iScreenWidth = 4096;
++    res->iScreenHeight= 2160;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
+   else if (StringUtils::EqualsNoCase(fromMode, "4k2k23hz") || StringUtils::EqualsNoCase(fromMode, "2160p23hz"))
+   {
+     res->iWidth = 1920;
+@@ -627,7 +879,7 @@ bool aml_mode_to_resolution(const char *mode, RESOLUTION_INFO *res)
+     res->fRefreshRate = 30;
+     res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
+   }
+-  else if (StringUtils::EqualsNoCase(fromMode, "2160p50hz420"))
++  else if (StringUtils::EqualsNoCase(fromMode, "2160p50hz") || StringUtils::EqualsNoCase(fromMode, "2160p50hz420"))
+   {
+     res->iWidth = 1920;
+     res->iHeight= 1080;
+@@ -636,7 +888,16 @@ bool aml_mode_to_resolution(const char *mode, RESOLUTION_INFO *res)
+     res->fRefreshRate = 50;
+     res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
+   }
+-  else if (StringUtils::EqualsNoCase(fromMode, "2160p60hz420"))
++  else if (StringUtils::EqualsNoCase(fromMode, "4k2k59hz") || StringUtils::EqualsNoCase(fromMode, "2160p59hz"))
++  {
++    res->iWidth = 1920;
++    res->iHeight= 1080;
++    res->iScreenWidth = 3840;
++    res->iScreenHeight= 2160;
++    res->fRefreshRate = 59.940;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::StartsWith(fromMode, "2160p60hz"))
+   {
+     res->iWidth = 1920;
+     res->iHeight= 1080;
+@@ -645,6 +906,105 @@ bool aml_mode_to_resolution(const char *mode, RESOLUTION_INFO *res)
+     res->fRefreshRate = 60;
+     res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
+   }
++  else if (StringUtils::StartsWith(fromMode, "4k1k100hz"))
++  {
++    res->iWidth = 1920;
++    res->iHeight= 1080;
++    res->iScreenWidth = 3840;
++    res->iScreenHeight= 1080;
++    res->fRefreshRate = 100;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::StartsWith(fromMode, "4k1k120hz"))
++  {
++    res->iWidth = 1920;
++    res->iHeight= 1080;
++    res->iScreenWidth = 3840;
++    res->iScreenHeight= 1080;
++    res->fRefreshRate = 120;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::StartsWith(fromMode, "4k05k200hz"))
++  {
++    res->iWidth = 1920;
++    res->iHeight= 1080;
++    res->iScreenWidth = 3840;
++    res->iScreenHeight= 540;
++    res->fRefreshRate = 200;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "4k05k240hz420"))
++  {
++    res->iWidth = 1920;
++    res->iHeight= 1080;
++    res->iScreenWidth = 3840;
++    res->iScreenHeight= 540;
++    res->fRefreshRate = 240;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "4k05k240hz"))
++  {
++    res->iWidth = 1920;
++    res->iHeight= 1080;
++    res->iScreenWidth = 3840;
++    res->iScreenHeight= 1080;
++    res->fRefreshRate = 240;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "vga"))
++  {
++    res->iWidth = 640;
++    res->iHeight= 480;
++    res->iScreenWidth = 640;
++    res->iScreenHeight= 480;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "svga"))
++  {
++    res->iWidth = 800;
++    res->iHeight= 600;
++    res->iScreenWidth = 800;
++    res->iScreenHeight= 600;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "xga"))
++  {
++    res->iWidth = 1024;
++    res->iHeight= 768;
++    res->iScreenWidth = 1024;
++    res->iScreenHeight= 768;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "sxga"))
++  {
++    res->iWidth = 1280;
++    res->iHeight= 1024;
++    res->iScreenWidth = 1280;
++    res->iScreenHeight= 1024;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "wsxga"))
++  {
++    res->iWidth = 1440;
++    res->iHeight= 900;
++    res->iScreenWidth = 1440;
++    res->iScreenHeight= 900;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
++  else if (StringUtils::EqualsNoCase(fromMode, "fhdvga"))
++  {
++    res->iWidth = 1920;
++    res->iHeight= 1080;
++    res->iScreenWidth = 1920;
++    res->iScreenHeight= 1080;
++    res->fRefreshRate = 60;
++    res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  }
+   else
+   {
+     return false;
