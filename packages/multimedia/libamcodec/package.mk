@@ -21,12 +21,12 @@ PKG_REV="1"
 PKG_ARCH="arm aarch64"
 PKG_LICENSE="other"
 PKG_SITE="http://openlinux.amlogic.com"
-case $TARGET_ARCH in
+case $TARGET_KERNEL_ARCH in
   arm)
     PKG_VERSION="5e23a81"
     PKG_URL="https://github.com/codesnake/libamcodec/archive/$PKG_VERSION.tar.gz"
     ;;
-  aarch64)
+  arm64)
     PKG_VERSION="2fba80c"
     PKG_URL="https://github.com/surkovalex/libamcodec/archive/$PKG_VERSION.tar.gz"
     ;;
