@@ -236,6 +236,9 @@ find $INSTALL/lib/modules/$MODVER/ -name *.ko | \
 $ROOT/$TOOLCHAIN/bin/depmod -b $INSTALL $MODVER 2> /dev/null
 
 # strip kernel modules
+if [ "$TARGET_KERNEL_ARCH" = "arm64" -a "$TARGET_ARCH" = "arm" ]; then
+  STRIP=$ROOT/$TOOLCHAIN/lib/gcc-linaro-aarch64-linux-gnu/bin/aarch64-linux-gnu-strip
+fi
 for MOD in `find $INSTALL/lib/modules/ -type f -name *.ko`; do
   $STRIP --strip-debug $MOD
 done
@@ -249,6 +252,10 @@ if [ "$BUILD_ANDROID_BOOTIMG" = "yes" ]; then
   echo "Building Amlogic DeviceTreeBlobs and injecting them to kernel..."
   pushd "$BUILD/linux-$(kernel_version)" > /dev/null
   rm -rf arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/*.dtb arch/$TARGET_KERNEL_ARCH/boot/dtb.img arch/$TARGET_KERNEL_ARCH/boot/boot.img
+  if [ "$TARGET_KERNEL_ARCH" = "arm64" -a "$TARGET_ARCH" = "arm" ]; then
+    PATH=$ROOT/$TOOLCHAIN/lib/gcc-linaro-aarch64-linux-gnu/bin/:$PATH
+    TARGET_PREFIX=aarch64-linux-gnu-
+  fi
   for extra_target in $KERNEL_UBOOT_EXTRA_TARGET; do
     LDFLAGS="" make $extra_target > /dev/null
   done
