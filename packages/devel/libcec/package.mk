@@ -44,9 +44,9 @@ else
 fi
 
 if [ "$KODIPLAYER_DRIVER" = "libamcodec" ]; then
-  if [ "$TARGET_ARCH" = "arm" ]; then
+  if [ "$TARGET_KERNEL_ARCH" = "arm" ]; then
     EXTRA_CMAKE_OPTS="$EXTRA_CMAKE_OPTS -DHAVE_AOCEC_API=0 -DHAVE_AMLOGIC_API=1"
-  elif [ "$TARGET_ARCH" = "aarch64" ]; then
+  elif [ "$TARGET_KERNEL_ARCH" = "arm64" ]; then
     EXTRA_CMAKE_OPTS="$EXTRA_CMAKE_OPTS -DHAVE_AOCEC_API=1 -DHAVE_AMLOGIC_API=0"
   fi
 else
