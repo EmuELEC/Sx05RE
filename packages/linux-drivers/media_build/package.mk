@@ -43,6 +43,12 @@ PKG_LONGDESC="Build system to use the latest experimental drivers/patches from l
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
+if [ "$TARGET_KERNEL_ARCH" = "arm64" -a "$TARGET_ARCH" = "arm" ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET gcc-linaro-aarch64-linux-gnu:host"
+  export PATH=$ROOT/$TOOLCHAIN/lib/gcc-linaro-aarch64-linux-gnu/bin/:$PATH
+  TARGET_PREFIX=aarch64-linux-gnu-
+fi
+
 pre_make_target() {
   export KERNEL_VER=$(get_module_dir)
   # dont use our LDFLAGS, use the KERNEL LDFLAGS
