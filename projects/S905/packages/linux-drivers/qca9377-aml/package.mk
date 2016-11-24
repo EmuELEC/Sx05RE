@@ -34,6 +34,12 @@ PKG_LONGDESC="qca9377-aml"
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
+if [ "$TARGET_KERNEL_ARCH" = "arm64" -a "$TARGET_ARCH" = "arm" ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET gcc-linaro-aarch64-linux-gnu:host"
+  export PATH=$ROOT/$TOOLCHAIN/lib/gcc-linaro-aarch64-linux-gnu/bin/:$PATH
+  TARGET_PREFIX=aarch64-linux-gnu-
+fi
+
 make_target() {
   make oldconfig \
        -C AIO/drivers/backports \
@@ -48,7 +54,7 @@ make_target() {
     KERNELARCH=$TARGET_KERNEL_ARCH \
     CROSS_COMPILE=$TARGET_PREFIX \
     ATH_TOPDIR=$ROOT/$PKG_BUILD/AIO \
-    TOOLPREFIX=${CROSS_COMPILE} \
+    TOOLPREFIX=${TARGET_PREFIX} \
     CFG80211_NAME=backports \
     CONFIG_CFG80211_INTERNAL_REGDB=y \
     CONFIG_PMF_SUPPORT=y \

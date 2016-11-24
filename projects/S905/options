@@ -2,9 +2,18 @@
 # setup system defaults
 ################################################################################
 
-    TARGET_ARCH="aarch64"
     TARGET_CPU="cortex-a53"
-    TARGET_CPU_FLAGS="+crc+fp+simd"
+
+    case $TARGET_ARCH in
+      aarch64)
+        TARGET_CPU_FLAGS="+crc+fp+simd"
+        ;;
+      arm)
+        TARGET_CPU_FLAGS="+crc"
+        TARGET_FPU="neon-fp-armv8"
+        TARGET_FLOAT="hard"
+        ;;
+    esac
 
   # Bootloader to use (syslinux / u-boot / bcm2835-bootloader)
     BOOTLOADER="u-boot"
@@ -140,9 +149,17 @@
     KERNEL_NAME="kernel.img"
 
   # set the addon dirs
-    ADDON_SERVER_URL="https://raw.github.com/codesnake/libreelec-addons"
-    ADDON_PATH="$ADDON_VERSION/WeTek_Play_2/$TARGET_ARCH"
-    ADDON_URL="$ADDON_SERVER_URL/$ADDON_PATH"
+    case $TARGET_ARCH in
+      arm)
+        ADDON_PATH="$ADDON_VERSION/WeTek_Play/$TARGET_ARCH"
+        ADDON_URL="$ADDON_SERVER_URL/$ADDON_PATH"
+        ;;
+      aarch64)
+        ADDON_SERVER_URL="https://raw.github.com/codesnake/libreelec-addons"
+        ADDON_PATH="$ADDON_VERSION/WeTek_Play_2/$TARGET_ARCH"
+        ADDON_URL="$ADDON_SERVER_URL/$ADDON_PATH"
+        ;;
+    esac
 
   # OEM packages for OEM's (yes / no)
     OEM_SUPPORT="yes"

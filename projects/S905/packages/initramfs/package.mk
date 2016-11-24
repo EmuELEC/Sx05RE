@@ -48,6 +48,10 @@ post_install() {
       ln -s /lib $ROOT/$BUILD/initramfs/lib64
     fi
 
+    if [ $TARGET_KERNEL_ARCH == "arm64" ] && [ $TARGET_ARCH == "arm" ]; then
+      STRIP=$ROOT/$TOOLCHAIN/lib/gcc-linaro-aarch64-linux-gnu/bin/aarch64-linux-gnu-strip
+    fi
+
     for MOD in `find ./lib/modules/ -type f -name *.ko`; do
       $STRIP --strip-debug $MOD
     done
