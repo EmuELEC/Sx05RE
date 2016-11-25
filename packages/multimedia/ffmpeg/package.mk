@@ -101,7 +101,7 @@ pre_configure_target() {
 
   case "$TARGET_FPU" in
     neon*)
-      export CFLAGS=`echo $CFLAGS | sed -e "s|-O[s012]|-O3 -ffast-math -ftree-vectorize -mvectorize-with-neon-quad|"`
+      export CFLAGS=`echo $CFLAGS | sed -e "s|-O[s012]|-O3 -ftree-vectorize -mvectorize-with-neon-quad|"`
     ;;
   esac
 }
