@@ -59,19 +59,6 @@ if [ "$KODIPLAYER_DRIVER" = "bcm2835-driver" ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET bcm2835-driver"
 fi
 
-case "$TARGET_ARCH" in
-  arm|aarch64)
-      FFMPEG_CPU=""
-      FFMPEG_TABLES="--enable-hardcoded-tables"
-      FFMPEG_PIC="--enable-pic"
-  ;;
-  x86_64)
-      FFMPEG_CPU=""
-      FFMPEG_TABLES="--disable-hardcoded-tables"
-      FFMPEG_PIC="--enable-pic"
-  ;;
-esac
-
 case "$TARGET_FPU" in
   neon*)
       FFMPEG_FPU="--enable-neon"
@@ -138,7 +125,7 @@ configure_target() {
               --enable-logging \
               --disable-doc \
               $FFMPEG_DEBUG \
-              $FFMPEG_PIC \
+              --enable-pic \
               --pkg-config="$ROOT/$TOOLCHAIN/bin/pkg-config" \
               --enable-optimizations \
               --disable-extra-warnings \
@@ -170,7 +157,7 @@ configure_target() {
               $FFMPEG_VDPAU \
               --disable-dxva2 \
               --enable-runtime-cpudetect \
-              $FFMPEG_TABLES \
+              --disable-hardcoded-tables \
               --disable-memalign-hack \
               --disable-encoders \
               --enable-encoder=ac3 \
@@ -221,7 +208,6 @@ configure_target() {
               --enable-zlib \
               --enable-asm \
               --disable-altivec \
-              $FFMPEG_CPU \
               $FFMPEG_FPU \
               --enable-yasm \
               --disable-symver
