@@ -39,7 +39,7 @@ make_target() {
   mkdir -p $ROOT/$PKG_BUILD
   cd $ROOT/$PKG_BUILD
 
-  case $TARGET_ARCH in
+  case $TARGET_KERNEL_ARCH in
     x86_64)
       INSTALLER_URL="http://sundtek.de/media/netinst/64bit/installer.tar.gz"
       ;;
