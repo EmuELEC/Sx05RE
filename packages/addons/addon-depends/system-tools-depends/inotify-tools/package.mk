@@ -31,8 +31,7 @@ PKG_LONGDESC="a C library and a set of command-line programs for Linux providing
 PKG_AUTORECONF="yes"
 
 PKG_IS_ADDON="no"
-
-PKG_CONFIGURE_OPTS_TARGET="--enable-static --disable-shared"
+PKG_CONFIGURE_OPTS_TARGET="--enable-static --disable-shared --disable-doxygen"
 
 makeinstall_target() {
   : nothing to do

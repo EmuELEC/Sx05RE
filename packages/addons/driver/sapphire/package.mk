@@ -35,6 +35,12 @@ PKG_ADDON_NAME="Sapphire Remote Driver"
 PKG_ADDON_TYPE="xbmc.service"
 PKG_ADDON_REPOVERSION="8.0"
 
+if [ "$TARGET_KERNEL_ARCH" = "arm64" -a "$TARGET_ARCH" = "arm" ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET gcc-linaro-aarch64-elf:host"
+  export PATH=$ROOT/$TOOLCHAIN/lib/gcc-linaro-aarch64-elf/bin/:$PATH
+  TARGET_PREFIX=aarch64-elf-
+fi
+
 if [ -f $SYSROOT_PREFIX/usr/include/linux/input-event-codes.h ]; then
   INPUT_H="$SYSROOT_PREFIX/usr/include/linux/input-event-codes.h"
 else

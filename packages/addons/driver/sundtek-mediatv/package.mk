@@ -46,7 +46,7 @@ make_target() {
     arm)
       INSTALLER_URL="http://sundtek.de/media/netinst/armsysvhf/installer.tar.gz"
       ;;
-    aarch64)
+    arm64)
       INSTALLER_URL="http://sundtek.de/media/netinst/arm64/installer.tar.gz"
       ;;
   esac
