@@ -1,18 +1,18 @@
-From c679ade10558c6d228e33f2bfd36f5d60d752c5f Mon Sep 17 00:00:00 2001
+From 14f44ccaa84f30c134802eb2752e0f1d6160fd24 Mon Sep 17 00:00:00 2001
 From: kszaq <kszaquitto@gmail.com>
 Date: Sun, 4 Sep 2016 00:51:03 +0200
-Subject: [PATCH] [aml] Multichannel-PCM and HD Audio passthrough
+Subject: [PATCH] aml: Multichannel-PCM and HD Audio passthrough
 
 1. If we want passthrough, is should be redirected to device 1. To make sure device 1 output is enabled, set device 0 to stereo.
 2. Set digital_codec parameter to notify sound driver about audio format.
 3. Amlogic wants 48kHz for EAC3 passthrough.
 4. Identify Amlogic audio output as HDMI.
 ---
- xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp | 56 ++++++++++++++++++++++++++---
- 1 file changed, 52 insertions(+), 4 deletions(-)
+ xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp | 59 +++++++++++++++++++++++++++--
+ 1 file changed, 55 insertions(+), 4 deletions(-)
 
 diff --git a/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp b/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp
-index e22db7a..80b1286 100644
+index e22db7a..29223de 100644
 --- a/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp
 +++ b/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp
 @@ -38,6 +38,7 @@
@@ -23,7 +23,7 @@ index e22db7a..80b1286 100644
  #endif
  
  
-@@ -523,13 +524,54 @@ bool CAESinkALSA::Initialize(AEAudioFormat &format, std::string &device)
+@@ -523,13 +524,58 @@ bool CAESinkALSA::Initialize(AEAudioFormat &format, std::string &device)
    {
      m_passthrough   = false;
    }
@@ -73,6 +73,10 @@ index e22db7a..80b1286 100644
 +          break;
 +      }
 +    }
++    else
++    {
++      device = "@:CARD=AMLM8AUDIO,DEV=0";
++    }
 +
      aml_set_audio_passthrough(m_passthrough);
 -    device = "default";
@@ -82,14 +86,13 @@ index e22db7a..80b1286 100644
  
    if (inconfig.channels == 0)
    {
-@@ -1536,6 +1578,12 @@ void CAESinkALSA::EnumerateDevice(AEDeviceInfoList &list, const std::string &dev
+@@ -1536,6 +1582,11 @@ void CAESinkALSA::EnumerateDevice(AEDeviceInfoList &list, const std::string &dev
        info.m_dataFormats.push_back(i);
    }
  
-+  if (info.m_displayName.find("M8AUDIO") != std::string::npos)
++  if (info.m_displayName.find("M8AUDIO") != std::string::npos && info.m_deviceType != AE_DEVTYPE_HDMI)
 +  {
-+    info.m_displayNameExtra = "HDMI";
-+    info.m_deviceType = AE_DEVTYPE_HDMI;
++    info.m_displayNameExtra = "PCM";
 +  }
 +
    if (info.m_deviceType == AE_DEVTYPE_HDMI)
