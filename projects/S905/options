@@ -97,7 +97,7 @@
     KODIPLAYER_DRIVER="libamcodec"
 
   # Modules to install in initramfs for early boot
-    INITRAMFS_MODULES="font softcursor bitblit fbcon aml_nftl_dev"
+    INITRAMFS_MODULES="dwc_otg dwc3 font softcursor bitblit fbcon aml_nftl_dev"
 
   # additional drivers to install:
   # for a list of additinoal drivers see packages/linux-drivers
