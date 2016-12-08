@@ -1,3 +1,9 @@
+7.0.104
+- Update to 53.0.2785.92
+
+7.0.103
+- add xdotool
+
 7.0.102
 - add unclutter
 

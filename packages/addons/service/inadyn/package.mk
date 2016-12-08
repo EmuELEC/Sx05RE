@@ -17,32 +17,25 @@
 ################################################################################
 
 PKG_NAME="inadyn"
-PKG_VERSION="1.99.15"
-PKG_REV="100"
+PKG_VERSION="2.0"
+PKG_REV="101"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="http://troglobit.com/inadyn.html"
-PKG_URL="ftp://troglobit.com/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="toolchain libressl"
-PKG_PRIORITY="optional"
+PKG_URL="https://github.com/troglobit/inadyn/archive/v$PKG_VERSION.tar.gz"
+PKG_DEPENDS_TARGET="toolchain libconfuse libite libressl"
 PKG_SECTION="service/system"
-PKG_SHORTDESC="Inadyn, a small and simple DDNS client"
-PKG_LONGDESC="Inadyn is a small and simple DDNS client with HTTPS support. It is commonly available in many GNU/Linux distributions, used in off-the-shelf routers and Internet gateways to automate the task of keeping your DNS record up to date with any IP address changes from your ISP. It can also be used in installations with redundant (backup) connections to the Internet."
-PKG_MAINTAINER="Anton Voyl (awiouy at gmail.com)"
+PKG_SHORTDESC="Inadyn: a small and simple Dynamic Domain Name System client"
+PKG_LONGDESC="Inadyn ($PKG_VERSION) is a small and simple Dynamic Domain Name System (DDNS) client with HTTPS support. It is commonly available in many GNU/Linux distributions, used in off-the-shelf routers and Internet gateways to automate the task of keeping your DNS record up to date with any IP address changes from your ISP. It can also be used in installations with redundant (backup) connections to the Internet."
+PKG_AUTORECONF="yes"
 
 PKG_IS_ADDON="yes"
+PKG_ADDON_NAME="Inadyn"
 PKG_ADDON_TYPE="xbmc.service"
-PKG_ADDON_PROVIDES=""
+PKG_MAINTAINER="Anton Voyl (awiouy)"
 PKG_ADDON_REPOVERSION="7.0"
 
-PKG_AUTORECONF="yes"
-PKG_CONFIGURE_OPTS_TARGET="--enable-openssl" # --sysconfdir is ineffective
-
-pre_configure_target() {
-  # inadyn fails to build in subdirs
-  cd $ROOT/$PKG_BUILD
-  rm -rf .$TARGET_NAME
-}
+PKG_CONFIGURE_OPTS_TARGET="--enable-openssl"
 
 makeinstall_target() {
   :
@@ -50,5 +43,5 @@ makeinstall_target() {
 
 addon() {
   mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/bin
-  cp $PKG_BUILD/src/inadyn $ADDON_BUILD/$PKG_ADDON_ID/bin
+  cp $PKG_BUILD/.$TARGET_NAME/src/inadyn $ADDON_BUILD/$PKG_ADDON_ID/bin
 }

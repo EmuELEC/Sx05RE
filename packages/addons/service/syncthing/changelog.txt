@@ -1,6 +1,8 @@
+7.0.102
+- Update to version 0.14.4
+
 7.0.101
 - Enable automatic upgrades
 
 7.0.100
 - Initial addon
-
