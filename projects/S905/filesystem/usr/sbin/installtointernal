@@ -26,6 +26,8 @@ BACKUP_DATE=$(date +%Y%m%d%H%M%S)
 
 install_to_nand() {
   if [ -f $IMAGE_KERNEL -a -f $IMAGE_SYSTEM ] ; then
+    fw_setenv upgrade_step 2
+
     if grep -q /dev/system /proc/mounts ; then
       echo "Unmounting SYSTEM partiton."
       umount -f /dev/system
