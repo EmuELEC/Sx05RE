@@ -45,6 +45,7 @@ for arg in $(cat /proc/cmdline); do
 
       if [ -f "$UPDATE_DTB_SOURCE" ] ; then
         echo "Updating device tree from $UPDATE_DTB_SOURCE..."
+        $SYSTEM_ROOT/usr/sbin/fw_setenv upgrade_step 2
         case $boot in
           /dev/system)
             dd if=$UPDATE_DTB_SOURCE of="/dev/dtb" bs=256k
