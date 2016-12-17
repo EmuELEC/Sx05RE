@@ -19,7 +19,6 @@
 PKG_NAME="device-trees"
 PKG_VERSION="0.1"
 PKG_REV="1"
-PKG_ARCH="aarch64"
 PKG_LICENSE="OSS"
 PKG_DEPENDS_TARGET="toolchain linux"
 
@@ -27,7 +26,14 @@ PKG_AUTORECONF="no"
 
 EXTRA_TREES=(gxbb_p201.dtb gxl_p212_1g.dtb gxl_p212_2g.dtb gxbb_p200_1G_wetek_hub.dtb gxbb_p200_2G_wetek_play_2.dtb)
 
+if [ "$TARGET_KERNEL_ARCH" = "arm64" -a "$TARGET_ARCH" = "arm" ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET gcc-linaro-aarch64-linux-gnu:host"
+  export PATH=$ROOT/$TOOLCHAIN/lib/gcc-linaro-aarch64-linux-gnu/bin/:$PATH
+  TARGET_PREFIX=aarch64-linux-gnu-
+fi
+
 make_target() {
+
   pushd $ROOT/$BUILD/linux-$(kernel_version) > /dev/null
 
   mkdir -p $TARGET_IMG
@@ -47,7 +53,7 @@ make_target() {
     if [ -e $f ]; then
       DTB_NAME="$(basename $f .patch).dtb"
       DTS_NAME="$(basename $f .patch).dts"
-      patch -d arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/ -o $DTS_NAME < $f
+      patch -d arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/ -o $DTS_NAME --merge < $f
       LDFLAGS="" make $DTB_NAME
       mv arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/$DTB_NAME $TARGET_IMG
     fi
