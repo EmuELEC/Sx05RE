@@ -1,41 +1,109 @@
 #!/bin/sh
 ################################################################################
-#      This file is part of OpenELEC - http://www.openelec.tv
-#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+#      This file is part of LibreELEC - https://libreelec.tv
+#      Copyright (C) 2016 Team LibreELEC
 #
-#  OpenELEC is free software: you can redistribute it and/or modify
+#  LibreELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation, either version 2 of the License, or
 #  (at your option) any later version.
 #
-#  OpenELEC is distributed in the hope that it will be useful,
+#  LibreELEC is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License
-#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-echo "getting sources..."
+# name of the package
+DVB_MKPKG_NAME="media_build"
+
+# remove old files
+echo "removing old sources ..."
+rm -rf ${DVB_MKPKG_NAME}
+rm -rf ${DVB_MKPKG_NAME}-*
+
+################################################################################
+
+# media_build dl
+echo "getting media_build sources ..."
   if [ ! -d media_build.git ]; then
-    git clone git://linuxtv.org/media_build.git media_build.git
+    git clone --depth=1 https://bitbucket.org/CrazyCat/media_build.git ${DVB_MKPKG_NAME}/media_build
   fi
 
-  cd media_build.git
+echo "cleaning media_build sources ..."
+  rm -rf ${DVB_MKPKG_NAME}/media_build/.git
+
+# media_tree dl
+echo "getting sources ..."
+  if [ ! -d linux_media.git ]; then
+    git clone --depth=1 https://github.com/crazycat69/linux_media.git -b latest ${DVB_MKPKG_NAME}/media
+  fi
+
+  cd ${DVB_MKPKG_NAME}/media
     git pull
-    GIT_REV=`git log -n1 --format=%h`
-  cd ..
+    GIT_REV=`git log -n1 --pretty=format:"%ad" --date=short`
 
-echo "copying sources..."
-  rm -rf media_build-$GIT_REV
-  cp -R media_build.git media_build-$GIT_REV
+################################################################################
 
-echo "cleaning sources..."
-  rm -rf media_build-$GIT_REV/.git
+# remove unnessecary files
+  rm -rf arch
+  rm -rf block
+  rm -rf certs
+  rm -rf crypto
+  rm -rf Documentation
 
-echo "packing sources..."
-  tar cvJf media_build-$GIT_REV.tar.xz media_build-$GIT_REV
+# clean drivers/
+  mkdir -p .tmp/staging
+  mkdir -p .tmp/misc
+  mv drivers/media/ .tmp/
+  mv drivers/staging/media/ .tmp/staging/
+  mv drivers/misc/altera-stapl/ .tmp/misc/
+  rm -rf drivers/*
+  mv .tmp/* drivers/
 
-echo "remove temporary sourcedir..."
-  rm -rf media_build-$GIT_REV
+  rm -rf firmware/acenic firmware/bnx* firmware/e* firmware/r* firmware/qlogic 
+  rm -rf fs
+  rm -rf include/net include/r* include/scsi include/trace include/video
+  rm -rf init
+  rm -rf ipc
+  rm -rf kernel
+  rm -rf lib
+  rm -rf mm
+  rm -rf net
+  rm -rf samples
+  rm -rf scripts
+  rm -rf security
+ 
+  # clean sound/
+  mkdir .tmp/
+  mv sound/pci/bt87x.c .tmp/
+  rm -rf sound/*
+  mkdir -p sound/pci
+  mv .tmp/bt87x.c sound/pci
+  
+  rm -rf tools
+  rm -rf usr
+  rm -rf virt
+  rm -rf .tmp
+  cd ../..
+
+# move sources
+echo "copying sources ..."
+  rm -rf ${DVB_MKPKG_NAME}-$GIT_REV
+  cp -R ${DVB_MKPKG_NAME} ${DVB_MKPKG_NAME}-$GIT_REV
+
+echo "cleaning sources ..."
+  rm -rf ${DVB_MKPKG_NAME}-$GIT_REV/media/.git
+
+################################################################################
+
+# pack sources
+echo "packing sources ..."
+tar cvJf ${DVB_MKPKG_NAME}-$GIT_REV.tar.xz ${DVB_MKPKG_NAME}-$GIT_REV
+
+echo "remove temporary sourcedir ..."
+  rm -rf ${DVB_MKPKG_NAME}-$GIT_REV
+  rm -rf ${DVB_MKPKG_NAME}
