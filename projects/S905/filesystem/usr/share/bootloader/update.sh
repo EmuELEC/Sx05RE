@@ -24,16 +24,20 @@
 UPDATE_DTB_IMG="$UPDATE_DIR/dtb.img"
 UPDATE_DTB=`ls -1 "$UPDATE_DIR"/*.dtb 2>/dev/null | head -n 1`
 
+# Indicate that we are not modifying bootloader
+echo "Bootloader has NOT been modified."
+echo "Updating device tree and partition labels..."
+
 for arg in $(cat /proc/cmdline); do
   case $arg in
     boot=*)
       boot="${arg#*=}"
       case $boot in
         /dev/mmc*)
-          $SYSTEM_ROOT/usr/sbin/fatlabel $boot "BOOT"
+          LD_LIBRARY_PATH="$SYSTEM_ROOT/lib" $SYSTEM_ROOT/usr/sbin/fatlabel $boot "BOOT"
           ;;
         LABEL=*)
-          $SYSTEM_ROOT/usr/sbin/fatlabel $($SYSTEM_ROOT/sbin/findfs $boot) "BOOT"
+          LD_LIBRARY_PATH="$SYSTEM_ROOT/lib" $SYSTEM_ROOT/usr/sbin/fatlabel $($SYSTEM_ROOT/sbin/findfs $boot) "BOOT"
           ;;
       esac
 
@@ -45,7 +49,7 @@ for arg in $(cat /proc/cmdline); do
 
       if [ -f "$UPDATE_DTB_SOURCE" ] ; then
         echo "Updating device tree from $UPDATE_DTB_SOURCE..."
-        $SYSTEM_ROOT/usr/sbin/fw_setenv upgrade_step 2
+        LD_LIBRARY_PATH="$SYSTEM_ROOT/lib" $SYSTEM_ROOT/usr/sbin/fw_setenv upgrade_step 2
         case $boot in
           /dev/system)
             dd if=$UPDATE_DTB_SOURCE of="/dev/dtb" bs=256k
@@ -61,10 +65,10 @@ for arg in $(cat /proc/cmdline); do
       disk="${arg#*=}"
       case $disk in
         /dev/mmc*)
-          $SYSTEM_ROOT/sbin/e2label $disk "DISK"
+          LD_LIBRARY_PATH="$SYSTEM_ROOT/lib" $SYSTEM_ROOT/sbin/e2label $disk "DISK"
           ;;
         LABEL=*)
-          $SYSTEM_ROOT/sbin/e2label $($SYSTEM_ROOT/sbin/findfs $disk) "DISK"
+          LD_LIBRARY_PATH="$SYSTEM_ROOT/lib" $SYSTEM_ROOT/sbin/e2label $($SYSTEM_ROOT/sbin/findfs $disk) "DISK"
           ;;
       esac
       ;;
