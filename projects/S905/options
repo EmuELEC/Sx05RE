@@ -149,17 +149,8 @@
     KERNEL_NAME="kernel.img"
 
   # set the addon dirs
-    case $TARGET_ARCH in
-      arm)
-        ADDON_PATH="$ADDON_VERSION/WeTek_Play/$TARGET_ARCH"
-        ADDON_URL="$ADDON_SERVER_URL/$ADDON_PATH"
-        ;;
-      aarch64)
-        ADDON_SERVER_URL="https://raw.github.com/codesnake/libreelec-addons"
-        ADDON_PATH="$ADDON_VERSION/WeTek_Play_2/$TARGET_ARCH"
-        ADDON_URL="$ADDON_SERVER_URL/$ADDON_PATH"
-        ;;
-    esac
+    ADDON_SERVER_URL="http://kszaq.libreelec.tv/addons"
+    ADDON_URL="$ADDON_SERVER_URL/$ADDON_PATH"
 
   # OEM packages for OEM's (yes / no)
     OEM_SUPPORT="yes"
