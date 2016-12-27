@@ -1,7 +1,7 @@
-diff --git a/v4l/compat.h b/v4l/compat.h
+diff --git a/media_build/v4l/compat.h b/media_build/v4l/compat.h
 index aee654a..03e1882 100644
---- a/v4l/compat.h
-+++ b/v4l/compat.h
+--- a/media_build/v4l/compat.h
++++ b/media_build/v4l/compat.h
 @@ -1570,7 +1570,7 @@ static inline __s32 sign_extend32(__u32 value, int index)
  #endif
  
@@ -11,12 +11,12 @@ index aee654a..03e1882 100644
  #endif
  
  #ifdef NEED_GET_USER_PAGES_UNLOCKED
-diff --git a/v4l/compat.h b/v4l/compat.h
+diff --git a/media_build/v4l/compat.h b/media_build/v4l/compat.h
 index 03e1882..1580ae5 100644
-diff --git a/v4l/versions.txt b/v4l/versions.txt
+diff --git a/media_build/v4l/versions.txt b/media_build/v4l/versions.txt
 index 0a84755..4bb122f 100644
---- a/v4l/versions.txt
-+++ b/v4l/versions.txt
+--- a/media_build/v4l/versions.txt
++++ b/media_build/v4l/versions.txt
 @@ -1,5 +1,6 @@
  # Use this for stuff for drivers that don't compile
  [9.255.255]
