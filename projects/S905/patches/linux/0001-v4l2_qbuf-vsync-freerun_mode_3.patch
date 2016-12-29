@@ -1,0 +1,256 @@
+From b6a448a7d85a2f7160830ec6995dce40adcba216 Mon Sep 17 00:00:00 2001
+From: peak3d <pfau@peak3d.de>
+Date: Thu, 5 Jan 2017 18:29:07 +0100
+Subject: [PATCH 1/1] [AML] v4l2_qbuf / vsync / freerun_mode_3 / DI pts_us64
+ fix
+
+Conflicts:
+	drivers/amlogic/amports/vh264.c
+	drivers/amlogic/deinterlace/deinterlace.c
+	drivers/amlogic/video_dev/amlvideo.c
+---
+ drivers/amlogic/amports/ptsserv.c         |  8 +++-
+ drivers/amlogic/amports/video.c           |  2 +
+ drivers/amlogic/deinterlace/deinterlace.c |  4 ++
+ drivers/amlogic/video_dev/amlvideo.c      | 70 +++++++++++++++++++++++++------
+ 4 files changed, 70 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/amlogic/amports/ptsserv.c b/drivers/amlogic/amports/ptsserv.c
+index e6fcf17..927f18e 100644
+--- a/drivers/amlogic/amports/ptsserv.c
++++ b/drivers/amlogic/amports/ptsserv.c
+@@ -231,7 +231,9 @@ int calculation_stream_delayed_ms(u8 type, u32 *latestbitrate,
+ 			outtime = timestamp_pcrscr_get();
+ 	if (outtime == 0 || outtime == 0xffffffff)
+ 		outtime = pTable->last_checkout_pts;
+-	timestampe_delayed = (pTable->last_checkin_pts - outtime) / 90;
++	if (pTable->last_checkin_pts > outtime)
++		timestampe_delayed = (pTable->last_checkin_pts - outtime) / 90;
++
+ 	pTable->last_pts_delay_ms = timestampe_delayed;
+ 	if ((timestampe_delayed < 10
+ 		 || abs(pTable->last_pts_delay_ms - timestampe_delayed) > 3000)
+@@ -253,6 +255,7 @@ int calculation_stream_delayed_ms(u8 type, u32 *latestbitrate,
+ 		} else
+ 			/* #endif */
+ 			diff2 = stbuf_level(get_buf_by_type(type));
++
+ 		/* #if MESON_CPU_TYPE >= MESON_CPU_TYPE_MESON8 */
+ 		if (has_hevc_vdec()) {
+ 			if (pTable->hevc) {
+@@ -270,7 +273,7 @@ int calculation_stream_delayed_ms(u8 type, u32 *latestbitrate,
+ 			if (diff2 > stbuf_space(get_buf_by_type(type)))
+ 				diff = diff2;
+ 		}
+-		delay_ms = diff * 1000 / (1 + pTable->last_avg_bitrate / 8);
++		delay_ms = (diff * 1000) / (int)(1 + pTable->last_avg_bitrate / 8);
+ 
+ 		if (timestampe_delayed < 10
+ 			|| (abs(timestampe_delayed - delay_ms) > 3 * 1000
+@@ -888,6 +891,7 @@ static int pts_lookup_offset_inline_locked(u8 type, u32 offset, u32 *val,
+ 			 * use first checkin pts instead */
+ 			if (!pTable->first_lookup_ok) {
+ 				*val = pTable->first_checkin_pts;
++				*uS64 = div64_u64((u64)pTable->first_checkin_pts * 100, 9);
+ 				pTable->first_lookup_ok = 1;
+ 				pTable->first_lookup_is_fail = 1;
+ 
+diff --git a/drivers/amlogic/amports/video.c b/drivers/amlogic/amports/video.c
+index 7481409..b723e0b 100644
+--- a/drivers/amlogic/amports/video.c
++++ b/drivers/amlogic/amports/video.c
+@@ -3637,6 +3637,8 @@ static irqreturn_t vsync_isr(int irq, void *dev_id)
+ 	}
+ 	if (omx_secret_mode == true) {
+ 		u32 system_time = timestamp_pcrscr_get();
++		video_notify_flag |= VIDEO_NOTIFY_TRICK_WAIT;
++		atomic_set(&trickmode_framedone, 1);
+ 		int diff = system_time - omx_pts;
+ 		if ((diff - omx_pts_interval_upper) > 0
+ 			|| (diff - omx_pts_interval_lower) < 0) {
+diff --git a/drivers/amlogic/deinterlace/deinterlace.c b/drivers/amlogic/deinterlace/deinterlace.c
+index 9e28011..2d2ee87 100644
+--- a/drivers/amlogic/deinterlace/deinterlace.c
++++ b/drivers/amlogic/deinterlace/deinterlace.c
+@@ -1912,6 +1912,7 @@ struct di_post_stru_s {
+ 	bool		toggle_flag;
+ 	bool		vscale_skip_flag;
+ 	uint		start_pts;
++	u64 start_pts_us64;
+ 	int		buf_type;
+ 	int de_post_process_done;
+ 	int post_de_busy;
+@@ -6247,6 +6248,7 @@ static void vscale_skip_disable_post(struct di_buf_s *di_buf, vframe_t *disp_vf)
+ 	disp_vf->height = di_buf_i->vframe->height;
+ 	disp_vf->duration = di_buf_i->vframe->duration;
+ 	disp_vf->pts = di_buf_i->vframe->pts;
++	disp_vf->pts_us64 = di_buf_i->vframe->pts_us64;
+ 	disp_vf->flag = di_buf_i->vframe->flag;
+ 	disp_vf->canvas0Addr = di_post_idx[di_post_stru.canvas_id][0];
+ 	disp_vf->canvas1Addr = di_post_idx[di_post_stru.canvas_id][0];
+@@ -7343,6 +7345,7 @@ void drop_frame(int check_drop, int throw_flag, struct di_buf_s *di_buf)
+ 	di_lock_irqfiq_save(irq_flag2, fiq_flag);
+ 	if ((frame_count == 0) && check_drop)
+ 		di_post_stru.start_pts = di_buf->vframe->pts;
++		di_post_stru.start_pts_us64 = di_buf->vframe->pts_us64;
+ 	if ((check_drop && (frame_count < start_frame_drop_count))
+ 	|| throw_flag) {
+ 		drop_flag = 1;
+@@ -7351,6 +7354,7 @@ void drop_frame(int check_drop, int throw_flag, struct di_buf_s *di_buf)
+ 			if ((di_post_stru.start_pts)
+ 			&& (di_buf->vframe->pts == 0))
+ 				di_buf->vframe->pts = di_post_stru.start_pts;
++                                di_buf->vframe->pts_us64 = di_post_stru.start_pts_us64;
+ 			di_post_stru.start_pts = 0;
+ 		}
+ 		for (i = 0; i < 3; i++) {
+diff --git a/drivers/amlogic/video_dev/amlvideo.c b/drivers/amlogic/video_dev/amlvideo.c
+index 20f3431..a385d6a 100644
+--- a/drivers/amlogic/video_dev/amlvideo.c
++++ b/drivers/amlogic/video_dev/amlvideo.c
+@@ -67,9 +67,11 @@ AMLVIDEO_MINOR_VERSION, AMLVIDEO_RELEASE)
+ 
+ #define AMLVIDEO_POOL_SIZE 16
+ static struct vfq_s q_ready;
++static struct vfq_s q_omx;
+ /*extern bool omx_secret_mode;*/
+ static u8 first_frame;
+ static u64 last_pts_us64;
++static u32 omx_freerun_index = 0;
+ 
+ #define DUR2PTS(x) ((x) - ((x) >> 4))
+ #define DUR2PTS_RM(x) ((x) & 0xf)
+@@ -149,9 +151,11 @@ static struct vivi_fmt formats[] = {
+ };
+ 
+ struct vframe_s *amlvideo_pool_ready[AMLVIDEO_POOL_SIZE + 1];
++struct vframe_s *amlvideo_pool_omx[AMLVIDEO_POOL_SIZE + 1];
+ /* ------------------------------------------------------------------
+  *           provider operations
+  *-----------------------------------------------------------------*/
++
+ static struct vframe_s *amlvideo_vf_peek(void *op_arg)
+ {
+ 	return vfq_peek(&q_ready);
+@@ -187,10 +191,11 @@ static int amlvideo_vf_states(struct vframe_states *states, void *op_arg)
+ {
+ 	/* unsigned long flags; */
+ 	/* spin_lock_irqsave(&lock, flags); */
++	int avail_count = vfq_level(&q_ready) + vfq_level(&q_omx);
+ 	states->vf_pool_size = AMLVIDEO_POOL_SIZE;
+ 	states->buf_recycle_num = 0;
+-	states->buf_free_num = AMLVIDEO_POOL_SIZE - vfq_level(&q_ready);
+-	states->buf_avail_num = vfq_level(&q_ready);
++	states->buf_free_num = AMLVIDEO_POOL_SIZE - avail_count;
++	states->buf_avail_num = avail_count;
+ 	/* spin_unlock_irqrestore(&lock, flags); */
+ 	return 0;
+ }
+@@ -329,6 +334,8 @@ static int video_receiver_event_fun(int type, void *data, void *private_data)
+ 			omx_secret_mode = true;
+ 			vfq_init(&q_ready, AMLVIDEO_POOL_SIZE + 1,
+ 					&amlvideo_pool_ready[0]);
++                        vfq_init(&q_omx, AMLVIDEO_POOL_SIZE + 1,
++                                        &amlvideo_pool_omx[0]);
+ 			vf_provider_init(&amlvideo_vf_prov, PROVIDER_NAME,
+ 						&amlvideo_vf_provider, NULL);
+ 			vf_reg_provider(&amlvideo_vf_prov);
+@@ -577,8 +584,34 @@ static int vidioc_querybuf(struct file *file, void *priv, struct v4l2_buffer *p)
+ static int vidioc_qbuf(struct file *file, void *priv, struct v4l2_buffer *p)
+ {
+ 	int ret = 0;
++        u32 index;
+ 	if (omx_secret_mode == true)
++	{
++		if (freerun_mode == 3)
++		{
++			struct vframe_s *vf;
++			while ((vf = vfq_peek(&q_omx)))
++			{
++				index = (u32)vf->pts_us64;
++				if (p->index > index)
++				{
++					vf_put(vfq_pop(&q_omx), RECEIVER_NAME);
++					printk("vidioc_qbuf skip: index:%u:%u\n", p->index, index);
++					continue;
++				}
++				else if (p->index == index)
++				{
++					vf = (vfq_pop(&q_omx));
++					if (p->flags & V4L2_BUF_FLAG_DONE)
++						vf_put(vf, RECEIVER_NAME);
++					else
++						vfq_push(&q_ready, vf);
++				}
++				break;
++			}
++		}
+ 		return ret;
++	}
+ 
+ 	if (ppmgrvf) {
+ 		vf_put(ppmgrvf, RECEIVER_NAME);
+@@ -653,8 +686,11 @@ static int freerun_dqbuf(struct v4l2_buffer *p)
+ 		return -EAGAIN;
+ 	}
+ 	if (omx_secret_mode == true) {
+-		vfq_push(&q_ready, ppmgrvf);
+-		p->index = 0;
++
++//printk("%s, %s, %d %x %llx\n", __FILE__, __FUNCTION__, __LINE__, ppmgrvf->pts, ppmgrvf->pts_us64);
++
++		if (!ppmgrvf->pts_us64)
++			ppmgrvf->pts_us64 = ((u64)ppmgrvf->pts * 100) / 9;
+ 
+ 		if (ppmgrvf->pts_us64) {
+ 			first_frame = 1;
+@@ -672,11 +708,21 @@ static int freerun_dqbuf(struct v4l2_buffer *p)
+ 		p->timecode.type = ppmgrvf->width;
+ 		p->timecode.flags = ppmgrvf->height;
+ 
+-		vf_notify_receiver(
+-				PROVIDER_NAME,
+-				VFRAME_EVENT_PROVIDER_VFRAME_READY,
+-				NULL);
+-
++		if (freerun_mode != 3)
++		{
++			p->index = 0;
++			vfq_push(&q_ready, ppmgrvf);
++			vf_notify_receiver(
++					PROVIDER_NAME,
++					VFRAME_EVENT_PROVIDER_VFRAME_READY,
++					NULL);
++		}
++		else
++		{
++			p->index = omx_freerun_index;
++			ppmgrvf->pts_us64 = omx_freerun_index++;
++			vfq_push(&q_omx, ppmgrvf);
++		}
+ 		return ret;
+ 	}
+ 	if (ppmgrvf->pts != 0) {
+@@ -686,8 +732,8 @@ static int freerun_dqbuf(struct v4l2_buffer *p)
+ 		ppmgrvf->pts = timestamp_vpts_get();
+ 	}
+ 
+-	if (!ppmgrvf->pts)
+-		ppmgrvf->pts_us64 = ppmgrvf->pts * 100 / 9;
++	if (!ppmgrvf->pts_us64)
++		ppmgrvf->pts_us64 = ((u64)ppmgrvf->pts * 100) / 9;
+ 
+ 	if (unregFlag || startFlag) {
+ 		if (ppmgrvf->pts == 0)
+@@ -804,7 +850,7 @@ static int vidioc_dqbuf(struct file *file, void *priv, struct v4l2_buffer *p)
+ {
+ 	int ret = 0;
+ 
+-	if (freerun_mode == 1) {
++	if (freerun_mode == 1 || freerun_mode == 3) {
+ 		/* pr_err("amlvideo dqbuf called freerun_mode=1\n"); */
+ 		ret = freerun_dqbuf(p);
+ 	} else if (freerun_mode == 2) {
+-- 
+2.1.4
+
