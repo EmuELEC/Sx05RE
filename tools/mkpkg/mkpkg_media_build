@@ -19,6 +19,7 @@
 
 # name of the package
 DVB_MKPKG_NAME="media_build"
+DVB_MKPKG_FOLDER="$(pwd)"
 
 # remove old files
 echo "removing old sources ..."
@@ -39,64 +40,52 @@ echo "cleaning media_build sources ..."
 # media_tree dl
 echo "getting sources ..."
   if [ ! -d linux_media.git ]; then
-    git clone --depth=1 https://github.com/crazycat69/linux_media.git -b latest ${DVB_MKPKG_NAME}/media
+    git clone --depth=1 https://github.com/crazycat69/linux_media.git -b latest ${DVB_MKPKG_NAME}/media_tree
   fi
 
-  cd ${DVB_MKPKG_NAME}/media
-    git pull
-    GIT_REV=`git log -n1 --pretty=format:"%ad" --date=short`
+cd ${DVB_MKPKG_NAME}/media_tree
+  git pull
+  GIT_REV=`git log -n1 --pretty=format:"%ad" --date=short`
+
+cd $DVB_MKPKG_FOLDER/
+
+# final folder
+mkdir ${DVB_MKPKG_NAME}/media/
 
 ################################################################################
 
-# remove unnessecary files
-  rm -rf arch
-  rm -rf block
-  rm -rf certs
-  rm -rf crypto
-  rm -rf Documentation
+# modify the media_build buildscript
+cd ${DVB_MKPKG_NAME}/media_build/linux/
 
-# clean drivers/
-  mkdir -p .tmp/staging
-  mkdir -p .tmp/misc
-  mv drivers/media/ .tmp/
-  mv drivers/staging/media/ .tmp/staging/
-  mv drivers/misc/altera-stapl/ .tmp/misc/
-  rm -rf drivers/*
-  mv .tmp/* drivers/
+# backup Makefile
+cp Makefile Makefile.org
 
-  rm -rf firmware/acenic firmware/bnx* firmware/e* firmware/r* firmware/qlogic 
-  rm -rf fs
-  rm -rf include/net include/r* include/scsi include/trace include/video
-  rm -rf init
-  rm -rf ipc
-  rm -rf kernel
-  rm -rf lib
-  rm -rf mm
-  rm -rf net
-  rm -rf samples
-  rm -rf scripts
-  rm -rf security
- 
-  # clean sound/
-  mkdir .tmp/
-  mv sound/pci/bt87x.c .tmp/
-  rm -rf sound/*
-  mkdir -p sound/pci
-  mv .tmp/bt87x.c sound/pci
-  
-  rm -rf tools
-  rm -rf usr
-  rm -rf virt
-  rm -rf .tmp
-  cd ../..
+# workaround for crazycat media_build to create a proper named file
+sed -i -E "s/TODAY_TAR\ \:\=\ linux\-media\-LATEST\.tar/TODAY_TAR\ \:\=\ linux\-media.tar/g" Makefile
 
-# move sources
-echo "copying sources ..."
-  rm -rf ${DVB_MKPKG_NAME}-$GIT_REV
-  cp -R ${DVB_MKPKG_NAME} ${DVB_MKPKG_NAME}-$GIT_REV
+# normal media build
+sed -i -E 's/TODAY_TAR\ \:\=\ linux\-media\-\$\{DATE\}\.tar/TODAY_TAR\ \:\=\ linux\-media.tar/g' Makefile
 
-echo "cleaning sources ..."
-  rm -rf ${DVB_MKPKG_NAME}-$GIT_REV/media/.git
+# remove the creation of the archive
+sed -i -E 's/bzip2\ \$\(PWD\)\/\$\(TODAY_TAR\)/ /g' Makefile
+
+# collecting files from media_tree
+echo "collect source files ..."
+make todaytar DIR="../../media_tree/"
+
+# extract resulting tar into media folder
+tar xf linux-media.tar -C "../../media/"
+
+# cleanup
+rm linux-media.tar
+rm Makefile && mv Makefile.org Makefile
+
+cd $DVB_MKPKG_FOLDER 
+rm -rf ${DVB_MKPKG_NAME}/media_tree/ 
+rm -rf ${DVB_MKPKG_NAME}/media_build/.git/
+
+# rename buildfolder
+mv ${DVB_MKPKG_NAME}/ ${DVB_MKPKG_NAME}-$GIT_REV/
 
 ################################################################################
 
@@ -105,5 +94,5 @@ echo "packing sources ..."
 tar cvJf ${DVB_MKPKG_NAME}-$GIT_REV.tar.xz ${DVB_MKPKG_NAME}-$GIT_REV
 
 echo "remove temporary sourcedir ..."
-  rm -rf ${DVB_MKPKG_NAME}-$GIT_REV
-  rm -rf ${DVB_MKPKG_NAME}
+rm -rf ${DVB_MKPKG_NAME}-$GIT_REV
+rm -rf ${DVB_MKPKG_NAME}

@@ -17,12 +17,12 @@
 ################################################################################
 
 PKG_NAME="media_build"
-PKG_VERSION="2016-12-23"
+PKG_VERSION="2016-12-28"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="tbs"
-PKG_URL="http://mycvh.de/libreelec/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_SITE="https://github.com/crazycat69/linux_media"
+PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain linux"
 PKG_BUILD_DEPENDS_TARGET="toolchain linux"
 PKG_SECTION="driver"
