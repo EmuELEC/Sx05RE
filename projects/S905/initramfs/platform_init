@@ -85,6 +85,3 @@ echo f > /proc/irq/231/smp_affinity  # hdmi_aocec
 echo 2 > /proc/irq/40/smp_affinity   # eth0
 echo 4 > /proc/irq/63/smp_affinity   # dwc_otg, dwc_otg_hcd:usb1
 echo 8 > /proc/irq/62/smp_affinity   # dwc_otg, dwc_otg_hcd:usb2, dwc_otg_pcd
-
-# Keep at least 64M RAM free
-echo 65535 > /proc/sys/vm/extra_free_kbytes
