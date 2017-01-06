@@ -1,7 +1,7 @@
-diff --git a/xml/DialogButtonMenu.xml b/xml/DialogButtonMenu.xml
+diff --git a/addons/skin.estuary/xml/DialogButtonMenu.xml b/addons/skin.estuary/xml/DialogButtonMenu.xml
 index 9d29e01..cd5f1df 100644
---- a/xml/DialogButtonMenu.xml
-+++ b/xml/DialogButtonMenu.xml
+--- a/addons/skin.estuary/xml/DialogButtonMenu.xml
++++ b/addons/skin.estuary/xml/DialogButtonMenu.xml
 @@ -54,6 +54,11 @@
  						<visible>System.CanReboot</visible>
  					</item>
