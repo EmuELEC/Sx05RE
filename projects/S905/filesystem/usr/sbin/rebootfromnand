@@ -17,5 +17,6 @@
 #  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
+if /usr/sbin/fw_printenv whereToBootFrom 2&>1 > /dev/null; then /usr/sbin/fw_setenv whereToBootFrom internal; fi
 /usr/sbin/fw_setenv bootfromnand 1
 /usr/sbin/reboot switch_system
