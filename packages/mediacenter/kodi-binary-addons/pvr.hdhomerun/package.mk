@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="pvr.hdhomerun"
-PKG_VERSION="c4eeb1d"
+PKG_VERSION="cb3f151"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
@@ -31,9 +31,6 @@ PKG_AUTORECONF="no"
 
 PKG_IS_ADDON="yes"
 PKG_ADDON_TYPE="xbmc.pvrclient"
-
-PKG_CMAKE_OPTS_TARGET="-DHDHOMERUN_LIBRARIES=$SYSROOT_PREFIX/usr/lib/libhdhomerun.so \
-                       -DHDHOMERUN_INCLUDE_DIRS=$SYSROOT_PREFIX/usr/include/hdhomerun"
 
 addon() {
   mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/
