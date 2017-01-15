@@ -1,6 +1,8 @@
---- a/tools/env/fw_env.c	2016-03-22 16:09:17.949471217 +0100
-+++ b/tools/env/fw_env.c	2016-03-22 16:32:45.301980868 +0100
-@@ -888,12 +888,13 @@
+diff --git a/tools/env/fw_env.c b/tools/env/fw_env.c
+index 8b0317a..575f12a 100644
+--- a/tools/env/fw_env.c
++++ b/tools/env/fw_env.c
+@@ -888,12 +888,13 @@ static int flash_write_buf (int dev, int fd, void *buf, size_t count,
  				}
  		}
  
@@ -20,15 +22,31 @@
  
  #ifdef DEBUG
  		fprintf(stderr, "Write 0x%x bytes at 0x%llx\n", erasesize,
-@@ -1036,9 +1037,8 @@
- 		    mtdinfo.type != MTD_NANDFLASH &&
- 		    mtdinfo.type != MTD_DATAFLASH &&
- 		    mtdinfo.type != MTD_UBIVOLUME) {
+@@ -1025,25 +1026,8 @@ static int flash_read (int fd)
+ 		return -1;
+ 	}
+ 
+-	if (S_ISCHR(st.st_mode)) {
+-		rc = ioctl(fd, MEMGETINFO, &mtdinfo);
+-		if (rc < 0) {
+-			fprintf(stderr, "Cannot get MTD information for %s\n",
+-				DEVNAME(dev_current));
+-			return -1;
+-		}
+-		if (mtdinfo.type != MTD_NORFLASH &&
+-		    mtdinfo.type != MTD_NANDFLASH &&
+-		    mtdinfo.type != MTD_DATAFLASH &&
+-		    mtdinfo.type != MTD_UBIVOLUME) {
 -			fprintf (stderr, "Unsupported flash type %u on %s\n",
 -				 mtdinfo.type, DEVNAME(dev_current));
 -			return -1;
-+			memset(&mtdinfo, 0, sizeof(mtdinfo));
-+			mtdinfo.type = MTD_ABSENT;
- 		}
- 	} else {
- 		memset(&mtdinfo, 0, sizeof(mtdinfo));
+-		}
+-	} else {
+-		memset(&mtdinfo, 0, sizeof(mtdinfo));
+-		mtdinfo.type = MTD_ABSENT;
+-	}
++	memset(&mtdinfo, 0, sizeof(mtdinfo));
++	mtdinfo.type = MTD_ABSENT;
+ 
+ 	DEVTYPE(dev_current) = mtdinfo.type;
+ 
