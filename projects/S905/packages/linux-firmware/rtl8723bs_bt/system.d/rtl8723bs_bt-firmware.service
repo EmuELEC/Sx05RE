@@ -5,4 +5,4 @@ ConditionPathExists=/dev/ttyS1
 [Service]
 Type=simple
 RemainAfterExit=yes
-ExecStart=/usr/bin/rtk_hciattach -n -s 115200 /dev/ttyS1 rtk_h5
+ExecStart=/usr/bin/rtk_hciattach -n -s 115200 /dev/ttyS1 rtk_h5 2000000
