@@ -85,3 +85,5 @@ echo "$cmdline" > /proc/cmdline
 for part in /sys/block/*/queue/add_random; do
   echo 0 > "$part"
 done
+
+echo 1 > /sys/module/di/parameters/bypass_prog
