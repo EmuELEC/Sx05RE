@@ -5,4 +5,4 @@ ConditionPathExists=/dev/ttyS1
 [Service]
 Type=simple
 RemainAfterExit=yes
-ExecStart=/usr/bin/hciattach -n -s 2000000 /dev/ttyS1 qca
+ExecStart=/usr/bin/hciattach -n -s 115200 /dev/ttyS1 qca 2000000
