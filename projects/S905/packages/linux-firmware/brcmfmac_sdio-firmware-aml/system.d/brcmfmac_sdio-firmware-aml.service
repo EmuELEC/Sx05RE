@@ -1,0 +1,12 @@
+[Unit]
+Description=Broadcom sdio firmware update for %I
+ConditionPathExists=/dev/ttyS1
+After=network.target
+
+[Service]
+Type=simple
+RemainAfterExit=yes
+ExecStart=/usr/bin/hciattach -n -s 115200 /dev/ttyS1 bcm43xx 2000000
+
+[Install]
+WantedBy=network.target
