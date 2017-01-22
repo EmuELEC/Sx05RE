@@ -17,10 +17,4 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-ACTION!="add|change", GOTO="end"
-SUBSYSTEM!="net", GOTO="end"
-ENV{INTERFACE}!="wlan*", GOTO="end"
-
-RUN+="/usr/bin/systemctl restart connman.service"
-
-LABEL="end"
+ACTION=="add|change", SUBSYSTEM=="net", ENV{INTERFACE}=="wlan*", RUN+="/usr/bin/systemctl restart connman.service"
