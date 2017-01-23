@@ -16,7 +16,7 @@ index 7236444..d6b0cc1 100644
    }
  
 +  // we must return VC_BUFFER or VC_PICTURE,
-+  int rtn = 0;
++  int rtn = VC_BUFFER;
 +
    // if we have still frames, demux size will be small
    // and we need to pre-buffer more.
@@ -32,9 +32,10 @@ index 7236444..d6b0cc1 100644
  
 -  // wait until we get a new frame or 25ms,
 -  if (m_old_pictcnt == m_cur_pictcnt)
+-    m_ready_event.WaitMSec(25);
 +  // wait until we get a new frame or 100ms
 +  else if (m_old_pictcnt == m_cur_pictcnt)
-     m_ready_event.WaitMSec(25);
++    m_ready_event.WaitMSec(100);
  
 -  // we must return VC_BUFFER or VC_PICTURE,
 -  // default to VC_BUFFER.
