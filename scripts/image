@@ -35,6 +35,10 @@ BUILD_DATE=`date +%Y%m%d%H%M%S`
 
 GIT_HASH=$(git rev-parse HEAD)
 
+if [ -n "$CUSTOM_VERSION" ]; then
+   LIBREELEC_VERSION="$CUSTOM_VERSION"
+fi
+
 if [ "$LIBREELEC_VERSION" = "devel" ]; then
   if ! GIT_BUILD=$(git rev-list --count HEAD 2>/dev/null)
   then
