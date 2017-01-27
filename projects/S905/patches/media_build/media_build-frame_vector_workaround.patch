@@ -1,7 +1,7 @@
-diff --git a/media_build/v4l/Makefile b/media_build/v4l/Makefile
+diff --git a/v4l/Makefile b/v4l/Makefile
 index 04027c2..02edc70 100644
---- a/media_build/v4l/Makefile
-+++ b/media_build/v4l/Makefile
+--- a/v4l/Makefile
++++ b/v4l/Makefile
 @@ -92,9 +92,6 @@ ifneq ($(filter $(no-makefile-media-targets), $(MAKECMDGOALS)),)
  endif
  
