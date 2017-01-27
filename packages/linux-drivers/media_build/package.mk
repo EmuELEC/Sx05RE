@@ -62,22 +62,22 @@ make_target() {
   if [ -e "$(kernel_path)/drivers/amlogic/video_dev" ]; then
 
     # Copy, patch and enable amlvideodri module
-    cp -a "$(kernel_path)/drivers/amlogic/video_dev" "media/drivers/media/"
-    sed -i 's,common/,,g; s,"trace/,",g' $(find media/drivers/media/video_dev/ -type f)
-    sed -i 's,\$(CONFIG_V4L_AMLOGIC_VIDEO),m,g' "media/drivers/media/video_dev/Makefile"
-    echo "obj-y += video_dev/" >> "media/drivers/media/Makefile"
-    echo "source drivers/media/video_dev/Kconfig " >> "media/drivers/media/Kconfig"
+    cp -a "$(kernel_path)/drivers/amlogic/video_dev" "linux/drivers/media/"
+    sed -i 's,common/,,g; s,"trace/,",g' $(find linux/drivers/media/video_dev/ -type f)
+    sed -i 's,\$(CONFIG_V4L_AMLOGIC_VIDEO),m,g' "linux/drivers/media/video_dev/Makefile"
+    echo "obj-y += video_dev/" >> "linux/drivers/media/Makefile"
+    echo "source drivers/media/video_dev/Kconfig " >> "linux/drivers/media/Kconfig"
 
     # Copy and enable videobuf-res module
-    cp -a "$(kernel_path)/drivers/media/v4l2-core/videobuf-res.c" "media/drivers/media/v4l2-core/"
-    cp -a "$(kernel_path)/include/media/videobuf-res.h" "media/include/media/"
-    echo "obj-m += videobuf-res.o" >> "media/drivers/media/v4l2-core/Makefile"
+    cp -a "$(kernel_path)/drivers/media/v4l2-core/videobuf-res.c" "linux/drivers/media/v4l2-core/"
+    cp -a "$(kernel_path)/include/media/videobuf-res.h" "linux/include/media/"
+    echo "obj-m += videobuf-res.o" >> "linux/drivers/media/v4l2-core/Makefile"
 
     # Use meson-ir module from kernel tree, patch it and force to be built
     if [ -e "$(kernel_path)/drivers/media/rc/meson-ir.c" ]; then
-      cp -a "$(kernel_path)/drivers/media/rc/meson-ir.c" "media/drivers/media/rc/"
-      sed -i 's,allowed_protos,allowed_protocols,g' "media/drivers/media/rc/meson-ir.c"
-      echo "obj-m += meson-ir.o" >> "media/drivers/media/rc/Makefile"
+      cp -a "$(kernel_path)/drivers/media/rc/meson-ir.c" "linux/drivers/media/rc/"
+      sed -i 's,allowed_protos,allowed_protocols,g' "linux/drivers/media/rc/meson-ir.c"
+      echo "obj-m += meson-ir.o" >> "linux/drivers/media/rc/Makefile"
     fi
 
   fi
