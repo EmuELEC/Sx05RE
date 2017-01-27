@@ -1,19 +1,37 @@
-diff --git a/media/drivers/media/platform/soc_camera/soc_camera.c b/media/drivers/media/platform/soc_camera/soc_camera.c
-index 680ab43..fbf53da 100644
---- a/media/drivers/media/platform/soc_camera/soc_camera.c
-+++ b/media/drivers/media/platform/soc_camera/soc_camera.c
-@@ -23,6 +23,7 @@
- #include <linux/list.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/of_i2c.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
-diff --git a/media_build/v4l/compat.h b/media_build/v4l/compat.h
+diff --git a/backports/backports.txt b/backports/backports.txt
+index 19ce705..f621ad8 100644
+--- a/backports/backports.txt
++++ b/backports/backports.txt
+@@ -25,6 +25,7 @@ add api_version.patch
+ add linux-054-nuvoton_revert_d7b290a1056c5564eec8a1b169c6e84ff3.6.114c13.patch
+ add linux-057-Removed-MCE-customer-code-restriction-in-rc6-decode.patch
+ add linux-062-imon_pad_ignore_diagonal.patch
++add of_i2c.patch
+
+ [4.8.255]
+ add v4.8_user_pages_flag.patch
+diff --git a/backports/of_i2c.patch b/backports/of_i2c.patch
+new file mode 100644
+index 0000000..1fe1d61
+--- /dev/null
++++ b/backports/of_i2c.patch
+@@ -0,0 +1,12 @@
++diff --git a/drivers/media/platform/soc_camera/soc_camera.c b/drivers/media/platform/soc_camera/soc_camera.c
++index 680ab43..fbf53da 100644
++--- a/drivers/media/platform/soc_camera/soc_camera.c
+++++ b/drivers/media/platform/soc_camera/soc_camera.c
++@@ -23,6 +23,7 @@
++ #include <linux/list.h>
++ #include <linux/module.h>
++ #include <linux/mutex.h>
+++#include <linux/of_i2c.h>
++ #include <linux/platform_device.h>
++ #include <linux/pm_runtime.h>
++ #include <linux/regulator/consumer.h>
+diff --git a/v4l/compat.h b/v4l/compat.h
 index aee654a..03e1882 100644
---- a/media_build/v4l/compat.h
-+++ b/media_build/v4l/compat.h
+--- a/v4l/compat.h
++++ b/v4l/compat.h
 @@ -1570,7 +1570,7 @@ static inline __s32 sign_extend32(__u32 value, int index)
  #endif
  
@@ -23,10 +41,10 @@ index aee654a..03e1882 100644
  #endif
  
  #ifdef NEED_GET_USER_PAGES_UNLOCKED
-diff --git a/media_build/v4l/versions.txt b/media_build/v4l/versions.txt
+diff --git a/v4l/versions.txt b/v4l/versions.txt
 index 0a84755..4bb122f 100644
---- a/media_build/v4l/versions.txt
-+++ b/media_build/v4l/versions.txt
+--- a/v4l/versions.txt
++++ b/v4l/versions.txt
 @@ -1,5 +1,6 @@
  # Use this for stuff for drivers that don't compile
  [9.255.255]
