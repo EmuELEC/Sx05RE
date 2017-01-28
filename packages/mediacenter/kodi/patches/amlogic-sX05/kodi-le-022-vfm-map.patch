@@ -1,0 +1,13 @@
+diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp b/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
+index a5bc749..8434ec2 100644
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
+@@ -1688,7 +1688,7 @@ bool CAMLCodec::OpenAmlVideo(const CDVDStreamInfo &hints)
+   m_amlVideoFile = amlVideoFile;
+ 
+   m_defaultVfmMap = GetVfmMap("default");
+-  SetVfmMap("default", "decoder ppmgr deinterlace amlvideo amvideo");
++  SetVfmMap("default", "decoder ppmgr amlvideo deinterlace amvideo");
+ 
+   SysfsUtils::SetInt("/sys/module/amlvideodri/parameters/freerun_mode", 3);
+ 
