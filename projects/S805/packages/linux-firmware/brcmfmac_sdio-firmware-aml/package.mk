@@ -41,7 +41,8 @@ makeinstall_target() {
   cp -P $PKG_DIR/firmware/*.hcd $INSTALL/lib/firmware/brcm
   cd $INSTALL/lib/firmware/brcm
   for f in *.hcd; do
-    ln -sr $f $(grep --text -o 'BCM\S*' $f).hcd
-    ln -sr $f $(grep --text -o 'BCM\S*' $f | cut -c4-).hcd
+    ln -sr $f $(grep --text -o 'BCM\S*' $f).hcd 2>/dev/null || true
+    ln -sr $f $(grep --text -o 'BCM\S*' $f | cut -c4-).hcd 2>/dev/null || true
+    ln -sr $f $(echo $f | sed -r 's/[^.]*/\U&/') 2>/dev/null || true
   done
 }
