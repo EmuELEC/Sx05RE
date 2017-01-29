@@ -1,14 +1,14 @@
-From 98d3e91d360f310729c2bd16f7af709d3071c4b4 Mon Sep 17 00:00:00 2001
+From a6402ac4201802a14e5073cab7ed3640e25eb28d Mon Sep 17 00:00:00 2001
 From: kszaq <kszaquitto@gmail.com>
 Date: Tue, 18 Oct 2016 05:32:00 +0200
 Subject: [PATCH] aml: fix vq dropping and high bitrate playback
 
 ---
- xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
 diff --git a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
-index 7236444..d6b0cc1 100644
+index 7236444..f131969 100644
 --- a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
 +++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
 @@ -1810,6 +1810,9 @@ int CAMLCodec::Decode(uint8_t *pData, size_t iSize, double dts, double pts)
@@ -21,35 +21,31 @@ index 7236444..d6b0cc1 100644
    // if we have still frames, demux size will be small
    // and we need to pre-buffer more.
    double target_timesize = 1.0;
-@@ -1817,24 +1820,21 @@ int CAMLCodec::Decode(uint8_t *pData, size_t iSize, double dts, double pts)
+@@ -1817,16 +1820,9 @@ int CAMLCodec::Decode(uint8_t *pData, size_t iSize, double dts, double pts)
      target_timesize = 2.0;
  
    // keep hw buffered demux above 1 second
 -  if (GetTimeSize() < target_timesize && m_speed == DVD_PLAYSPEED_NORMAL)
 -    return VC_BUFFER;
-+  if (GetTimeSize() < target_timesize)
-+    rtn |= VC_BUFFER;
++  if (GetTimeSize() > target_timesize)
++    m_ready_event.WaitMSec(100);
  
 -  // wait until we get a new frame or 25ms,
 -  if (m_old_pictcnt == m_cur_pictcnt)
 -    m_ready_event.WaitMSec(25);
-+  // wait until we get a new frame or 100ms
-+  else if (m_old_pictcnt == m_cur_pictcnt)
-+    m_ready_event.WaitMSec(100);
- 
+-
 -  // we must return VC_BUFFER or VC_PICTURE,
 -  // default to VC_BUFFER.
 -  int rtn = VC_BUFFER;
    if (m_old_pictcnt != m_cur_pictcnt)
    {
      m_old_pictcnt++;
--    rtn = VC_PICTURE;
-+    rtn |= VC_PICTURE;
+@@ -1834,7 +1830,7 @@ int CAMLCodec::Decode(uint8_t *pData, size_t iSize, double dts, double pts)
      // we got a new pict, try and keep hw buffered demux above 2 seconds.
      // this, combined with the above 1 second check, keeps hw buffered demux between 1 and 2 seconds.
      // we also check to make sure we keep from filling hw buffer.
 -    if (GetTimeSize() < 2.0 && GetDataSize() < m_vbufsize/3)
-+    if (GetTimeSize() < 2.0)
++    if (GetTimeSize() < target_timesize)
        rtn |= VC_BUFFER;
    }
  /*
