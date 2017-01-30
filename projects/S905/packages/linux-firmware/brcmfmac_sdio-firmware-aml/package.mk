@@ -44,5 +44,6 @@ makeinstall_target() {
     ln -sr $f $(grep --text -o 'BCM\S*' $f).hcd 2>/dev/null || true
     ln -sr $f $(grep --text -o 'BCM\S*' $f | cut -c4-).hcd 2>/dev/null || true
     ln -sr $f $(echo $f | sed -r 's/[^.]*/\U&/') 2>/dev/null || true
+    ln -sr bcm4335_V0343.0353.hcd BCM4335A0.hcd 2>/dev/null || true
   done
 }
