@@ -3,9 +3,9 @@ index 19ce705..f621ad8 100644
 --- a/backports/backports.txt
 +++ b/backports/backports.txt
 @@ -25,6 +25,7 @@ add api_version.patch
- add linux-054-nuvoton_revert_d7b290a1056c5564eec8a1b169c6e84ff3.6.114c13.patch
  add linux-057-Removed-MCE-customer-code-restriction-in-rc6-decode.patch
  add linux-062-imon_pad_ignore_diagonal.patch
+ add linux-240-pctv452e_kernel_oops_in_4.9.patch
 +add of_i2c.patch
 
  [4.8.255]
