@@ -1,0 +1,95 @@
+From 6da5e7464811ac53e021c947b4129daa224e773a Mon Sep 17 00:00:00 2001
+From: kszaq <kszaquitto@gmail.com>
+Date: Sun, 5 Feb 2017 11:01:23 +0100
+Subject: [PATCH] aml: remove waiting for a keyframe
+
+---
+ .../DVDCodecs/Video/DVDVideoCodecAmlogic.cpp       | 28 ++++------------------
+ .../DVDCodecs/Video/DVDVideoCodecAmlogic.h         |  1 -
+ 2 files changed, 4 insertions(+), 25 deletions(-)
+
+diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
+index bcf5247..ae25d6f 100644
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
+@@ -52,7 +52,6 @@ CDVDVideoCodecAmlogic::CDVDVideoCodecAmlogic(CProcessInfo &processInfo) : CDVDVi
+   m_video_rate(0),
+   m_mpeg2_sequence(NULL),
+   m_drop(false),
+-  m_has_keyframe(false),
+   m_bitparser(NULL),
+   m_bitstream(NULL)
+ {
+@@ -134,11 +133,6 @@ bool CDVDVideoCodecAmlogic::Open(CDVDStreamInfo &hints, CDVDCodecOptions &option
+         m_hints.extradata = malloc(m_hints.extrasize);
+         memcpy(m_hints.extradata, m_bitstream->GetExtraData(), m_hints.extrasize);
+       }
+-      else
+-      {
+-        m_bitparser = new CBitstreamParser();
+-        m_bitparser->Open();
+-      }
+       break;
+     case AV_CODEC_ID_MPEG4:
+     case AV_CODEC_ID_MSMPEG4V2:
+@@ -244,8 +238,6 @@ bool CDVDVideoCodecAmlogic::Open(CDVDStreamInfo &hints, CDVDCodecOptions &option
+   m_processInfo.SetVideoDeintMethod("hardware");
+   m_processInfo.SetVideoDAR(m_hints.aspect);
+ 
+-  m_has_keyframe = false;
+-
+   CLog::Log(LOGINFO, "%s: Opened Amlogic Codec", __MODULE_NAME__);
+   return true;
+ }
+@@ -286,24 +278,13 @@ int CDVDVideoCodecAmlogic::Decode(uint8_t *pData, int iSize, double dts, double
+       if (!m_bitstream->Convert(pData, iSize))
+         return VC_ERROR;
+ 
+-      if (!m_bitstream->HasKeyframe())
+-      {
+-        CLog::Log(LOGDEBUG, "%s::Decode waiting for keyframe (bitstream)", __MODULE_NAME__);
+-        return VC_BUFFER;
+-      }
+       pData = m_bitstream->GetConvertBuffer();
+       iSize = m_bitstream->GetConvertSize();
+     }
+-    else if (!m_has_keyframe && m_bitparser)
+-    {
+-      if (!m_bitparser->HasKeyframe(pData, iSize))
+-      {
+-        CLog::Log(LOGDEBUG, "%s::Decode waiting for keyframe (bitparser)", __MODULE_NAME__);
+-        return VC_BUFFER;
+-      }
+-      else
+-        m_has_keyframe = true;
+-    }
++
++    if (m_bitparser)
++      m_bitparser->HasKeyframe(pData, iSize);
++
+     FrameRateTracking( pData, iSize, dts, pts);
+ 
+     if (!m_opened)
+@@ -330,7 +311,6 @@ void CDVDVideoCodecAmlogic::Reset(void)
+ 
+   m_Codec->Reset();
+   m_mpeg2_sequence_pts = 0;
+-  m_has_keyframe = false;
+   if (m_bitstream && m_hints.codec == AV_CODEC_ID_H264)
+     m_bitstream->ResetKeyframe();
+ }
+diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecAmlogic.h b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecAmlogic.h
+index 9e57295..e97c2de 100644
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecAmlogic.h
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecAmlogic.h
+@@ -102,7 +102,6 @@ protected:
+   mpeg2_sequence *m_mpeg2_sequence;
+   double          m_mpeg2_sequence_pts;
+   bool            m_drop;
+-  bool            m_has_keyframe;
+ 
+   CBitstreamParser *m_bitparser;
+   CBitstreamConverter *m_bitstream;
+-- 
+1.8.3.1
+
