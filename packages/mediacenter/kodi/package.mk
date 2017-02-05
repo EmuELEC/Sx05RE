@@ -34,6 +34,10 @@ PKG_AUTORECONF="no"
 case $PROJECT in
   S805|S905)
     PKG_PATCH_DIRS="amlogic-sX05"
+    if [ "$TARGET_ARCH" = "arm" ]; then
+      CFLAGS="$CFLAGS -mthumb"
+      CXXFLAGS="$CXXFLAGS -mthumb"
+    fi
     ;;
 esac
 
