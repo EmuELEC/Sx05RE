@@ -65,6 +65,6 @@ post_install() {
 
     mkdir -p $ROOT/$BUILD/image/
     fakeroot -- sh -c \
-      "mkdir -p dev; mknod -m 600 dev/console c 5 1; find . | cpio -H newc -ov -R 0:0 | lzop > $ROOT/$BUILD/image/initramfs.cpio"
+      "mkdir -p dev; mknod -m 600 dev/console c 5 1; find . | cpio -H newc -ov -R 0:0 | lzop --best > $ROOT/$BUILD/image/initramfs.cpio"
   )
 }
