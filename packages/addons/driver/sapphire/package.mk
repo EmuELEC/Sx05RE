@@ -33,7 +33,7 @@ PKG_AUTORECONF="no"
 PKG_IS_ADDON="yes"
 PKG_ADDON_NAME="Sapphire Remote Driver"
 PKG_ADDON_TYPE="xbmc.service"
-PKG_ADDON_REPOVERSION="8.0"
+PKG_ADDON_REPOVERSION="7.0"
 
 if [ "$TARGET_KERNEL_ARCH" = "arm64" -a "$TARGET_ARCH" = "arm" ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET gcc-linaro-aarch64-linux-gnu:host"
