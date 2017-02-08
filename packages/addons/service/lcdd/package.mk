@@ -34,6 +34,8 @@ PKG_IS_ADDON="yes"
 PKG_ADDON_NAME="LCDproc"
 PKG_ADDON_TYPE="xbmc.service"
 
+CFLAGS="$CFLAGS -DHAVE_SYS_POLL_H=1"
+
 PKG_CONFIGURE_OPTS_TARGET="--with-ft-prefix=$SYSROOT_PREFIX/usr \
                            --enable-libusb \
                            --enable-libftdi \
