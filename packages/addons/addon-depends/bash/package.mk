@@ -37,7 +37,3 @@ PKG_CONFIGURE_OPTS_TARGET="--enable-static \
                            --enable-readline \
                            --without-bash-malloc \
                            --with-installed-readline"
-
-pre_configure_target() {
-  export LIBS="-lterminfo"
-}
