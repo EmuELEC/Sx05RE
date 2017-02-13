@@ -1,0 +1,26 @@
+From 970d18bcaec012da46936992d69c4d4c2136c824 Mon Sep 17 00:00:00 2001
+From: peak3d <pfau@peak3d.de>
+Date: Fri, 10 Feb 2017 14:30:45 +0100
+Subject: [PATCH] aml: fix scale for orientation 90 / 270
+
+---
+ xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
+index 501eae5..2587494 100644
+--- a/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
++++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/AMLCodec.cpp
+@@ -2247,7 +2247,8 @@ void CAMLCodec::SetVideoRect(const CRect &SrcRect, const CRect &DestRect)
+     case 1:
+     case 3:
+       {
+-        int diff = (int) ((dst_rect.Height() - dst_rect.Width()) / 2);
++        double scale = (double)dst_rect.Height() / dst_rect.Width();
++        int diff = (int) ((dst_rect.Height()*scale - dst_rect.Width()) / 2);
+         dst_rect = CRect(DestRect.x1 - diff, DestRect.y1, DestRect.x2 + diff, DestRect.y2);
+       }
+ 
+-- 
+1.8.3.1
+
