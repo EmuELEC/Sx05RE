@@ -1,7 +1,5 @@
 #!/bin/sh
 
-[ ! -e /dev/system ] && insmod "/usr/lib/modules/aml_nftl_dev.ko"
-
 hdmimode=1080p60hz
 
 for arg in $(cat /proc/cmdline); do
