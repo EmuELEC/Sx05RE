@@ -20,4 +20,8 @@
   <network>
     <readbufferfactor>4.0</readbufferfactor>
   </network>
+  <pvr>
+    <minvideocachelevel>5</minvideocachelevel>
+    <minaudiocachelevel>20</minaudiocachelevel>
+  </pvr>
 </advancedsettings>
