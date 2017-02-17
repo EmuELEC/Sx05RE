@@ -232,7 +232,7 @@ fi
 
 # run depmod
 MODVER=$(basename $(ls -d $INSTALL/usr/lib/modules/*))
-find $INSTALL/usr/lib/modules/$MODVER/ -name *.ko | \
+find $INSTALL/usr/lib/modules/$MODVER/ -name "*.ko" | \
   sed -e "s,$INSTALL/usr/lib/modules/$MODVER/,," > $INSTALL/usr/lib/modules/$MODVER/modules.order
 $ROOT/$TOOLCHAIN/bin/depmod -b $INSTALL/usr $MODVER 2> /dev/null
 
@@ -240,7 +240,7 @@ $ROOT/$TOOLCHAIN/bin/depmod -b $INSTALL/usr $MODVER 2> /dev/null
 if [ "$TARGET_KERNEL_ARCH" = "arm64" -a "$TARGET_ARCH" = "arm" ]; then
   STRIP=$ROOT/$TOOLCHAIN/lib/gcc-linaro-aarch64-linux-gnu/bin/aarch64-linux-gnu-strip
 fi
-for MOD in `find $INSTALL/usr/lib/modules/ -type f -name *.ko`; do
+for MOD in `find $INSTALL/usr/lib/modules/ -type f -name "*.ko"`; do
   $STRIP --strip-debug $MOD
 done
 
