@@ -19,8 +19,6 @@
 ################################################################################
 
 SOURCEREMOTECONF=""
-TMPREMOTECONF="/tmp"
-REMOTECONFPRESENT="yes"
 REMAP="no"
 
 if [ -f /storage/.config/remote.conf ]; then
@@ -35,22 +33,20 @@ elif ! grep -q /dev/system /proc/mounts ; then
   mount -o rw,remount /flash
   mkdir -p /tmp/system
   mount -o ro /dev/system /tmp/system
-  for f in "/tmp/system/etc/remote*.conf"; do
-    cp "$f" /flash
+  for f in /tmp/system/etc/remote*.conf; do
+    cp $f /flash
     SOURCEREMOTECONF="/flash"
   done
-  for f in "/tmp/system/remote*.conf"; do
-    cp "$f" /flash
+  for f in /tmp/system/remote*.conf; do
+    cp $f /flash
     SOURCEREMOTECONF="/flash"
   done
   umount /tmp/system
   REMAP="yes"
-else
-  REMOTECONFPRESENT="no"
 fi
 
-if [ "$REMOTECONFPRESENT" = "yes" ]; then
-  cp "$SOURCEREMOTECONF/remote*.conf" "$TMPREMOTECONF"
+if [ -n "$SOURCEREMOTECONF" ]; then
+  cp $SOURCEREMOTECONF/remote*.conf /tmp
   if [ "$REMAP" = "yes" ]; then
     sed -i 's/ 15[^0-9]*$/ 1/
             s/ 63[^0-9]*$/ 90/
@@ -71,9 +67,9 @@ if [ "$REMOTECONFPRESENT" = "yes" ]; then
             s/ 244[^0-9]*$/ 208/
             s/ 245[^0-9]*$/ 168/
             s/ 264[^0-9]*$/ 63/
-            s/ 704[^0-9]*$/ 116/' "$TMPREMOTECONF/remote*.conf"
+            s/ 704[^0-9]*$/ 116/' /tmp/remote*.conf
   fi
-  for f in "$TMPREMOTECONF/remote*.conf"; do
-    /usr/bin/remotecfg "$f"
+  for f in /tmp/remote*.conf; do
+    /usr/bin/remotecfg $f
   done
 fi
