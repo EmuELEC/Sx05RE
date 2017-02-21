@@ -67,7 +67,7 @@ install_to_nand() {
         echo "Copying user data..."
         mkdir -p /tmp/data
         mount -o rw /dev/data /tmp/data
-        cp -av /storage/. /tmp/data/
+        cp -pPRv /storage/. /tmp/data
         echo -n "Restarting Kodi..."
         systemctl start kodi
         echo "done."
