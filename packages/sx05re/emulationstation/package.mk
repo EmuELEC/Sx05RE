@@ -4,14 +4,14 @@
 ################################################################################
 
 PKG_NAME="emulationstation"
-PKG_VERSION="15d9041"
+PKG_VERSION="b851f91"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/fieldofcows/EmulationStation/"
-PKG_URL="https://github.com/fieldofcows/EmulationStation/archive/$PKG_VERSION.tar.gz"
+PKG_SITE="https://github.com/RetroPie/EmulationStation"
+PKG_URL="https://github.com/RetroPie/EmulationStation/archive/$PKG_VERSION.tar.gz"
 PKG_SOURCE_DIR="EmulationStation*"
-PKG_DEPENDS_TARGET="toolchain systemd SDL2 boost freetype curl cmake:host freeimage eigen vlc"
+PKG_DEPENDS_TARGET="toolchain systemd SDL2 boost freetype curl cmake:host freeimage eigen vlc libpng"
 PKG_SECTION="xmedia/games"
 PKG_SHORTDESC="Emulationstation emulator frontend"
 PKG_IS_ADDON="no"
