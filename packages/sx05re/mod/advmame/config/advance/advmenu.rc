@@ -1,0 +1,590 @@
+#device_video_clock 10-150 / 30.5-60 / 55-130
+device_video_clock 5 - 50 / 15.62 / 50 ; 5 - 50 / 15.73 / 60
+#display_mode auto
+#display_mode pc_31.5_1024x768
+device_video_format 30500 0.833333 0 0.0833333 0.0833333 0.923228 0.011811 0.0137795 0.0511811
+#device_video_modeline 
+config save_at_exit
+device_alsa_device default
+device_alsa_mixer channel
+device_color_bgr15 yes
+device_color_bgr16 yes
+device_color_bgr24 yes
+device_color_bgr32 yes
+device_color_bgr8 yes
+device_color_palette8 yes
+device_color_yuy2 yes
+device_joystick auto
+device_keyboard auto
+device_mouse none
+device_raw_firstkeyhack no
+device_raw_mousedev[0] auto
+device_raw_mousedev[1] auto
+device_raw_mousedev[2] auto
+device_raw_mousedev[3] auto
+device_raw_mousetype[0] pnp
+device_raw_mousetype[1] pnp
+device_raw_mousetype[2] pnp
+device_raw_mousetype[3] pnp
+device_sdl_samples 512
+device_sound auto
+device_video auto
+device_video_cursor auto
+device_video_doublescan yes
+device_video_fastchange no
+device_video_interlace yes
+device_video_output fullscreen
+device_video_overlaysize auto
+device_video_singlescan yes
+difficulty none
+display_brightness 1
+display_gamma 1
+display_orientation 
+display_restoreatexit yes
+display_restoreatgame yes
+display_size 1280x720
+emulator "advmame" advmame "advmame" "-quiet"
+emulator "advmess" advmess "advmess" "-quiet"
+emulator_altss "advmame" "/usr/local/share/advance/snap"
+emulator_altss "advmess" "/usr/local/share/advance/snap"
+emulator_roms "advmame" "/usr/local/share/advance/rom"
+emulator_roms "advmess" "/usr/local/share/advance/rom"
+event_alpha yes
+event_assign up up or 8_pad
+event_assign down down or 2_pad
+event_assign left left or 4_pad
+event_assign right right or 6_pad
+event_assign enter enter or enter_pad
+event_assign esc esc
+event_assign space space
+event_assign home home
+event_assign end end
+event_assign pgup pgup
+event_assign pgdn pgdn
+event_assign del del
+event_assign ins insert
+event_assign shutdown lcontrol esc
+event_assign mode tab
+event_assign help f1
+event_assign group f2
+event_assign type f3
+event_assign exclude f4
+event_assign sort f5
+event_assign setgroup f9
+event_assign settype f10
+event_assign runclone f12
+event_assign command f8
+event_assign menu backquote or backslash
+event_assign emulator f6
+event_assign rotate 0_pad
+event_assign lock scrlock
+event_assign preview space
+event_assign mute period_pad
+event_mode fast
+event_repeat 500 50
+icon_space 43
+idle_screensaver 60 10
+idle_screensaver_preview play
+idle_start 0 0
+include 
+input_hotkey yes
+lock no
+menu_base 0
+menu_rel 33
+merge differential
+misc_exit normal
+misc_quiet no
+mode list
+mode_skip 
+mouse_delta 100
+preview snap
+preview_default none
+preview_default_cabinet none
+preview_default_flyer none
+preview_default_icon none
+preview_default_marquee none
+preview_default_snap none
+preview_default_title none
+preview_expand 1.15
+sort parent
+sound_background_begin none
+sound_background_end none
+sound_background_loop default
+sound_background_loop_dir "mp3"
+sound_background_start none
+sound_background_stop none
+sound_buffer 0.1
+sound_foreground_begin default
+sound_foreground_end default
+sound_foreground_key default
+sound_foreground_start default
+sound_foreground_stop default
+sound_latency 0.1
+sound_samplerate 44100
+sound_volume -3
+type_import catver "advmame" "/usr/local/share/advance/category.ini" "Category"
+ui_background none
+ui_bottombar yes
+ui_clip multiloopall
+ui_color help 000000 ffffff
+ui_color help_tag 247ef0 ffffff
+ui_color submenu_bar 247ef0 ffffff
+ui_color submenu_item 000000 ffffff
+ui_color submenu_item_select 000000 afffff
+ui_color submenu_hidden 808080 ffffff
+ui_color submenu_hidden_select 808080 afffff
+ui_color menu_item 000000 ffffff
+ui_color menu_hidden 808080 ffffff
+ui_color menu_tag 247ef0 ffffff
+ui_color menu_item_select 000000 afffff
+ui_color menu_hidden_select 808080 afffff
+ui_color menu_tag_select 247ef0 afffff
+ui_color bar 000000 ffffff
+ui_color bar_tag 247ef0 ffffff
+ui_color bar_hidden 808080 ffffff
+ui_color grid 247ef0 ffffff
+ui_color backdrop 000000 808080
+ui_color icon ffffff ffffff
+ui_color cursor 808080 ffffff
+ui_command_error Error running the command
+ui_command_menu Command...
+ui_console no
+ui_exit none
+ui_font auto
+ui_fontsize auto
+ui_game snap
+ui_gamemsg "Loading"
+ui_help none
+ui_menukey yes
+ui_skipbottom 0
+ui_skipleft 0
+ui_skipright 0
+ui_skiptop 0
+ui_startup none
+ui_topbar yes
+ui_translucency 0.6
+emulator "advmame" advmame "advmame" "-quiet"
+emulator_altss "advmame" "/usr/local/share/advance/snap"
+emulator_roms "advmame" "/usr/local/share/advance/rom"
+type_import catver "advmame" "/usr/local/share/advance/category.ini" "Category"
+emulator "advmess" advmess "advmess" "-quiet"
+emulator_altss "advmess" "/usr/local/share/advance/snap"
+emulator_roms "advmess" "/usr/local/share/advance/rom"
+ui_color help 000000 ffffff
+ui_color help_tag 247ef0 ffffff
+ui_color submenu_bar 247ef0 ffffff
+ui_color submenu_item 000000 ffffff
+ui_color submenu_item_select 000000 afffff
+ui_color submenu_hidden 808080 ffffff
+ui_color submenu_hidden_select 808080 afffff
+ui_color menu_item 000000 ffffff
+ui_color menu_hidden 808080 ffffff
+ui_color menu_tag 247ef0 ffffff
+ui_color menu_item_select 000000 afffff
+ui_color menu_hidden_select 808080 afffff
+ui_color menu_tag_select 247ef0 afffff
+ui_color bar 000000 ffffff
+ui_color bar_tag 247ef0 ffffff
+ui_color bar_hidden 808080 ffffff
+ui_color grid 247ef0 ffffff
+ui_color backdrop 000000 808080
+ui_color icon ffffff ffffff
+ui_color cursor 808080 ffffff
+event_assign up up or 8_pad
+event_assign down down or 2_pad
+event_assign left left or 4_pad
+event_assign right right or 6_pad
+event_assign enter enter or enter_pad
+event_assign esc esc
+event_assign space space
+event_assign home home
+event_assign end end
+event_assign pgup pgup
+event_assign pgdn pgdn
+event_assign del del
+event_assign ins insert
+event_assign shutdown lcontrol esc
+event_assign mode tab
+event_assign help f1
+event_assign group f2
+event_assign type f3
+event_assign exclude f4
+event_assign sort f5
+event_assign setgroup f9
+event_assign settype f10
+event_assign runclone f12
+event_assign command f8
+event_assign menu backquote or backslash
+event_assign emulator f6
+event_assign rotate 0_pad
+event_assign lock scrlock
+event_assign preview space
+event_assign mute period_pad
+type_include "<undefined>"
+type_include "Ball & Paddle"
+type_include "Ball & Paddle / Breakout"
+type_include "Ball & Paddle / Breakout * Mature *"
+type_include "Casino"
+type_include "Casino / Cards"
+type_include "Casino / Cards * Mature *"
+type_include "Casino / Lottery"
+type_include "Casino / Multiplay"
+type_include "Casino / Racing"
+type_include "Casino / Reels"
+type_include "Casino / Reels * Mature *"
+type_include "Casino / Roulette"
+type_include "Climbing"
+type_include "Driving"
+type_include "Driving / 1st Person"
+type_include "Driving / Boat"
+type_include "Driving / Plane"
+type_include "Driving / Race"
+type_include "Driving / Race (chase view)"
+type_include "Driving / Race (chase view) Bike"
+type_include "Driving / Race 1st P Bike"
+type_include "Driving / Race 1st Person"
+type_include "Driving / Race Bike"
+type_include "Driving / Race Track"
+type_include "Electromechanical / Misc."
+type_include "Fighter / 2.5D"
+type_include "Fighter / 2D"
+type_include "Fighter / 3D"
+type_include "Fighter / Field"
+type_include "Fighter / Misc."
+type_include "Fighter / Multiplay"
+type_include "Fighter / Versus"
+type_include "Fighter / Versus * Mature *"
+type_include "Fighter / Versus Co-op"
+type_include "Fighter / Vertical"
+type_include "Game Console"
+type_include "Maze"
+type_include "Maze * Mature *"
+type_include "Maze / Digging"
+type_include "Maze / Digging * Mature *"
+type_include "Maze / Driving"
+type_include "Maze / Fighter"
+type_include "Maze / Outline"
+type_include "Maze / Shooter Large"
+type_include "Maze / Shooter Small"
+type_include "Maze / Shooter Small * Mature *"
+type_include "Maze / Surround"
+type_include "Misc."
+type_include "Misc. * Mature *"
+type_include "Multiplay"
+type_include "Multiplay / Compilation"
+type_include "Multiplay / Compilation * Mature *"
+type_include "Multiplay / Mini-Games"
+type_include "Multiplay / Mini-Games * Mature *"
+type_include "Not Classified"
+type_include "Pinball"
+type_include "Pinball * Mature *"
+type_include "Pinball / Pachinko * Mature *"
+type_include "Platform / Fighter"
+type_include "Platform / Fighter Scrolling"
+type_include "Platform / Run Jump"
+type_include "Platform / Run Jump * Mature *"
+type_include "Platform / Run Jump Scrolling"
+type_include "Platform / Shooter"
+type_include "Platform / Shooter Scrolling"
+type_include "Print Club"
+type_include "Puzzle / Cards"
+type_include "Puzzle / Cards * Mature *"
+type_include "Puzzle / Drop"
+type_include "Puzzle / Drop * Mature *"
+type_include "Puzzle / Match"
+type_include "Puzzle / Match * Mature *"
+type_include "Puzzle / Maze"
+type_include "Puzzle / Misc."
+type_include "Puzzle / Misc. * Mature *"
+type_include "Puzzle / Outline"
+type_include "Puzzle / Outline * Mature *"
+type_include "Puzzle / Sliding"
+type_include "Puzzle / Sliding * Mature *"
+type_include "Puzzle / Toss"
+type_include "Puzzle / Toss * Mature *"
+type_include "Quiz / Chinese"
+type_include "Quiz / English"
+type_include "Quiz / English * Mature *"
+type_include "Quiz / French"
+type_include "Quiz / German"
+type_include "Quiz / Italian"
+type_include "Quiz / Japanese"
+type_include "Quiz / Japanese * Mature *"
+type_include "Quiz / Korean"
+type_include "Quiz / Music English"
+type_include "Quiz / Music Japanese"
+type_include "Quiz / Spanish"
+type_include "Rhythm / Dance"
+type_include "Rhythm / Instruments"
+type_include "Rhythm / Misc."
+type_include "Shooter / 1st Person"
+type_include "Shooter / 3rd Person"
+type_include "Shooter / Command"
+type_include "Shooter / Driving"
+type_include "Shooter / Driving (chase view)"
+type_include "Shooter / Driving 1st Person"
+type_include "Shooter / Driving Diagonal"
+type_include "Shooter / Driving Horizontal"
+type_include "Shooter / Driving Vertical"
+type_include "Shooter / Field"
+type_include "Shooter / Field * Mature *"
+type_include "Shooter / Flying"
+type_include "Shooter / Flying (chase view)"
+type_include "Shooter / Flying 1st Person"
+type_include "Shooter / Flying Diagonal"
+type_include "Shooter / Flying Horizontal"
+type_include "Shooter / Flying Horizontal * Mature *"
+type_include "Shooter / Flying Vertical"
+type_include "Shooter / Flying Vertical * Mature *"
+type_include "Shooter / Gallery"
+type_include "Shooter / Gallery * Mature *"
+type_include "Shooter / Gun"
+type_include "Shooter / Misc."
+type_include "Shooter / Misc. Horizontal"
+type_include "Shooter / Misc. Vertical"
+type_include "Shooter / Versus"
+type_include "Shooter / Walking"
+type_include "Sports / Amer. Football"
+type_include "Sports / Armwrestling"
+type_include "Sports / Baseball"
+type_include "Sports / Basketball"
+type_include "Sports / Bowling"
+type_include "Sports / Boxing"
+type_include "Sports / Bull Fighting"
+type_include "Sports / Darts"
+type_include "Sports / Dodgeball"
+type_include "Sports / Fishing"
+type_include "Sports / Golf"
+type_include "Sports / Handball"
+type_include "Sports / Hang Gliding"
+type_include "Sports / Hockey"
+type_include "Sports / Horse Racing"
+type_include "Sports / Horseshoes"
+type_include "Sports / Misc."
+type_include "Sports / Multiplay"
+type_include "Sports / Ping pong"
+type_include "Sports / Pool"
+type_include "Sports / Pool * Mature *"
+type_include "Sports / Rugby Football"
+type_include "Sports / Shuffleboard"
+type_include "Sports / Skateboarding"
+type_include "Sports / Skiing"
+type_include "Sports / SkyDiving"
+type_include "Sports / Soccer"
+type_include "Sports / Sumo"
+type_include "Sports / Swimming"
+type_include "Sports / Tennis"
+type_include "Sports / Track & Field"
+type_include "Sports / Volleyball"
+type_include "Sports / Wrestling"
+type_include "Tabletop / Cards"
+type_include "Tabletop / Hanafuda"
+type_include "Tabletop / Hanafuda * Mature *"
+type_include "Tabletop / Mahjong"
+type_include "Tabletop / Mahjong * Mature *"
+type_include "Tabletop / Misc."
+type_include "Tabletop / Misc. * Mature *"
+type_include "Tabletop / Othello"
+type_include "Tabletop / Othello * Mature *"
+type_include "Tabletop / Renju"
+type_include "Tabletop / Shougi"
+type_include "Utilities / Test"
+emulator_include "advmame"
+group "<undefined>"
+type "<undefined>"
+type "Ball & Paddle"
+type "Ball & Paddle / Breakout"
+type "Ball & Paddle / Breakout * Mature *"
+type "Casino"
+type "Casino / Cards"
+type "Casino / Cards * Mature *"
+type "Casino / Lottery"
+type "Casino / Multiplay"
+type "Casino / Racing"
+type "Casino / Reels"
+type "Casino / Reels * Mature *"
+type "Casino / Roulette"
+type "Climbing"
+type "Driving"
+type "Driving / 1st Person"
+type "Driving / Boat"
+type "Driving / Plane"
+type "Driving / Race"
+type "Driving / Race (chase view)"
+type "Driving / Race (chase view) Bike"
+type "Driving / Race 1st P Bike"
+type "Driving / Race 1st Person"
+type "Driving / Race Bike"
+type "Driving / Race Track"
+type "Electromechanical / Misc."
+type "Fighter / 2.5D"
+type "Fighter / 2D"
+type "Fighter / 3D"
+type "Fighter / Field"
+type "Fighter / Misc."
+type "Fighter / Multiplay"
+type "Fighter / Versus"
+type "Fighter / Versus * Mature *"
+type "Fighter / Versus Co-op"
+type "Fighter / Vertical"
+type "Game Console"
+type "Maze"
+type "Maze * Mature *"
+type "Maze / Digging"
+type "Maze / Digging * Mature *"
+type "Maze / Driving"
+type "Maze / Fighter"
+type "Maze / Outline"
+type "Maze / Shooter Large"
+type "Maze / Shooter Small"
+type "Maze / Shooter Small * Mature *"
+type "Maze / Surround"
+type "Misc."
+type "Misc. * Mature *"
+type "Multiplay"
+type "Multiplay / Compilation"
+type "Multiplay / Compilation * Mature *"
+type "Multiplay / Mini-Games"
+type "Multiplay / Mini-Games * Mature *"
+type "Not Classified"
+type "Pinball"
+type "Pinball * Mature *"
+type "Pinball / Pachinko * Mature *"
+type "Platform / Fighter"
+type "Platform / Fighter Scrolling"
+type "Platform / Run Jump"
+type "Platform / Run Jump * Mature *"
+type "Platform / Run Jump Scrolling"
+type "Platform / Shooter"
+type "Platform / Shooter Scrolling"
+type "Print Club"
+type "Puzzle / Cards"
+type "Puzzle / Cards * Mature *"
+type "Puzzle / Drop"
+type "Puzzle / Drop * Mature *"
+type "Puzzle / Match"
+type "Puzzle / Match * Mature *"
+type "Puzzle / Maze"
+type "Puzzle / Misc."
+type "Puzzle / Misc. * Mature *"
+type "Puzzle / Outline"
+type "Puzzle / Outline * Mature *"
+type "Puzzle / Sliding"
+type "Puzzle / Sliding * Mature *"
+type "Puzzle / Toss"
+type "Puzzle / Toss * Mature *"
+type "Quiz / Chinese"
+type "Quiz / English"
+type "Quiz / English * Mature *"
+type "Quiz / French"
+type "Quiz / German"
+type "Quiz / Italian"
+type "Quiz / Japanese"
+type "Quiz / Japanese * Mature *"
+type "Quiz / Korean"
+type "Quiz / Music English"
+type "Quiz / Music Japanese"
+type "Quiz / Spanish"
+type "Rhythm / Dance"
+type "Rhythm / Instruments"
+type "Rhythm / Misc."
+type "Shooter / 1st Person"
+type "Shooter / 3rd Person"
+type "Shooter / Command"
+type "Shooter / Driving"
+type "Shooter / Driving (chase view)"
+type "Shooter / Driving 1st Person"
+type "Shooter / Driving Diagonal"
+type "Shooter / Driving Horizontal"
+type "Shooter / Driving Vertical"
+type "Shooter / Field"
+type "Shooter / Field * Mature *"
+type "Shooter / Flying"
+type "Shooter / Flying (chase view)"
+type "Shooter / Flying 1st Person"
+type "Shooter / Flying Diagonal"
+type "Shooter / Flying Horizontal"
+type "Shooter / Flying Horizontal * Mature *"
+type "Shooter / Flying Vertical"
+type "Shooter / Flying Vertical * Mature *"
+type "Shooter / Gallery"
+type "Shooter / Gallery * Mature *"
+type "Shooter / Gun"
+type "Shooter / Misc."
+type "Shooter / Misc. Horizontal"
+type "Shooter / Misc. Vertical"
+type "Shooter / Versus"
+type "Shooter / Walking"
+type "Sports / Amer. Football"
+type "Sports / Armwrestling"
+type "Sports / Baseball"
+type "Sports / Basketball"
+type "Sports / Bowling"
+type "Sports / Boxing"
+type "Sports / Bull Fighting"
+type "Sports / Darts"
+type "Sports / Dodgeball"
+type "Sports / Fishing"
+type "Sports / Golf"
+type "Sports / Handball"
+type "Sports / Hang Gliding"
+type "Sports / Hockey"
+type "Sports / Horse Racing"
+type "Sports / Horseshoes"
+type "Sports / Misc."
+type "Sports / Multiplay"
+type "Sports / Ping pong"
+type "Sports / Pool"
+type "Sports / Pool * Mature *"
+type "Sports / Rugby Football"
+type "Sports / Shuffleboard"
+type "Sports / Skateboarding"
+type "Sports / Skiing"
+type "Sports / SkyDiving"
+type "Sports / Soccer"
+type "Sports / Sumo"
+type "Sports / Swimming"
+type "Sports / Tennis"
+type "Sports / Track & Field"
+type "Sports / Volleyball"
+type "Sports / Wrestling"
+type "Tabletop / Cards"
+type "Tabletop / Hanafuda"
+type "Tabletop / Hanafuda * Mature *"
+type "Tabletop / Mahjong"
+type "Tabletop / Mahjong * Mature *"
+type "Tabletop / Misc."
+type "Tabletop / Misc. * Mature *"
+type "Tabletop / Othello"
+type "Tabletop / Othello * Mature *"
+type "Tabletop / Renju"
+type "Tabletop / Shougi"
+type "Utilities / Test"
+emulator_attrib "advmame" missing exclude
+emulator_attrib "advmame" clone exclude
+emulator_attrib "advmame" bad exclude
+emulator_attrib "advmame" vector include
+emulator_attrib "advmame" vertical include
+emulator_attrib "advmame" neogeo include
+emulator_attrib "advmame" deco exclude
+emulator_attrib "advmame" playchoice exclude
+emulator_attrib "advmess" missing exclude
+emulator_attrib "advmess" clone exclude
+emulator_attrib "advmess" bad exclude
+emulator_attrib "advmess" vector include
+emulator_attrib "advmess" vertical include
+emulator_attrib "advmess" empty exclude
+emulator_attrib "advmame" missing exclude
+emulator_attrib "advmame" clone exclude
+emulator_attrib "advmame" bad exclude
+emulator_attrib "advmame" vector include
+emulator_attrib "advmame" vertical include
+emulator_attrib "advmame" neogeo include
+emulator_attrib "advmame" deco exclude
+emulator_attrib "advmame" playchoice exclude
+emulator_attrib "advmess" missing exclude
+emulator_attrib "advmess" clone exclude
+emulator_attrib "advmess" bad exclude
+emulator_attrib "advmess" vector include
+emulator_attrib "advmess" vertical include
+emulator_attrib "advmess" empty exclude

@@ -1,0 +1,12 @@
+diff -Naurp libretro-glupen64-c533113/libretro-common/include/glsym/glsym_es2.h libretro-glupen64-c533113-patch/libretro-common/include/glsym/glsym_es2.h
+--- libretro-glupen64-c533113/libretro-common/include/glsym/glsym_es2.h	2016-11-11 14:09:11.000000000 +0200
++++ libretro-glupen64-c533113-patch/libretro-common/include/glsym/glsym_es2.h	2016-11-11 12:40:01.000000000 +0200
+@@ -1,5 +1,8 @@
+ #ifndef RGLGEN_DECL_H__
+ #define RGLGEN_DECL_H__
++
++#include <stdint.h>
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif

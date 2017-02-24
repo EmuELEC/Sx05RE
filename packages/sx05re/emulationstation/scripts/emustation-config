@@ -1,0 +1,33 @@
+#!/bin/sh
+
+BIOS_DIR="/storage/roms/bios"
+N64_DIR="/storage/roms/n64"
+CONFIG_DIR="/storage/.emulationstation"
+
+
+# initial ES setup
+load_bios () {
+ 
+ if [ ! -f "$BIOS_DIR/putbioshere" ]; then
+    mkdir -p $BIOS_DIR
+     touch $BIOS_DIR/putbioshere
+fi
+
+    mkdir -p $N64_DIR
+if [ ! -f "$N64_DIR/dummy.z64" ]; then
+    touch $N64_DIR/dummy.z64
+fi
+
+if [ ! -d "$CONFIG_DIR" ]; then
+ mkdir -p $CONFIG_DIR
+ cp -rf /usr/config/emulationstation/* $CONFIG_DIR/
+fi
+
+
+}
+
+
+
+load_bios
+
+exit 0

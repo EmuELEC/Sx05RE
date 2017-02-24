@@ -1,0 +1,16 @@
+--- VolumeControl.cpp	2017-02-13 19:41:06.897756528 -0600
++++ VolumeControl.cpp.2	2017-02-13 19:40:50.441766975 -0600
+@@ -5,11 +5,11 @@
+ 
+ #if defined(__linux__)
+     #ifdef _RPI_
+-        const char * VolumeControl::mixerName = "PCM";
++        const char * VolumeControl::mixerName = "Ext Spk";
+     #else
+     	const char * VolumeControl::mixerName = "Master";
+     #endif
+-    const char * VolumeControl::mixerCard = "default";
++    const char * VolumeControl::mixerCard = "default";
+ #endif
+ 
+ std::weak_ptr<VolumeControl> VolumeControl::sInstance;

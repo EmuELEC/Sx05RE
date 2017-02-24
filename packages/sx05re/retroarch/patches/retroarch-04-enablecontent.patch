@@ -1,0 +1,57 @@
+--- ./menu/menu_displaylist.c	2017-02-04 16:49:24.095496887 -0600
++++ ./menu/menu_displaylist.c	2017-02-04 16:54:10.409814898 -0600
+@@ -3011,6 +3011,54 @@
+          msg_hash_to_str(MENU_ENUM_LABEL_THUMBNAILS_UPDATER_LIST),
+          MENU_ENUM_LABEL_THUMBNAILS_UPDATER_LIST,
+          MENU_SETTING_ACTION, 0, 0);
++ 
++   menu_entries_append_enum(info->list,
++         msg_hash_to_str(MENU_ENUM_LABEL_VALUE_CORE_UPDATER_LIST),
++         msg_hash_to_str(MENU_ENUM_LABEL_CORE_UPDATER_LIST),
++         MENU_ENUM_LABEL_CORE_UPDATER_LIST,
++         MENU_SETTING_ACTION, 0, 0);
++ 
++   menu_entries_append_enum(info->list,
++         msg_hash_to_str(MENU_ENUM_LABEL_VALUE_UPDATE_CORE_INFO_FILES),
++         msg_hash_to_str(MENU_ENUM_LABEL_UPDATE_CORE_INFO_FILES),
++         MENU_ENUM_LABEL_UPDATE_CORE_INFO_FILES,
++         MENU_SETTING_ACTION, 0, 0);
++ 
++   menu_entries_append_enum(info->list,
++         msg_hash_to_str(MENU_ENUM_LABEL_VALUE_DOWNLOAD_CORE_CONTENT),
++         msg_hash_to_str(MENU_ENUM_LABEL_DOWNLOAD_CORE_CONTENT_DIRS),
++         MENU_ENUM_LABEL_DOWNLOAD_CORE_CONTENT_DIRS,
++         MENU_SETTING_ACTION, 0, 0);
++ 
++   menu_entries_append_enum(info->list,
++         msg_hash_to_str(MENU_ENUM_LABEL_VALUE_UPDATE_AUTOCONFIG_PROFILES),
++         msg_hash_to_str(MENU_ENUM_LABEL_UPDATE_AUTOCONFIG_PROFILES),
++         MENU_ENUM_LABEL_UPDATE_AUTOCONFIG_PROFILES,
++         MENU_SETTING_ACTION, 0, 0);
++
++   menu_entries_append_enum(info->list,
++         msg_hash_to_str(MENU_ENUM_LABEL_VALUE_UPDATE_CHEATS),
++         msg_hash_to_str(MENU_ENUM_LABEL_UPDATE_CHEATS),
++         MENU_ENUM_LABEL_UPDATE_CHEATS,
++         MENU_SETTING_ACTION, 0, 0);
++
++   menu_entries_append_enum(info->list,
++         msg_hash_to_str(MENU_ENUM_LABEL_VALUE_UPDATE_OVERLAYS),
++         msg_hash_to_str(MENU_ENUM_LABEL_UPDATE_OVERLAYS),
++         MENU_ENUM_LABEL_UPDATE_OVERLAYS,
++         MENU_SETTING_ACTION, 0, 0);
++   
++   menu_entries_append_enum(info->list,
++         msg_hash_to_str(MENU_ENUM_LABEL_VALUE_UPDATE_GLSL_SHADERS),
++         msg_hash_to_str(MENU_ENUM_LABEL_UPDATE_GLSL_SHADERS),
++         MENU_ENUM_LABEL_UPDATE_GLSL_SHADERS,
++         MENU_SETTING_ACTION, 0, 0);
++
++   menu_entries_append_enum(info->list,
++         msg_hash_to_str(MENU_ENUM_LABEL_VALUE_UPDATE_DATABASES),
++         msg_hash_to_str(MENU_ENUM_LABEL_UPDATE_DATABASES),
++         MENU_ENUM_LABEL_UPDATE_DATABASES,
++         MENU_SETTING_ACTION, 0, 0);
+ #else
+ #if !defined(VITA)
+    menu_entries_append_enum(info->list,

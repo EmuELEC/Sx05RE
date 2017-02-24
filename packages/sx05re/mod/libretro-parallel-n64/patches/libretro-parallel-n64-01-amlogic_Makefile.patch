@@ -1,0 +1,28 @@
+diff -Naurp libretro-parallel-n64-09b3871/Makefile libretro-parallel-n64-09b3871-patch/Makefile
+--- libretro-parallel-n64-09b3871/Makefile	2017-02-19 06:00:25.000000000 +0200
++++ libretro-parallel-n64-09b3871-patch/Makefile	2017-02-19 11:12:36.000000000 +0200
+@@ -156,13 +156,19 @@ ifneq (,$(findstring unix,$(platform)))
+       endif
+    endif
+ 
+-   # Generic ARM
++   # Amlogic S905/812/805
+    ifneq (,$(findstring armv,$(platform)))
+-      CPUFLAGS += -DNO_ASM -DARM -D__arm__ -DARM_ASM -DNOSSE
++      GLES = 1
++      GL_LIB := -lGLESv2
++      CPUFLAGS += -DNO_ASM -DARM -D__arm__ -DARM_ASM -D__NEON_OPT -DNOSSE -marm -mfloat-abi=hard
++      HAVE_NEON = 1
+       WITH_DYNAREC=arm
+-      ifneq (,$(findstring neon,$(platform)))
+-         CPUFLAGS += -D__NEON_OPT -mfpu=neon
+-         HAVE_NEON = 1
++      ifneq (,$(findstring aml905,$(platform)))
++         CPUFLAGS += -mcpu=cortex-a53 -mfpu=neon-fp-armv8
++      else ifneq (,$(findstring aml812,$(platform)))
++         CPUFLAGS += -mcpu=cortex-a9 -mfpu=neon-fp16
++      else
++         CPUFLAGS += -mcpu=cortex-a5 -mfpu=neon-vfpv4
+       endif
+    endif
+ 

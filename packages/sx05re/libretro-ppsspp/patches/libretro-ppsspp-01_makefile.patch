@@ -1,0 +1,11 @@
+--- ./libretro/Makefile	2017-02-06 22:13:06.000000000 -0600
++++ ./libretro/Makefile	2017-02-22 21:47:34.818931689 -0600
+@@ -294,6 +294,8 @@
+ 	CPUOPTS += -O3 -DNDEBUG
+ endif
+ 
++fpic := -fPIC
++### Finalize ###
+ ### Finalize ###
+ OBJECTS		+= $(SOURCES_CXX:.cpp=.o) $(SOURCES_C:.c=.o) $(ASMFILES:.S=.o)
+ CXXFLAGS	+= -std=c++11 $(CPUOPTS) $(COREFLAGS) $(INCFLAGS) $(PLATCFLAGS) $(fpic) $(PLATCFLAGS) $(CPUFLAGS) $(GLFLAGS) $(DYNAFLAGS) 
