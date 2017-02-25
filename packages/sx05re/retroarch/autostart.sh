@@ -38,14 +38,14 @@ systemctl start smbd
 systemctl start sshd
 
 #touch /var/lock/start.kodi
- #rm -r /var/lock/start.kodi
- #touch /var/lock/start.games
+ rm -r /var/lock/start.kodi
+ touch /var/lock/start.games
 
 #/usr/bin/emustation-config
 #HOME=/storage
 #SDL_AUDIODRIVER="alsa" /usr/bin/emulationstation
 #while pgrep emulationstation  > /dev/null; do sleep 1; done
 
-#systemctl start emustation
+systemctl start emustation
 
 

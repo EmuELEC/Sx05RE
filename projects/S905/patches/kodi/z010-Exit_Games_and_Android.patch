@@ -63,9 +63,9 @@ diff -Naurp kodi-17.0-beta7-b9fe8e9/xbmc/Application.cpp kodi-17.0-beta7-b9fe8e9
 +  }
 +  else if (m_ExitCode == EXITCODE_GAMES)
 +  {
-+    system("systemctl stop kodi");
++    
 +    creat("/var/lock/start.games", S_IRUSR|S_IROTH);
-+    system("systemctl start emustation.service");
++    system("systemctl start emustation.service"); system("systemctl stop kodi");
 +  }
 +
    Sleep(200);

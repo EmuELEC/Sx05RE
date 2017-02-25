@@ -1,0 +1,11 @@
+[Unit]
+Description=GUI switch service
+Before=kodi.service
+
+[Service]
+Type=oneshot
+ExecStart=-/bin/sh -c 'touch /var/lock/start.kodi'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
