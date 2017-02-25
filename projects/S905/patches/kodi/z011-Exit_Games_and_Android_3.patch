@@ -1,0 +1,26 @@
+diff -Naurp kodi-17.0-beta7-b9fe8e9/xbmc/powermanagement/PowerManager.cpp kodi-17.0-beta7-b9fe8e9-patch/xbmc/powermanagement/PowerManager.cpp
+--- kodi-17.0-beta7-b9fe8e9/xbmc/powermanagement/PowerManager.cpp	2016-12-01 11:20:47.000000000 +0200
++++ kodi-17.0-beta7-b9fe8e9-patch/xbmc/powermanagement/PowerManager.cpp	2016-12-06 09:48:47.000000000 +0200
+@@ -312,17 +312,8 @@ void CPowerManager::OnLowBattery()
+ 
+ void CPowerManager::SettingOptionsShutdownStatesFiller(const CSetting *setting, std::vector< std::pair<std::string, int> > &list, int &current, void *data)
+ {
+-  if (g_powerManager.CanPowerdown())
+-    list.push_back(make_pair(g_localizeStrings.Get(13005), POWERSTATE_SHUTDOWN));
+-  if (g_powerManager.CanHibernate())
+-    list.push_back(make_pair(g_localizeStrings.Get(13010), POWERSTATE_HIBERNATE));
+-  if (g_powerManager.CanSuspend())
+-    list.push_back(make_pair(g_localizeStrings.Get(13011), POWERSTATE_SUSPEND));
+-  if (!g_application.IsStandAlone())
+-  {
+-    list.push_back(make_pair(g_localizeStrings.Get(13009), POWERSTATE_QUIT));
+-#if !defined(TARGET_DARWIN_IOS)
+-    list.push_back(make_pair(g_localizeStrings.Get(13014), POWERSTATE_MINIMIZE));
+-#endif
+-  }
++  list.push_back(make_pair(g_localizeStrings.Get(13005), POWERSTATE_SHUTDOWN));
++  list.push_back(make_pair(g_localizeStrings.Get(13010), POWERSTATE_HIBERNATE));
++  list.push_back(make_pair(g_localizeStrings.Get(13011), POWERSTATE_SUSPEND));
++  list.push_back(make_pair(g_localizeStrings.Get(13012), POWERSTATE_QUIT));
+ }
+

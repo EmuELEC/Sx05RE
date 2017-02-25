@@ -35,9 +35,17 @@ if [[ -z "${FULLPATHTOROMS}" ]]; then
 #hacky way to get samba on boot
 ./usr/lib/samba/samba-config
 systemctl start smbd
+systemctl start sshd
 
-rm -r /var/lock/start.kodi
-touch /var/lock/start.games
-systemctl start emustation.service
+#touch /var/lock/start.kodi
+ #rm -r /var/lock/start.kodi
+ #touch /var/lock/start.games
+
+#/usr/bin/emustation-config
+#HOME=/storage
+#SDL_AUDIODRIVER="alsa" /usr/bin/emulationstation
+#while pgrep emulationstation  > /dev/null; do sleep 1; done
+
+#systemctl start emustation
 
 

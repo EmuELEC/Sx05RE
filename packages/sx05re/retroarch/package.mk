@@ -72,6 +72,10 @@ makeinstall_target() {
  mkdir -p $INSTALL/usr/config/
 cp $PKG_DIR/autostart.sh $INSTALL/usr/config/autostart.sh
 
+#this needs to be moved to filesystem, but put it here for easy testing. 
+mkdir -p $INSTALL/usr/config/asound.conf
+cp $PKG_DIR/asound.conf/asound.conf $INSTALL/usr/config/asound.conf/asound.conf
+
   # General configuration
   sed -i -e "s/# screenshot_directory =/screenshot_directory = \"\/storage\/screenshots\"/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# libretro_directory =/libretro_directory = \"\/tmp\/cores\"/" $INSTALL/etc/retroarch.cfg
