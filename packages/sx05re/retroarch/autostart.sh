@@ -4,7 +4,7 @@
 
 sleep 2
 
-#name of the file we need to put in the roms folder
+#name of the file we need to put in the roms folder in your USB or SDCARD 
 ROMFILE="sx05reroms"
 
 
@@ -32,20 +32,11 @@ if [[ -z "${FULLPATHTOROMS}" ]]; then
 
  fi
 
-#hacky way to get samba on boot
-./usr/lib/samba/samba-config
-systemctl start smbd
-systemctl start sshd
+ touch /var/lock/start.kodi
 
-#touch /var/lock/start.kodi
- rm -r /var/lock/start.kodi
- touch /var/lock/start.games
-
-#/usr/bin/emustation-config
-#HOME=/storage
-#SDL_AUDIODRIVER="alsa" /usr/bin/emulationstation
-#while pgrep emulationstation  > /dev/null; do sleep 1; done
-
-systemctl start emustation
+ #if you want EmulationStation to start first, uncomment the next 3 lines
+ #rm -r /var/lock/start.kodi
+ #touch /var/lock/start.games
+ #systemctl start emustation
 
 
