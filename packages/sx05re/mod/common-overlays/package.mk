@@ -4,7 +4,7 @@
 ################################################################################
 
 PKG_NAME="common-overlays"
-PKG_VERSION="8684606"
+PKG_VERSION="041856e"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"

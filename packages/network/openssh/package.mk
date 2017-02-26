@@ -62,6 +62,9 @@ post_makeinstall_target() {
   rm -rf $INSTALL/usr/bin/ssh-agent
   rm -rf $INSTALL/usr/bin/ssh-keyscan
 
+mkdir -p $INSTALL/usr/share/services
+    cp -P $PKG_DIR/default.d/*.conf $INSTALL/usr/share/services
+
   sed -e "s|^#PermitRootLogin.*|PermitRootLogin yes|g" \
       -e "s|^#StrictModes.*|StrictModes no|g" \
       -e "s|^#UsePrivilegeSeparation.*|UsePrivilegeSeparation no|g" \
@@ -73,5 +76,6 @@ post_makeinstall_target() {
 }
 
 post_install() {
+  enable_service sshd-defaults.service
   enable_service sshd.service
 }

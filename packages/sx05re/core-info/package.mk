@@ -4,7 +4,7 @@
 ################################################################################
 
 PKG_NAME="core-info"
-PKG_VERSION="adb2940"
+PKG_VERSION="176cdcd"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"

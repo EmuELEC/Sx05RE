@@ -1,10 +1,10 @@
 ################################################################################
 #      This file is part of Alex@ELEC - http://www.alexelec.in.ua
 #      Copyright (C) 2011-2017 Alexandr Zuyev (alex@alexelec.in.ua) e95eb4e
-################################################################################
+################################################################################b851f91
 
 PKG_NAME="emulationstation"
-PKG_VERSION="b851f91"
+PKG_VERSION="f63dca5"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"

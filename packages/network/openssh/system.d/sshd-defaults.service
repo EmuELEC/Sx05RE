@@ -1,0 +1,10 @@
+[Unit]
+Description=OpenSSH defaults
+
+ConditionPathExists=!/storage/.cache/services/sshd.conf
+ConditionPathExists=!/storage/.cache/services/sshd.disabled
+
+[Service]
+Type=oneshot
+ExecStart=/bin/cp /usr/share/services/sshd.conf /storage/.cache/services/
+RemainAfterExit=yes

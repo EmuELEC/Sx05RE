@@ -4,7 +4,7 @@
 ################################################################################
 
 PKG_NAME="libretro-snes9x2010"
-PKG_VERSION="9710b8f"
+PKG_VERSION="b2a69de"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="Non-commercial"
