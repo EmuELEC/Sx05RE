@@ -1,3 +1,9 @@
+**Sx05RE**
+An emulation fork for Sx05 devices.
+to build use
+
+make image PROJECT=S905 ARCH=arm DISTRO=Sx05RE
+
 # LibreELEC
 
 LibreELEC is a 'Just enough OS' Linux distribution for running the award-winning [Kodi](http://kodi.tv) software on popular mediacentre hardware. LibreELEC is a conservative fork of the popular [OpenELEC](http://openelec.tv) project with a stronger focus on pre-release testing and post-release change management. Further information on the project can be found on the [LibreELEC website](https://libreelec.tv).
