@@ -1,4 +1,4 @@
-From fc27aad01a7ba8f34633516dfbc65b74004a9f44 Mon Sep 17 00:00:00 2001
+From 8a39c3a53fc6fe49a42f91f27d83eb44e6fbcc32 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Mon, 19 Dec 2016 14:21:40 +0000
 Subject: [PATCH 1/3] [cec] Drop CEC_DOUBLE_TAP_TIMEOUT_MS_OLD code
@@ -9,10 +9,10 @@ Kodi won't even build with libcec 3, so supporting a libcec 2.2 setting is of no
  1 file changed, 1 insertion(+), 6 deletions(-)
 
 diff --git a/xbmc/peripherals/devices/PeripheralCecAdapter.cpp b/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
-index 54dc37e..73872e3 100644
+index 5b5b38d..2d4b06c 100644
 --- a/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
 +++ b/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
-@@ -1391,13 +1391,8 @@ void CPeripheralCecAdapter::SetConfigurationFromSettings(void)
+@@ -1392,13 +1392,8 @@ void CPeripheralCecAdapter::SetConfigurationFromSettings(void)
    m_configuration.bPowerOffOnStandby = iStandbyAction == LOCALISED_ID_SUSPEND ? 1 : 0;
    m_bShutdownOnStandby = iStandbyAction == LOCALISED_ID_POWEROFF;
  
@@ -28,7 +28,7 @@ index 54dc37e..73872e3 100644
    if (GetSettingBool("pause_playback_on_deactivate"))
    {
 
-From 728b67f562ce0f03d25aa189e73a8954d678e58e Mon Sep 17 00:00:00 2001
+From b79f99511bcf81fb07d90ba9c3aa378c88d7cc03 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Mon, 19 Dec 2016 14:21:40 +0000
 Subject: [PATCH 2/3] [cec] Add settings for configuring button repeats
@@ -40,12 +40,12 @@ Subject: [PATCH 2/3] [cec] Add settings for configuring button repeats
  3 files changed, 29 insertions(+), 1 deletion(-)
 
 diff --git a/addons/resource.language.en_gb/resources/strings.po b/addons/resource.language.en_gb/resources/strings.po
-index 0242b2c..9355717 100644
+index 699eae7..34bc0d8 100644
 --- a/addons/resource.language.en_gb/resources/strings.po
 +++ b/addons/resource.language.en_gb/resources/strings.po
-@@ -20410,3 +20410,18 @@ msgstr ""
- msgctxt "#39013"
- msgid "Virtual filesystems"
+@@ -20426,3 +20426,18 @@ msgstr ""
+ msgctxt "#39016"
+ msgid "Resume audiobook"
  msgstr ""
 +
 +#: system/peripherals.xml
@@ -78,10 +78,10 @@ index d5704b2..02b1a9e 100644
  
    <peripheral vendor_product="2548:1001,2548:1002" bus="usb" name="Pulse-Eight CEC Adapter" mapTo="cec">
 diff --git a/xbmc/peripherals/devices/PeripheralCecAdapter.cpp b/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
-index 73872e3..92c901e 100644
+index 2d4b06c..cb175d3 100644
 --- a/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
 +++ b/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
-@@ -1296,6 +1296,15 @@ void CPeripheralCecAdapter::SetConfigurationFromLibCEC(const CEC::libcec_configu
+@@ -1297,6 +1297,15 @@ void CPeripheralCecAdapter::SetConfigurationFromLibCEC(const CEC::libcec_configu
    m_configuration.bActivateSource = config.bActivateSource;
    bChanged |= SetSetting("activate_source", m_configuration.bActivateSource == 1);
  
@@ -97,7 +97,7 @@ index 73872e3..92c901e 100644
    m_configuration.bPowerOffOnStandby = config.bPowerOffOnStandby;
  
    m_configuration.iFirmwareVersion = config.iFirmwareVersion;
-@@ -1393,6 +1402,8 @@ void CPeripheralCecAdapter::SetConfigurationFromSettings(void)
+@@ -1394,6 +1403,8 @@ void CPeripheralCecAdapter::SetConfigurationFromSettings(void)
  
    // double tap prevention timeout in ms
    m_configuration.iDoubleTapTimeoutMs = GetSettingInt("double_tap_timeout_ms");
@@ -107,7 +107,7 @@ index 73872e3..92c901e 100644
    if (GetSettingBool("pause_playback_on_deactivate"))
    {
 
-From fece5a7f5b145de85a355273b456e0f2d62bc887 Mon Sep 17 00:00:00 2001
+From 5f19f6a2c06075e4d75b66772e304cd5f50523eb Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Mon, 19 Dec 2016 14:21:40 +0000
 Subject: [PATCH 3/3] [cec] Don't discard buttons when repeat mode is enabled
@@ -117,10 +117,10 @@ Subject: [PATCH 3/3] [cec] Don't discard buttons when repeat mode is enabled
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/xbmc/peripherals/devices/PeripheralCecAdapter.cpp b/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
-index 92c901e..da99db9 100644
+index cb175d3..9b2943f 100644
 --- a/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
 +++ b/xbmc/peripherals/devices/PeripheralCecAdapter.cpp
-@@ -803,7 +803,10 @@ void CPeripheralCecAdapter::PushCecKeypress(const CecButtonPress &key)
+@@ -804,7 +804,10 @@ void CPeripheralCecAdapter::PushCecKeypress(const CecButtonPress &key)
    CLog::Log(LOGDEBUG, "%s - received key %2x duration %d", __FUNCTION__, key.iButton, key.iDuration);
  
    CSingleLock lock(m_critSection);
