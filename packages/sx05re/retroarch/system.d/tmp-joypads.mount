@@ -1,5 +1,5 @@
 [Unit]
-Description=Joypad configs directory RetroArch
+Description=Joypad configs directory
 After=storage.mount
 After=systemd-tmpfiles-setup.service
 
@@ -7,7 +7,7 @@ After=systemd-tmpfiles-setup.service
 What=none
 Where=/tmp/joypads
 Type=overlay
-Options=lowerdir=/usr/share/retroarch/joypad-autoconfig,upperdir=/storage/.config/retroarch/joypads,workdir=/storage/.tmp/joypads-workdir
+Options=lowerdir=/etc/retroarch-joypad-autoconfig,upperdir=/storage/joypads,workdir=/storage/.tmp/joypads-workdir
 
 [Install]
 WantedBy=kodi.target

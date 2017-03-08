@@ -1,0 +1,54 @@
+diff -Naurp libretro-picodrive-805d357/Makefile.libretro libretro-picodrive-805d357-patch/Makefile.libretro
+--- libretro-picodrive-805d357/Makefile.libretro	2017-02-27 02:04:44.000000000 +0200
++++ libretro-picodrive-805d357-patch/Makefile.libretro	2017-03-04 16:17:38.000000000 +0200
+@@ -355,37 +355,25 @@ else ifeq ($(platform), qnx)
+ 	use_sh2drc = 1
+ 	use_svpdrc = 1
+ 
+-# ARM
++# Amlogic S905/812/805
+ else ifneq (,$(findstring armv,$(platform)))
+ 	TARGET := $(TARGET_NAME)_libretro.so
+ 	SHARED := -shared -Wl,--no-undefined
+    fpic := -fPIC
+-	ifneq (,$(findstring cortexa5,$(platform)))
+-		CFLAGS += -marm -mcpu=cortex-a5
+-		ASFLAGS += -mcpu=cortex-a5
+-	else ifneq (,$(findstring cortexa8,$(platform)))
+-		CFLAGS += -marm -mcpu=cortex-a8
+-		ASFLAGS += -mcpu=cortex-a8
+-	else ifneq (,$(findstring cortexa9,$(platform)))
+-		CFLAGS += -marm -mcpu=cortex-a9
+-		ASFLAGS += -mcpu=cortex-a9
+-	else ifneq (,$(findstring cortexa15a7,$(platform)))
+-		CFLAGS += -marm -mcpu=cortex-a15.cortex-a7
+-		ASFLAGS += -mcpu=cortex-a15.cortex-a7
++	ifneq (,$(findstring aml805,$(platform)))
++		CFLAGS += -marm --mcpu=cortex-a5 -mfpu=neon-vfpv4
++		ASFLAGS += -mcpu=cortex-a5 -mfpu=neon-vfpv4
++	else ifneq (,$(findstring aml905,$(platform)))
++		CFLAGS += -marm -mcpu=cortex-a53 -mfpu=neon-fp-armv8
++		ASFLAGS += -mcpu=cortex-a53 -mfpu=neon-fp-armv8
++	else ifneq (,$(findstring aml812,$(platform)))
++		CFLAGS += -marm -mcpu=cortex-a9 -mfpu=neon-fp16
++		ASFLAGS += -mcpu=cortex-a9 -mfpu=neon-fp16
+ 	else
+ 		CFLAGS += -marm
+ 	endif
+-	ifneq (,$(findstring neon,$(platform)))
+-		CFLAGS += -mfpu=neon
+-		ASFLAGS += -mfpu=neon
+-	endif
+-	ifneq (,$(findstring softfloat,$(platform)))
+-		CFLAGS += -mfloat-abi=softfp
+-		ASFLAGS += -mfloat-abi=softfp
+-	else ifneq (,$(findstring hardfloat,$(platform)))
+-		CFLAGS += -mfloat-abi=hard
+-		ASFLAGS += -mfloat-abi=hard
+-	endif
++	CFLAGS += -mfloat-abi=hard
++	ASFLAGS += -mfloat-abi=hard
+ 	ifneq (,$(findstring armasm,$(platform)))
+ 		ARM_ASM = 1
+ 	endif
+

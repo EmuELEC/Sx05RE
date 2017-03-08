@@ -23,7 +23,7 @@ PKG_ARCH="any"
 PKG_LICENSE="various"
 PKG_SITE="http://www.openelec.tv"
 PKG_URL=""
-PKG_DEPENDS_TARGET="toolchain rng-tools u-boot-tools"
+PKG_DEPENDS_TARGET="toolchain rng-tools u-boot-tools sx05re"
 PKG_PRIORITY="optional"
 PKG_SECTION="virtual"
 PKG_SHORTDESC="OEM: Metapackage for various OEM packages"
@@ -37,28 +37,4 @@ post_install() {
     cp -LR $PROJECT_DIR/$PROJECT/devices/$DEVICE/filesystem/* $ROOT/$BUILD/image/system
   fi
 }
-
-
- # sx05re
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET retroarch"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mupen64plus-libretro"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libretro-pcsx_rearmed"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libretro-genesis-plus-gx"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libretro-snes9x2010"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libretro-mame2003"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libretro-fbalpha"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libretro-fuse"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libretro-nestopia"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libretro-picodrive"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libretro-vba-next"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libretro-gambatte"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libretro-beetle-pce-fast"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET stella"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET prosystem"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET atari800"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libretro-parallel-n64"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET ppsspp"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET advmame"
-  #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libretro-ppsspp"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET PPSSPPSDL"
+ 
