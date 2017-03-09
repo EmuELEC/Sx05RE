@@ -2,15 +2,18 @@
 # setup system defaults
 ################################################################################
 
-    if [ -z "$SYSTEM" ]; then
-      SYSTEM="MXQ"
-    fi
+    TARGET_CPU="cortex-a53"
 
-  # Setup controls which processor should be targeted for generated code.
-    TARGET_ARCH=arm
-    TARGET_CPU="cortex-a5"
-    TARGET_FLOAT="hard"
-    TARGET_FPU="neon-vfpv4"
+    case $TARGET_ARCH in
+      aarch64)
+        TARGET_CPU_FLAGS="+crc+fp+simd"
+        ;;
+      arm)
+        TARGET_CPU_FLAGS="+crc"
+        TARGET_FPU="neon-fp-armv8"
+        TARGET_FLOAT="hard"
+        ;;
+    esac
 
   # Bootloader to use (syslinux / u-boot / atv-bootloader / bcm2835-bootloader)
     BOOTLOADER="u-boot"
@@ -25,23 +28,16 @@
     UBOOT_CONFIGFILE=""
 
   # Kernel target
-    KERNEL_TARGET="uImage"
+    KERNEL_TARGET="Image.lzo"
 
   # Kernel extra targets to build
-    case $SYSTEM in
-      MXQ)
-        KERNEL_UBOOT_EXTRA_TARGET="meson8b_mxq.dtd meson8b_mxq.dtb"
-        ;;
-      HD18Q)
-        KERNEL_UBOOT_EXTRA_TARGET="meson8b_hd18q.dtd meson8b_hd18q.dtb"
-        ;;
-      m201d)
-        KERNEL_UBOOT_EXTRA_TARGET="meson8b_m201d.dtd meson8b_m201d.dtb"
-        ;;
-    esac
+    KERNEL_UBOOT_EXTRA_TARGET="gxm_q200_2g.dtb gxm_q201_1g.dtb gxm_q201_2g.dtb"
 
   # Build Android kernel image using mkbootimg
     BUILD_ANDROID_BOOTIMG="yes"
+
+  # Additional options to be passed to Android mkbootimg
+    ANDROID_BOOTIMG_OPTIONS="--base 0x0 --kernel_offset 0x1080000"
 
   # Additional kernel make parameters (for example to specify the u-boot loadaddress)
     KERNEL_MAKE_EXTRACMD=""
@@ -52,8 +48,10 @@
   # Kernel to use. values can be:
   # default:  default mainline kernel
     LINUX="custom"
-    KERNEL_VERSION="c7cf113"
-    KERNEL_URL="https://github.com/kszaq/linux/archive/$KERNEL_VERSION.tar.gz"
+    KERNEL_VERSION="c850c92"
+    KERNEL_URL="https://github.com/kszaq/linux-amlogic-le/archive/$KERNEL_VERSION.tar.gz"
+    KERNEL_SOURCE_DIR="linux-amlogic-le-$KERNEL_VERSION*"
+    KERNEL_PATCH_DIRS="amlogic-3.14"
 
 ################################################################################
 # setup build defaults
@@ -76,10 +74,7 @@
     OPENGL="no"
 
   # OpenGL-ES implementation to use (no / bcm2835-driver / gpu-viv-bin-mx6q / opengl-meson)
-    OPENGLES="opengl-meson"
-
-  # Amlogic Meson SOC family (8 / 6 / gxbb)
-    MESON_FAMILY="8"
+    OPENGLES="opengl-meson-t82x"
 
   # include uvesafb support (yes / no)
     UVESAFB_SUPPORT="no"
@@ -99,18 +94,18 @@
     KODIPLAYER_DRIVER="libamcodec"
 
   # Modules to install in initramfs for early boot
-    INITRAMFS_MODULES="softcursor bitblit font fbcon"
+    INITRAMFS_MODULES="dwc_otg dwc3 font softcursor bitblit fbcon aml_nftl_dev"
 
   # additional drivers to install:
   # for a list of additinoal drivers see packages/linux-drivers
   # Space separated list is supported,
   # e.g. ADDITIONAL_DRIVERS="DRIVER1 DRIVER2"
-    ADDITIONAL_DRIVERS="RTL8192CU RTL8192DU RTL8192EU RTL8812AU mt7610u media_build mt7601u-aml"
+    ADDITIONAL_DRIVERS="RTL8192CU RTL8192DU RTL8192EU RTL8812AU qca9377-aml media_build mt7601u-aml mt7603u-aml gpu-aml-t8xx"
 
   # additional Firmware to use (dvb-firmware, misc-firmware, wlan-firmware)
   # Space separated list is supported,
   # e.g. FIRMWARE="dvb-firmware misc-firmware wlan-firmware"
-    FIRMWARE="misc-firmware wlan-firmware dvb-firmware brcmfmac_sdio-firmware-aml-all rtl8723bs_bt"
+    FIRMWARE="misc-firmware wlan-firmware dvb-firmware brcmfmac_sdio-firmware-aml-all rtl8723bs_bt qca9377-firmware-aml"
 
   # build and install ATV IR remote support (yes / no)
     ATVCLIENT_SUPPORT="no"
@@ -125,7 +120,7 @@
     ISCSI_SUPPORT="no"
 
   # build with swap support (yes / no)
-    SWAP_SUPPORT="no"
+    SWAP_SUPPORT="yes"
 
   # swap support enabled per default (yes / no)
     SWAP_ENABLED_DEFAULT="no"
@@ -140,12 +135,11 @@
     EXTRA_DEPS="mkimage"
     EXTRA_DEPS_PKG="u-boot-tools"
 
-  # kernel image name
-    KERNEL_NAME="kernel.img"
-
   # set the addon dirs
     ADDON_SERVER_URL="http://kszaq.libreelec.tv/addons"
+    ADDON_PATH="$ADDON_VERSION/S905/$TARGET_ARCH"
     ADDON_URL="$ADDON_SERVER_URL/$ADDON_PATH"
 
   # OEM packages for OEM's (yes / no)
     OEM_SUPPORT="yes"
+

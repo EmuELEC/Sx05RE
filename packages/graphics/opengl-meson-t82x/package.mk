@@ -16,27 +16,33 @@
 #  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="libc"
-PKG_VERSION=""
-PKG_ARCH="any"
-PKG_LICENSE="GPL"
-PKG_SITE="http://www.openelec.tv"
-PKG_URL=""
-PKG_DEPENDS_TARGET="toolchain glibc tz"
-PKG_DEPENDS_INIT="toolchain glibc:init"
-PKG_SECTION="virtual"
-PKG_SHORTDESC="libc: Metapackage"
-PKG_LONGDESC=""
-PKG_SHORTDESC="libc: Meta package for installing various tools and libs needed for libc"
-PKG_LONGDESC="Meta package for installing various tools and libs needed for libc"
+PKG_NAME="opengl-meson-t82x"
+PKG_ARCH="arm aarch64"
+PKG_LICENSE="nonfree"
+PKG_SITE="https://github.com/kszaq/opengl-meson-t82x"
+PKG_DEPENDS_TARGET="toolchain libhybris"
+PKG_VERSION="06cced7"
+PKG_URL="$PKG_SITE/archive/$PKG_VERSION.tar.gz"
+PKG_SOURCE_DIR="$PKG_NAME-$PKG_VERSION*"
+PKG_SECTION="graphics"
+PKG_SHORTDESC="opengl-meson: OpenGL ES pre-compiled libraries for Mali GPUs found in Amlogic Meson SoCs"
+PKG_LONGDESC="opengl-meson: OpenGL ES pre-compiled libraries for Mali GPUs found in Amlogic Meson SoCs. The libraries could be found in a Linux buildroot released by Amlogic at http://openlinux.amlogic.com:8000/download/ARM/filesystem/. See the opengl package."
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-if [ "$BOOTLOADER" = "bcm2835-bootloader" ] \
-  || [ "$PROJECT" = "S805" ] \
-  || [ "$PROJECT" = "S905" -a "$ARCH" = "arm" ] \
-  || [ "$PROJECT" = "S912" -a "$ARCH" = "arm" ] ; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET arm-mem"
-  PKG_DEPENDS_INIT="$PKG_DEPENDS_INIT arm-mem:init"
-fi
+make_target() {
+ : # nothing todo
+}
+
+makeinstall_target() {
+  mkdir -p $SYSROOT_PREFIX/usr/include
+    cp -PR usr/include/* $SYSROOT_PREFIX/usr/include
+
+  mkdir -p $INSTALL/system
+    cp -PR system/* $INSTALL/system
+}
+
+post_install() {
+  enable_service unbind-console.service
+}

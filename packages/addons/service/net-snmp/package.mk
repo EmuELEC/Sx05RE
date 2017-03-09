@@ -48,6 +48,11 @@ PKG_CONFIGURE_OPTS_TARGET="--with-defaults \
         --with-persistent-directory=/storage/.kodi/userdata/addon_data/${PKG_ADDON_ID}/ \
         --disable-embedded-perl"
 
+pre_configure_target() {
+  strip_gold
+  strip_lto
+}
+
 make_target() {
   make
 }
