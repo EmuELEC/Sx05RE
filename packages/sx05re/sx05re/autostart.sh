@@ -34,14 +34,16 @@ if [[ -z "${FULLPATHTOROMS}" ]]; then
 /usr/lib/samba/samba-config
 systemctl start smbd
 
+#THESE CHANGES ARE UNSTESTED! I DONT KNOW IF YOUR DEVICE WILL EXPLODE UNCOMMENT UNDER YOUR OWN RISK!
+
 #Echoing 5 will get you 792MHz for S905 and 742MHz for S905X
-echo 5 > /sys/class/mpgpu/cur_freq
-#set CPU max
-echo 1536000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+#echo 5 > /sys/class/mpgpu/cur_freq
+##set CPU max
+#echo 1536000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
 
 
 
  #if you don't want EmulationStation to start first, comment the next 3 lines
- rm -rf /var/lock/start.kodi
- touch /var/lock/start.games
- systemctl start emustation
+ #rm -rf /var/lock/start.kodi
+ #touch /var/lock/start.games
+ #systemctl start emustation
