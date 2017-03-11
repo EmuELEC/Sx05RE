@@ -12,7 +12,7 @@
 
 # Welcome Message for e.g. SSH Server (up to 5 Lines)
   GREETING0="##############################################"
-  GREETING1="#                 Sx05RE	              #"
+  GREETING1="#                 Sx05RE	             #"
   GREETING2="#    An emulation build for Sx05 Devices     #"
   GREETING3="#            Based on LibreELEC              #"
   GREETING4="##############################################"
@@ -198,7 +198,8 @@
   SYSTEM_PART_START=2048
 
 
-# This will be put in retroarch.cfg as core playlists
+ LAKKA_MIRROR="http://sources.lakka.tv"
+
   RA_PLAYLIST_NAMES=""\
 "Atari - 2600.lpl;"\
 "Atari - 5200.lpl;"\
@@ -210,7 +211,9 @@
 "Bandai - WonderSwan.lpl;"\
 "Cave Story.lpl;"\
 "Coleco - ColecoVision.lpl;"\
+"Dinothawr.lpl;"\
 "DOOM.lpl;"\
+"DOS.lpl;"\
 "FB Alpha - Arcade Games.lpl;"\
 "GCE - Vectrex.lpl;"\
 "Lutro.lpl;"\
@@ -259,12 +262,14 @@
 "/tmp/cores/mednafen_wswan_libretro.so;"\
 "/tmp/cores/nxengine_libretro.so;"\
 "/tmp/cores/bluemsx_libretro.so;"\
+"/tmp/cores/dinothawr_libretro.so;"\
 "/tmp/cores/prboom_libretro.so;"\
+"/tmp/cores/dosbox_libretro.so;"\
 "/tmp/cores/fbalpha_libretro.so;"\
 "/tmp/cores/vecx_libretro.so;"\
 "/tmp/cores/lutro_libretro.so;"\
 "/tmp/cores/o2em_libretro.so;"\
-"/tmp/cores/mame2003_libretro.so;"\
+"/tmp/cores/mame_libretro.so;"\
 "/tmp/cores/bluemsx_libretro.so;"\
 "/tmp/cores/bluemsx_libretro.so;"\
 "/tmp/cores/mednafen_supergrafx_libretro.so;"\
@@ -274,7 +279,7 @@
 "/tmp/cores/mgba_libretro.so;"\
 "/tmp/cores/gambatte_libretro.so;"\
 "/tmp/cores/gambatte_libretro.so;"\
-"/tmp/cores/glupen64_libretro.so;"\
+"/tmp/cores/parallel_n64_libretro.so;"\
 "/tmp/cores/desmume_libretro.so;"\
 "/tmp/cores/desmume_libretro.so;"\
 "/tmp/cores/desmume_libretro.so;"\
@@ -296,3 +301,9 @@
 "/tmp/cores/mednafen_ngp_libretro.so;"\
 "/tmp/cores/ppsspp_libretro.so;"\
 "/tmp/cores/pcsx_rearmed_libretro.so"
+
+# override some playlist core assignation
+RA_PLAYLIST_CORES="${RA_PLAYLIST_CORES//parallel_n64/mupen64plus}"
+
+# override some playlist core assignation
+RA_PLAYLIST_CORES="${RA_PLAYLIST_CORES//parallel_n64/glupen64}"

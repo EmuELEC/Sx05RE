@@ -38,8 +38,12 @@ systemctl start smbd
 
 #Echoing 5 will get you 792MHz for S905 and 742MHz for S905X
 #echo 5 > /sys/class/mpgpu/cur_freq
+#echo 5 > /sys/class/mpgpu/max_freq
+#echo 5 > /sys/class/mpgpu/min_freq
 ##set CPU max
 #echo 1536000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+#echo performance > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+
 
 
 

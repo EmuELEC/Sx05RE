@@ -1,7 +1,20 @@
 ################################################################################
-#      This file is part of Alex@ELEC - http://www.alexelec.in.ua
-#      Copyright (C) 2011-2017 Alexandr Zuyev (alex@alexelec.in.ua) e95eb4e
-################################################################################b851f91
+#      This file is part of LibreELEC - http://www.libreelec.tv
+#      Copyright (C) 2016 Team LibreELEC
+#
+#  LibreELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  LibreELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 PKG_NAME="emulationstation"
 PKG_VERSION="f63dca5"
@@ -18,8 +31,8 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 # theme for Emulationstation
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation-theme-simple-dark"
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation-theme-carbon"
+#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation-theme-simple-dark"
+#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation-theme-carbon"
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation-theme-tronkyfran"
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation-theme-crt"
 
@@ -31,4 +44,7 @@ post_makeinstall_target() {
 
   mkdir -p $INSTALL/usr/config/emulationstation
     cp $PKG_DIR/config/* $INSTALL/usr/config/emulationstation
+  
+   mkdir -p $INSTALL/etc/emulationstation/
+   ln -sf /storage/.config/emulationstation/themes $INSTALL/etc/emulationstation/
 }

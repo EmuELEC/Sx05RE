@@ -84,6 +84,7 @@ PKG_CONFIGURE_OPTS_TARGET="ac_cv_lib_rtmp_RTMP_Init=yes \
                            --with-random=/dev/urandom \
                            --without-gnutls \
                            --with-ssl \
+                           --with-openssl \
                            --without-polarssl \
                            --without-nss \
                            --with-ca-bundle=/etc/ssl/cert.pem \

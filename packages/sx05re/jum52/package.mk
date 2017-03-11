@@ -18,32 +18,41 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="core-info"
-PKG_VERSION="c0d244c"
+PKG_NAME="jum52"
+PKG_VERSION="0e37207"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/libretro/libretro-super"
-PKG_URL="https://github.com/libretro/libretro-super/archive/$PKG_VERSION.tar.gz"
+PKG_SITE="https://github.com/r-type/jum52"
+PKG_URL="https://github.com/r-type/jum52/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="Info files for libretro cores"
-PKG_LONGDESC="Super repo for other libretro projects. Fetches, builds and installs."
+PKG_SHORTDESC="Jum52 Atari 5200 emulator cross-platform for libretro/libco WIP"
+PKG_LONGDESC="Jum52 Atari 5200 emulator cross-platform for libretro/libco WIP"
 
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="no"
+PKG_AUTORECONF="no" 
 
-post_unpack() {
-  mv $BUILD/libretro-super-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
+
+#post_unpack() {
+#  mv $BUILD/jum52-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
+#}
+
+pre_configure_target() {
+  strip_lto
 }
 
 make_target() {
-  :
-}
+cd driver_Libretro
+make -f Makefile.libretro
+
+ }
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp dist/info/*.info $INSTALL/usr/lib/libretro/
+  cp jum52_libretro.so $INSTALL/usr/lib/libretro/
+  cp jum52_libretro.info $INSTALL/usr/lib/libretro/
+  cp jum52.cfg $INSTALL/usr/lib/libretro/
 }
 
