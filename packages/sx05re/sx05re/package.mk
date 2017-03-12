@@ -23,7 +23,8 @@ PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET vba-next"
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation"
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libretro-beetle-pce-fast"
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET attract" 
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET jum52" 
+#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET jum52" 
+
 
 make_target() {
   : not
@@ -33,10 +34,13 @@ makeinstall_target() {
 
   mkdir -p $INSTALL/usr/config/
     cp -rf $PKG_DIR/config/* $INSTALL/usr/config/
+    cp $PKG_DIR/autostart.sh $INSTALL/usr/config/autostart.sh
+ 
+mkdir -p $INSTALL/usr/bin/
+    cp $PKG_DIR/bin/* $INSTALL/usr/bin/
 
-mkdir -p $INSTALL/usr/config/
-cp $PKG_DIR/autostart.sh $INSTALL/usr/config/autostart.sh
-cp $PKG_DIR/remote.conf $INSTALL/usr/config/remote.conf
+mkdir -p $INSTALL/usr/share/kodi/addons/
+    cp -rf $PKG_DIR/addon/* $INSTALL/usr/share/kodi/addons/
 
 
 ##this needs to be moved to filesystem, but put it here for easy testing. 

@@ -30,21 +30,24 @@ if [[ -z "${FULLPATHTOROMS}" ]]; then
 
  fi
 
+
 #hacky way to get samba on boot
 /usr/lib/samba/samba-config
 systemctl start smbd
 
-#THESE CHANGES ARE UNSTESTED! I DONT KNOW IF YOUR DEVICE WILL EXPLODE UNCOMMENT UNDER YOUR OWN RISK!
+# THESE CHANGES ARE UNSTESTED! I DONT KNOW IF YOUR DEVICE WILL EXPLODE UNCOMMENT UNDER YOUR OWN RISK!
 
-#Echoing 5 will get you 792MHz for S905 and 742MHz for S905X
+# Set the device to run at top speed all the time, it has made a lot of emulators run better when all of them are set.
+# Make sure you have cooling other than the default.
+
+# Echoing 5 will get you 792MHz for S905 and 742MHz for S905X
 #echo 5 > /sys/class/mpgpu/cur_freq
 #echo 5 > /sys/class/mpgpu/max_freq
 #echo 5 > /sys/class/mpgpu/min_freq
+
 ##set CPU max
 #echo 1536000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
 #echo performance > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-
-
 
 
  #if you don't want EmulationStation to start first, comment the next 3 lines
