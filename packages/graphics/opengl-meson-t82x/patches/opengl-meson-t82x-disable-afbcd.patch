@@ -1,9 +1,0 @@
-diff --git a/system/build.prop b/system/build.prop
-index f282b49..39fa641 100644
---- a/system/build.prop
-+++ b/system/build.prop
-@@ -265,3 +265,4 @@ ro.fota.device=Beelink GT1
- ro.fota.version=MHC19J.20160930.105600 test-keys
- # end fota properties
- ro.expect.recovery_id=0xe5418254d2716c73ed5afebfafe1a3be9a1ce218000000000000000000000000
-+osd.afbcd.enable=0
