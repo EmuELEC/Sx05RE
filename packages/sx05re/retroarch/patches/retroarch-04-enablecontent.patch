@@ -1,11 +1,22 @@
---- ./menu/menu_displaylist.c	2017-02-04 16:49:24.095496887 -0600
-+++ ./menu/menu_displaylist.c	2017-02-04 16:54:10.409814898 -0600
-@@ -3011,6 +3011,54 @@
+diff U3 a/menu_displaylist.c b/menu_displaylist.c
+--- a/menu/menu_displaylist.c	Mon Mar 13 11:55:26 2017
++++ b/menu/menu_displaylist.c	Mon Mar 13 12:01:38 2017
+@@ -3027,22 +3027,58 @@
+ 
+ #ifdef HAVE_LAKKA
+    menu_entries_append_enum(info->list,
+-         msg_hash_to_str(MENU_ENUM_LABEL_VALUE_UPDATE_LAKKA),
+-         msg_hash_to_str(MENU_ENUM_LABEL_UPDATE_LAKKA),
+-         MENU_ENUM_LABEL_UPDATE_LAKKA,
+-         MENU_SETTING_ACTION, 0, 0);
+-
+-   menu_entries_append_enum(info->list,
+          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_THUMBNAILS_UPDATER_LIST),
           msg_hash_to_str(MENU_ENUM_LABEL_THUMBNAILS_UPDATER_LIST),
           MENU_ENUM_LABEL_THUMBNAILS_UPDATER_LIST,
           MENU_SETTING_ACTION, 0, 0);
-+ 
-+   menu_entries_append_enum(info->list,
+ 
+    menu_entries_append_enum(info->list,
 +         msg_hash_to_str(MENU_ENUM_LABEL_VALUE_CORE_UPDATER_LIST),
 +         msg_hash_to_str(MENU_ENUM_LABEL_CORE_UPDATER_LIST),
 +         MENU_ENUM_LABEL_CORE_UPDATER_LIST,
@@ -18,10 +29,10 @@
 +         MENU_SETTING_ACTION, 0, 0);
 + 
 +   menu_entries_append_enum(info->list,
-+         msg_hash_to_str(MENU_ENUM_LABEL_VALUE_DOWNLOAD_CORE_CONTENT),
-+         msg_hash_to_str(MENU_ENUM_LABEL_DOWNLOAD_CORE_CONTENT_DIRS),
-+         MENU_ENUM_LABEL_DOWNLOAD_CORE_CONTENT_DIRS,
-+         MENU_SETTING_ACTION, 0, 0);
+          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_DOWNLOAD_CORE_CONTENT),
+          msg_hash_to_str(MENU_ENUM_LABEL_DOWNLOAD_CORE_CONTENT_DIRS),
+          MENU_ENUM_LABEL_DOWNLOAD_CORE_CONTENT_DIRS,
+          MENU_SETTING_ACTION, 0, 0);
 + 
 +   menu_entries_append_enum(info->list,
 +         msg_hash_to_str(MENU_ENUM_LABEL_VALUE_UPDATE_AUTOCONFIG_PROFILES),
@@ -55,3 +66,47 @@
  #else
  #if !defined(VITA)
     menu_entries_append_enum(info->list,
+@@ -4336,14 +4372,7 @@
+             menu_displaylist_parse_settings_enum(menu, info,
+                   MENU_ENUM_LABEL_QUIT_RETROARCH,
+                   PARSE_ACTION, false);
+-#if defined(HAVE_LAKKA)
+-            menu_displaylist_parse_settings_enum(menu, info,
+-                  MENU_ENUM_LABEL_SHUTDOWN,
+-                  PARSE_ACTION, false);
+-            menu_displaylist_parse_settings_enum(menu, info,
+-                  MENU_ENUM_LABEL_REBOOT,
+-                  PARSE_ACTION, false);
+-#endif
++
+             info->need_push    = true;
+          }
+          break;
+--- a/menu/menu_setting.c	2017-03-12 17:52:42.000000000 -0600
++++ b/menu/menu_setting.c	2017-03-13 19:05:16.526319525 -0600
+@@ -2372,25 +2372,7 @@
+          menu_settings_list_current_add_cmd(list, list_info, CMD_EVENT_QUIT);
+ #endif
+ 
+-#if defined(HAVE_LAKKA)
+-         CONFIG_ACTION(
+-               list, list_info,
+-               MENU_ENUM_LABEL_REBOOT,
+-               MENU_ENUM_LABEL_VALUE_REBOOT,
+-               &group_info,
+-               &subgroup_info,
+-               parent_group);
+-         menu_settings_list_current_add_cmd(list, list_info, CMD_EVENT_REBOOT);
+ 
+-         CONFIG_ACTION(
+-               list, list_info,
+-               MENU_ENUM_LABEL_SHUTDOWN,
+-               MENU_ENUM_LABEL_VALUE_SHUTDOWN,
+-               &group_info,
+-               &subgroup_info,
+-               parent_group);
+-         menu_settings_list_current_add_cmd(list, list_info, CMD_EVENT_SHUTDOWN);
+-#endif
+ 
+          CONFIG_ACTION(
+                list, list_info,

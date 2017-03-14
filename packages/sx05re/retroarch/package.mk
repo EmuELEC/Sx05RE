@@ -19,13 +19,13 @@
 ################################################################################
 
 PKG_NAME="retroarch"
-PKG_VERSION="51581e1"
-PKG_REV="3"
+PKG_VERSION="0b05fdf"
+PKG_REV="4"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/RetroArch"
 PKG_URL="https://github.com/libretro/RetroArch/archive/$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain alsa-lib freetype zlib retroarch-assets retroarch-overlays core-info retroarch-joypad-autoconfig common-shaders  libretro-database ffmpeg libass libvdpau openal-soft"
+PKG_DEPENDS_TARGET="toolchain alsa-lib freetype zlib retroarch-assets retroarch-overlays core-info retroarch-joypad-autoconfig common-shaders libretro-database ffmpeg libass libvdpau libxkbfile xkeyboard-config libxkbcommon openal-soft"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="Reference frontend for the libretro API."
@@ -111,7 +111,7 @@ makeinstall_target() {
   sed -i -e "s/# savestate_directory =/savestate_directory =\/storage\/savestates/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# system_directory =/system_directory =\/storage\/system/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# screenshot_directory =/screenshot_directory =\/storage\/screenshots/" $INSTALL/etc/retroarch.cfg
-  sed -i -e "s/# video_shader_dir =/video_shader_dir =\/usr\/share\/common-shaders/" $INSTALL/etc/retroarch.cfg
+  sed -i -e "s/# video_shader_dir =/video_shader_dir =\/tmp\/shaders/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# rgui_show_start_screen = true/rgui_show_start_screen = false/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# assets_directory =/assets_directory =\/tmp\/assets/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# overlays_directory =/overlays_directory =\/usr\/share\/retroarch-overlays/" $INSTALL/etc/retroarch.cfg
@@ -183,8 +183,11 @@ makeinstall_target() {
   fi
 }
 
-
-post_install() {
+post_install() {  
+  # link default.target to retroarch.target
+  #ln -sf retroarch.target $INSTALL/usr/lib/systemd/system/default.target
+  
+  #enable_service retroarch-autostart.service
   enable_service retroarch.service
   enable_service tmp-cores.mount
   enable_service tmp-joypads.mount
@@ -192,3 +195,8 @@ post_install() {
   enable_service tmp-assets.mount
   enable_service tmp-shaders.mount
 }
+
+#post_makeinstall_target() {
+ # mkdir -p $INSTALL/usr/lib/retroarch
+  #  cp $PKG_DIR/scripts/retroarch-config $INSTALL/usr/lib/retroarch
+#}
