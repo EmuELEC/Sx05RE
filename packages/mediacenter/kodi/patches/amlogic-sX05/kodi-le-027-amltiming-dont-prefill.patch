@@ -12,7 +12,7 @@ index 56496e0..9c9ecf2 100644
    }
  
 -  if ((m_state & STATE_PREFILLED) != 0 && timesize > 0.5 &&  DequeueBuffer() == 0)
-+  if (DequeueBuffer() == 0)
++  if (timesize > 0.0 && DequeueBuffer() == 0)
      rtn |= VC_PICTURE;
  
    if (((rtn & VC_PICTURE) == 0 && timesize < 2.0) || timesize < 1.0)
