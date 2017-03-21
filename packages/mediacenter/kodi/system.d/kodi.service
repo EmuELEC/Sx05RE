@@ -17,13 +17,11 @@ EnvironmentFile=-/run/libreelec/debug/kodi.conf
 ExecStartPre=-/usr/lib/kodi/kodi-config
 ExecStart=/usr/lib/kodi/kodi.sh --standalone -fs $KODI_ARGS $KODI_DEBUG
 ExecStop=/bin/kill -TERM $MAINPID
-TimeoutStopSec=5
-Restart=on-failure
-SuccessExitStatus=64 66 67 68
+TimeoutStopSec=15
+Restart=always
 RestartSec=2
 StartLimitInterval=0
 LimitNOFILE=16384
-
 
 [Install]
 WantedBy=kodi.target
