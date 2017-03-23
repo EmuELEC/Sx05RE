@@ -18,10 +18,10 @@
 ################################################################################
 
 PKG_NAME="libhybris"
-PKG_VERSION="240ae56"
+PKG_VERSION="a2e5d92"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/libhybris/libhybris/"
+PKG_SITE="https://github.com/krnlyng/libhybris/"
 PKG_URL="$PKG_SITE/archive/$PKG_VERSION.tar.gz"
 PKG_SOURCE_DIR="$PKG_NAME-$PKG_VERSION*/hybris"
 PKG_DEPENDS_TARGET="toolchain android-headers"
