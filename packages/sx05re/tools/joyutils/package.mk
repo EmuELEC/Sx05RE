@@ -18,31 +18,35 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="genesis-plus-gx"
-PKG_VERSION="a8ac6ad"
+PKG_NAME="joyutils"
+PKG_VERSION="1.2.15"
 PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="Non-commercial"
-PKG_SITE="https://github.com/libretro/Genesis-Plus-GX"
-PKG_URL="https://github.com/libretro/Genesis-Plus-GX/archive/$PKG_VERSION.tar.gz"
+PKG_LICENSE="GPL"
+PKG_SITE="http://atrey.karlin.mff.cuni.cz/~vojtech/joystick/"
+PKG_URL="ftp://atrey.karlin.mff.cuni.cz/pub/linux/joystick/joystick-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
-PKG_SECTION="libretro"
-PKG_SHORTDESC="An enhanced port of Genesis Plus for Gamecube/Wii"
-PKG_LONGDESC="Genesis Plus GX is an open-source & portable Sega Mega Drive / Genesis emulator, now also emulating SG-1000, Master System, Game Gear and Sega/Mega CD hardware."
+PKG_SECTION="tools"
+PKG_SHORTDESC="jscal, jstest, and jsattach utilities for the Linux joystick driver"
+PKG_LONGDESC="jscal, jstest, and jsattach utilities for the Linux joystick driver"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 post_unpack() {
-  mv $BUILD/Genesis-Plus-GX-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
+  mv $BUILD/joystick-$PKG_VERSION $BUILD/$PKG_NAME-$PKG_VERSION
 }
 
 make_target() {
-  make -f Makefile.libretro
+  $CC -lm -o jscal jscal.c $CFLAGS
+  $CC -lm -o jstest jstest.c $CFLAGS
+  $CC -lm -o jsattach jsattach.c $CFLAGS
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL/usr/lib/libretro
-  cp genesis_plus_gx_libretro.so $INSTALL/usr/lib/libretro/genesis_plus_gx_libretro.so
+  mkdir -p $INSTALL/usr/bin
+  cp jscal $INSTALL/usr/bin/
+  cp jstest $INSTALL/usr/bin/
+  cp jsattach $INSTALL/usr/bin/
 }
