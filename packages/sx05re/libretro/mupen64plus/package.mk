@@ -69,7 +69,12 @@ make_target() {
       make platform=odroid BOARD=ODROID-XU3
       ;;
     *)
+      #sx05re edit to compile on aarch64
+     if [ "$TARGET_ARCH" == "aarch64" ]; then
+      make platform=linux-gles GLES=1 FORCE_GLES=1 WITH_DYNAREC=aarch64
+       else
       make platform=linux-gles GLES=1 FORCE_GLES=1 HAVE_NEON=1 WITH_DYNAREC=arm
+     fi
       ;;
   esac
 }

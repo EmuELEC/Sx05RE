@@ -10,20 +10,25 @@ PKG_ARCH="arm aarch64"
 PKG_LICENSE="GPLv3"
 PKG_SITE=""
 PKG_URL=""
-PKG_DEPENDS_TARGET="retroarch atari800 hatari uzebox tyrquake scummvm dosbox mgba prosystem o2em 81 fuse-libretro gw-libretro beetle-supergrafx genesis-plus-gx lutro gpsp ppsspp 2048 beetle-vb beetle-wswan beetle-ngp pcsx_rearmed vecx snes9x2010 dinothawr prboom beetle-pce handy picodrive nxengine nestopia gambatte stella fbalpha parallel-n64 mupen64plus beetle-pcfx mame2003 bluemsx fceumm"
+PKG_DEPENDS_TARGET="retroarch atari800 hatari uzebox tyrquake scummvm dosbox mgba prosystem o2em 81 gw-libretro beetle-supergrafx genesis-plus-gx gpsp  2048 beetle-vb beetle-wswan beetle-ngp pcsx_rearmed vecx snes9x2010 dinothawr prboom beetle-pce handy  nxengine nestopia gambatte stella fbalpha mame2003 bluemsx fceumm"
 PKG_SECTION="sx05re"
 PKG_SHORTDESC="Sx05re Meta Package"
 PKG_LONGDESC="Sx05re Meta Package"
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET advancemame"
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET PPSSPPSDL"
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET vba-next"
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation"
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libretro-beetle-pce-fast"
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET advancemame PPSSPPSDL vba-next emulationstation libretro-beetle-pce-fast mupen64plus parallel-n64"
+
+#these packages do not compile on aarch64 yet.
+if [ "$TARGET_ARCH" == "arm" ]; then
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET fuse-libretro lutro ppsspp beetle-pcfx picodrive"
+fi
+
+#these packages are experimental, they do not compile at all yet.
+
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET attract" 
-#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET jum52" 
+#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET jum52"
+
 
 
 make_target() {

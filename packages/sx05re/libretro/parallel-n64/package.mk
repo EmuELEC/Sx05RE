@@ -51,7 +51,12 @@ make_target() {
     CFLAGS="$CFLAGS -DGL_BGRA_EXT=0x80E1" # Fix build for platforms where GL_BGRA_EXT is not defined
     make platform=armv-gles-neon
   else
-    make WITH_DYNAREC=$DYNAREC
+      #sx05re edit to compile on aarch64
+      if [ "$TARGET_ARCH" == "aarch64" ]; then
+    make WITH_DYNAREC=$DYNAREC ARCH=aarch64 FORCE_GLES=1
+       else
+      make WITH_DYNAREC=$DYNAREC
+    fi 
   fi
 }
 

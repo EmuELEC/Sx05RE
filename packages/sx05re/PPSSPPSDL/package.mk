@@ -29,14 +29,22 @@ PKG_LONGDESC="PPSSPP Standalone"
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
+if [ "$TARGET_ARCH" == "aarch64" ]; then
 
+PKG_CMAKE_OPTS_TARGET="-DUSING_FBDEV=1  \
+                       -DUSING_GLES2=1  \
+                       -DUSE_FFMPEG=1  \
+                       -DARM64=1  \
+		       -DSHARED_LIBZIP=1 \
+                       -DARM_NEON=1"
+else
 PKG_CMAKE_OPTS_TARGET="-DUSING_FBDEV=1  \
                        -DUSING_GLES2=1  \
                        -DUSE_FFMPEG=1  \
                        -DARMV7=1  \
 		       -DSHARED_LIBZIP=1 \
                        -DARM_NEON=1"
-
+fi
 
 unpack() { 
  cp $PKG_DIR/zipconf.h $SYSROOT_PREFIX/usr/include/zipconf.h 
