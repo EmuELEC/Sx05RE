@@ -18,29 +18,31 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="nestopia"
-PKG_VERSION="1e31779"
+PKG_NAME="xrick"
+PKG_VERSION="460fc1d"
 PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="GPLv2"
-PKG_SITE="https://github.com/libretro/nestopia"
-PKG_URL="https://github.com/libretro/nestopia/archive/$PKG_VERSION.tar.gz"
+PKG_LICENSE="GPLv3"
+PKG_SITE="https://github.com/libretro/xrick-libretro"
+PKG_URL="https://github.com/libretro/xrick-libretro/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="Libretro implementation of NEStopia. (Nintendo Entertainment System)"
-PKG_LONGDESC="This project is a fork of the original Nestopia source code, plus the Linux port. The purpose of the project is to enhance the original, and ensure it continues to work on modern operating systems."
+PKG_SHORTDESC="Rick Dangerous Game Engine"
+PKG_LONGDESC="Rick Dangerous Game Engine"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
-PKG_USE_CMAKE="no"
+
+post_unpack() {
+  mv $BUILD/xrick-libretro-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
+}
 
 make_target() {
-  cd $ROOT/$PKG_BUILD
-  make -C libretro
+  make -f Makefile.libretro CC=$CC
 }
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp libretro/nestopia_libretro.so $INSTALL/usr/lib/libretro/
+  cp xrick_libretro.so $INSTALL/usr/lib/libretro/
 }

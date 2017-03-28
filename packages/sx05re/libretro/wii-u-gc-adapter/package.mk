@@ -18,29 +18,23 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="nestopia"
-PKG_VERSION="1e31779"
+PKG_NAME="wii-u-gc-adapter"
+PKG_VERSION="1030fee"
 PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="GPLv2"
-PKG_SITE="https://github.com/libretro/nestopia"
-PKG_URL="https://github.com/libretro/nestopia/archive/$PKG_VERSION.tar.gz"
+PKG_LICENSE="Non-commercial"
+PKG_SITE="https://github.com/ToadKing/wii-u-gc-adapter"
+PKG_URL="https://github.com/ToadKing/wii-u-gc-adapter/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
-PKG_SECTION="libretro"
-PKG_SHORTDESC="Libretro implementation of NEStopia. (Nintendo Entertainment System)"
-PKG_LONGDESC="This project is a fork of the original Nestopia source code, plus the Linux port. The purpose of the project is to enhance the original, and ensure it continues to work on modern operating systems."
+PKG_SECTION=""
+PKG_SHORTDESC="Tool for using the Wii U GameCube Adapter on Linux"
+PKG_LONGDESC="Tool for using the Wii U GameCube Adapter on Linux"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
-PKG_USE_CMAKE="no"
-
-make_target() {
-  cd $ROOT/$PKG_BUILD
-  make -C libretro
-}
 
 makeinstall_target() {
-  mkdir -p $INSTALL/usr/lib/libretro
-  cp libretro/nestopia_libretro.so $INSTALL/usr/lib/libretro/
+  mkdir -p $INSTALL/usr/bin
+  cp wii-u-gc-adapter $INSTALL/usr/bin/
 }

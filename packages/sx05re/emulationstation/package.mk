@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="emulationstation"
-PKG_VERSION="cdc1890"
+PKG_VERSION="bf1c0b8"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"

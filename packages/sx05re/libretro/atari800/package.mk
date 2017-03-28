@@ -19,7 +19,7 @@
 ################################################################################
 
 PKG_NAME="atari800"
-PKG_VERSION="61f190"
+PKG_VERSION="b943747"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
@@ -32,8 +32,7 @@ PKG_SHORTDESC="atari800 3.1.0 for libretro/libco WIP"
 PKG_LONGDESC="atari800 3.1.0 for libretro/libco WIP"
 
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="no" 
-
+PKG_AUTORECONF="no"
 
 post_unpack() {
   mv $BUILD/libretro-atari800-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
@@ -46,9 +45,4 @@ pre_configure_target() {
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
   cp atari800_libretro.so $INSTALL/usr/lib/libretro/
-}
-
-post_makeinstall_target() {
-  mkdir -p $INSTALL/usr/config/
-    cp $PKG_DIR/config/.atari800.cfg $INSTALL/usr/config/.atari800.cfg
 }

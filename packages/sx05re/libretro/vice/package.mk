@@ -18,29 +18,36 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="nestopia"
-PKG_VERSION="1e31779"
+PKG_NAME="vice"
+PKG_VERSION="054da71"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
-PKG_SITE="https://github.com/libretro/nestopia"
-PKG_URL="https://github.com/libretro/nestopia/archive/$PKG_VERSION.tar.gz"
+PKG_SITE="https://github.com/libretro/vice-libretro"
+PKG_URL="https://github.com/libretro/vice-libretro/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="Libretro implementation of NEStopia. (Nintendo Entertainment System)"
-PKG_LONGDESC="This project is a fork of the original Nestopia source code, plus the Linux port. The purpose of the project is to enhance the original, and ensure it continues to work on modern operating systems."
+PKG_SHORTDESC="Versatile Commodore 8-bit Emulator version 3.0"
+PKG_LONGDESC="Versatile Commodore 8-bit Emulator version 3.0"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
-PKG_USE_CMAKE="no"
+
+post_unpack() {
+  mv $BUILD/vice-libretro-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
+}
 
 make_target() {
-  cd $ROOT/$PKG_BUILD
-  make -C libretro
+  strip_lto
+  if [ "$ARCH" == "arm" ]; then
+    CFLAGS="$CFLAGS -DARM -DALIGN_DWORD -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -marm"
+  fi
+  make -f Makefile.libretro EMUTYPE=x64
+  #make -f Makefile.libretro EMUTYPE=x128
 }
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp libretro/nestopia_libretro.so $INSTALL/usr/lib/libretro/
+  cp vice_*_libretro.so $INSTALL/usr/lib/libretro/
 }

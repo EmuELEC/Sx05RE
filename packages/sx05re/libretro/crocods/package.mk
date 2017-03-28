@@ -18,29 +18,27 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="nestopia"
-PKG_VERSION="1e31779"
+PKG_NAME="crocods"
+PKG_VERSION="3544137"
 PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="GPLv2"
-PKG_SITE="https://github.com/libretro/nestopia"
-PKG_URL="https://github.com/libretro/nestopia/archive/$PKG_VERSION.tar.gz"
+PKG_LICENSE="MIT"
+PKG_SITE="https://github.com/libretro/libretro-crocods"
+PKG_URL="https://github.com/libretro/libretro-crocods/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="Libretro implementation of NEStopia. (Nintendo Entertainment System)"
-PKG_LONGDESC="This project is a fork of the original Nestopia source code, plus the Linux port. The purpose of the project is to enhance the original, and ensure it continues to work on modern operating systems."
+PKG_SHORTDESC="Amstrad CPC emulator"
+PKG_LONGDESC="Amstrad CPC emulator"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
-PKG_USE_CMAKE="no"
 
-make_target() {
-  cd $ROOT/$PKG_BUILD
-  make -C libretro
+post_unpack() {
+  mv $BUILD/libretro-crocods-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
 }
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp libretro/nestopia_libretro.so $INSTALL/usr/lib/libretro/
+  cp crocods_libretro.so $INSTALL/usr/lib/libretro/
 }

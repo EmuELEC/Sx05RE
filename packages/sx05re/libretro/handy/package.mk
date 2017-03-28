@@ -38,8 +38,6 @@ post_unpack() {
   mv $BUILD/libretro-handy-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
 }
 
-
-
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
   cp handy_libretro.so $INSTALL/usr/lib/libretro/

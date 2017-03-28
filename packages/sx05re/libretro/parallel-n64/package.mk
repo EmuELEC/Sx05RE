@@ -45,18 +45,13 @@ make_target() {
     DYNAREC=x86
   fi
 
-  if [ "$PROJECT" == "RPi" ]; then
+  if [ "$PROJECT" == "RPi" -o "$PROJECT" == "Gamegirl" ]; then
     make platform=rpi
   elif [[ "$TARGET_FPU" =~ "neon" ]]; then
     CFLAGS="$CFLAGS -DGL_BGRA_EXT=0x80E1" # Fix build for platforms where GL_BGRA_EXT is not defined
     make platform=armv-gles-neon
   else
-      #sx05re edit to compile on aarch64
-      if [ "$TARGET_ARCH" == "aarch64" ]; then
-    make WITH_DYNAREC=$DYNAREC ARCH=aarch64 FORCE_GLES=1
-       else
-      make WITH_DYNAREC=$DYNAREC
-    fi 
+    make WITH_DYNAREC=$DYNAREC
   fi
 }
 

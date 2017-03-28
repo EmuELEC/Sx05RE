@@ -1,13 +1,12 @@
---- /CMakeLists.txt	2017-02-20 14:24:52.000000000 -0600
-+++ /CMakeLists.txt	2017-02-21 01:50:52.166080341 -0600
-@@ -81,8 +81,8 @@
-     endif()
- 
-     #set up compiler flags for GCC
+--- /CMakeLists.txt	2017-03-25 14:13:36.000000000 -0600
++++ /CMakeLists.txt	2017-03-25 22:59:57.932526201 -0600
+@@ -89,8 +89,8 @@
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-attributes -O0") #support C++11 for std::, optimize
+     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -O0")
+ else()
 -    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-attributes -O3") #support C++11 for std::, optimize
 -    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -O3")  #-s = strip binary
-+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-attributes -O3  -ldl -lm") #support C++11 for std::, optimize
++    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-attributes -O3 -ldl -lm") #support C++11 for std::, optimize
 +    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -O3 -ldl -lm")  #-s = strip binary
  endif()
- 
- if(${GLSystem} MATCHES "Desktop OpenGL")
+ endif()

@@ -200,7 +200,7 @@
 
  LAKKA_MIRROR="http://sources.lakka.tv"
 
-  RA_PLAYLIST_NAMES=""\
+RA_PLAYLIST_NAMES=""\
 "Atari - 2600.lpl;"\
 "Atari - 5200.lpl;"\
 "Atari - 7800.lpl;"\
@@ -301,9 +301,3 @@
 "/tmp/cores/mednafen_ngp_libretro.so;"\
 "/tmp/cores/ppsspp_libretro.so;"\
 "/tmp/cores/pcsx_rearmed_libretro.so"
-
-# override some playlist core assignation
-RA_PLAYLIST_CORES="${RA_PLAYLIST_CORES//parallel_n64/mupen64plus}"
-
-# override some playlist core assignation
-RA_PLAYLIST_CORES="${RA_PLAYLIST_CORES//parallel_n64/glupen64}"

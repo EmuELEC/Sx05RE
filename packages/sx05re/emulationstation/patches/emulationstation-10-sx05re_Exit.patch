@@ -58,8 +58,8 @@
  				quit->type = SDL_QUIT;
  				SDL_PushEvent(quit);
 
---- emulationstation-e95eb4e/es-core/src/platform.cpp	2017-02-01 18:20:17.000000000 -0600
-+++ emulationstation-e95eb4e/es-core/src/platform.cpp	2017-02-12 14:45:00.867871656 -0600
+--- emulationstation-e95eb4e/es-core/src/platform.cpp	2017-03-25 14:13:36.000000000 -0600
++++ emulationstation-e95eb4e/es-core/src/platform.cpp	2017-03-25 22:54:41.811958171 -0600
 @@ -43,20 +43,12 @@
  
  int runShutdownCommand()
@@ -83,10 +83,4 @@
  }
  
  int runSystemCommand(const std::string& cmd_utf8)
-@@ -87,4 +79,4 @@
- 	int fd = open(filename.c_str(), O_CREAT|O_WRONLY, 0644);
- 	if (fd >= 0)
- 		close(fd);
--}
-\ No newline at end of file
-+}
+

@@ -18,29 +18,34 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="nestopia"
-PKG_VERSION="1e31779"
+PKG_NAME="frodo"
+PKG_VERSION="4c15016"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
-PKG_SITE="https://github.com/libretro/nestopia"
-PKG_URL="https://github.com/libretro/nestopia/archive/$PKG_VERSION.tar.gz"
+PKG_SITE="https://github.com/r-type/frodo-libretro"
+PKG_URL="https://github.com/r-type/frodo-libretro/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="Libretro implementation of NEStopia. (Nintendo Entertainment System)"
-PKG_LONGDESC="This project is a fork of the original Nestopia source code, plus the Linux port. The purpose of the project is to enhance the original, and ensure it continues to work on modern operating systems."
+PKG_SHORTDESC="Frodo - The free portable C64 emulator"
+PKG_LONGDESC="Frodo - The free portable C64 emulator"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
-PKG_USE_CMAKE="no"
+
+post_unpack() {
+  mv $BUILD/frodo-libretro-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
+}
 
 make_target() {
-  cd $ROOT/$PKG_BUILD
-  make -C libretro
+  #if [ "$ARCH" == "arm" ]; then
+  #  CFLAGS="$CFLAGS -DARM -DALIGN_DWORD -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -marm"
+  #fi
+  make -f Makefile.libretro
 }
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp libretro/nestopia_libretro.so $INSTALL/usr/lib/libretro/
+  cp frodo_libretro.so $INSTALL/usr/lib/libretro/
 }
