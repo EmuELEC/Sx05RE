@@ -1,0 +1,118 @@
+From 1c4d5ae67f5b355e1f1648da770c5d6a3ce15b72 Mon Sep 17 00:00:00 2001
+From: kszaq <kszaquitto@gmail.com>
+Date: Fri, 31 Mar 2017 23:39:05 +0200
+Subject: [PATCH] aml: Implement drain
+
+---
+ .../cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp | 25 ++++++++++++++++------
+ xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.h  |  2 ++
+ .../DVDCodecs/Video/DVDVideoCodecAmlogic.cpp       |  6 ++++++
+ .../DVDCodecs/Video/DVDVideoCodecAmlogic.h         |  1 +
+ 4 files changed, 27 insertions(+), 7 deletions(-)
+
+diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp b/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
+index 11b08b5..7af5e3a 100644
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
+@@ -1431,6 +1431,7 @@ bool CAMLCodec::OpenDecoder(CDVDStreamInfo &hints)
+ #endif
+ 
+   m_speed = DVD_PLAYSPEED_NORMAL;
++  m_drain = false;
+   m_cur_pts = INT64_0;
+   m_dst_rect.SetRect(0, 0, 0, 0);
+   m_zoom = -1;
+@@ -1889,16 +1890,25 @@ int CAMLCodec::Decode(uint8_t *pData, size_t iSize, double dts, double pts)
+        m_state |= STATE_PREFILLED;
+   }
+ 
+-  if ((m_state & STATE_PREFILLED) != 0 && timesize > 0.5 &&  DequeueBuffer() == 0)
+-    rtn |= VC_PICTURE;
+-
+-  if (((rtn & VC_PICTURE) == 0 && timesize < 2.0) || timesize < 1.0)
+-    rtn |= VC_BUFFER;
++  if (m_drain)
++  {
++    if (DequeueBuffer() == 0)
++      rtn = VC_PICTURE;
++    else if (timesize <= 0)
++      rtn = VC_BUFFER;
++  }
++  else
++  {
++    if ((m_state & STATE_PREFILLED) != 0 && timesize > 0.5 && DequeueBuffer() == 0)
++      rtn |= VC_PICTURE;
+ 
++    if (timesize < 1.0)
++      rtn |= VC_BUFFER;
++  }
+ 
+   if (g_advancedSettings.CanLogComponent(LOGVIDEO))
+   {
+-    CLog::Log(LOGDEBUG, "CAMLCodec::Decode: ret: %d, sz: %u, dts_in: %0.4lf[%llX], pts_in: %0.4lf[%llX], adj:%llu, ptsOut:%0.4f, amlpts:%d, idx:%u, timesize:%0.4f",
++    CLog::Log(LOGDEBUG, "CAMLCodec::Decode: ret: %d, sz: %u, dts_in: %0.4lf[%llX], pts_in: %0.4lf[%llX], adj:%llu, ptsOut:%0.4f, amlpts:%d, idx:%u, timesize:%0.4f, drain: %d",
+       rtn,
+       static_cast<unsigned int>(iSize),
+       dts / DVD_TIME_BASE, am_private->am_pkt.avdts,
+@@ -1907,7 +1917,8 @@ int CAMLCodec::Decode(uint8_t *pData, size_t iSize, double dts, double pts)
+       static_cast<float>(m_cur_pts)/PTS_FREQ,
+       static_cast<int>(m_cur_pts),
+       m_bufferIndex,
+-      timesize
++      timesize,
++      m_drain
+     );
+   }
+ 
+diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.h b/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.h
+index 2885a88..a3d79c3 100644
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.h
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.h
+@@ -47,6 +47,7 @@ public:
+ 
+   bool          GetPicture(DVDVideoPicture* pDvdVideoPicture);
+   void          SetSpeed(int speed);
++  void          SetDrain(bool drain){m_drain = drain;};
+   void          SetVideoRect(const CRect &SrcRect, const CRect &DestRect);
+   void          SetVideoRate(int videoRate);
+   int64_t       GetCurPts() const { return m_cur_pts + m_start_adj; }
+@@ -78,6 +79,7 @@ private:
+   DllLibAmCodec   *m_dll;
+   bool             m_opened;
+   bool             m_ptsIs64us;
++  bool             m_drain;
+   am_private_t    *am_private;
+   CDVDStreamInfo   m_hints;
+   int              m_speed;
+diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
+index bcf5247..21a28d0 100644
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
+@@ -393,6 +393,12 @@ void CDVDVideoCodecAmlogic::SetDropState(bool bDrop)
+   //SysfsUtils::SetInt("/sys/class/video/freerun_mode", bDrop ? 1 : 0);
+ }
+ 
++void CDVDVideoCodecAmlogic::SetCodecControl(int flags)
++{
++  if (m_Codec)
++    m_Codec->SetDrain((flags & DVD_CODEC_CTRL_DRAIN) != 0);
++}
++
+ void CDVDVideoCodecAmlogic::SetSpeed(int iSpeed)
+ {
+   if (m_Codec)
+diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecAmlogic.h b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecAmlogic.h
+index 9e57295..1458b8b 100644
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecAmlogic.h
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecAmlogic.h
+@@ -77,6 +77,7 @@ public:
+   virtual bool ClearPicture(DVDVideoPicture* pDvdVideoPicture);
+   virtual void SetSpeed(int iSpeed);
+   virtual void SetDropState(bool bDrop);
++  virtual void SetCodecControl(int flags);
+   virtual const char* GetName(void) { return (const char*)m_pFormatName; }
+ 
+ protected:
+-- 
+1.8.3.1
+
