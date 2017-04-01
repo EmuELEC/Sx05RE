@@ -1,0 +1,107 @@
+diff U3 /es-core/src/guis/GuiInputConfig.cpp /es-core/src/guis/GuiInputConfig.cpp.2
+--- a/es-core/src/guis/GuiInputConfig.cpp	Fri Mar 31 16:41:01 2017
++++ b/es-core/src/guis/GuiInputConfig.cpp.2	Fri Mar 31 16:44:38 2017
+@@ -15,7 +15,7 @@
+ // 											":/help/button_a.svg", ":/help/button_b.svg", ":/help/button_start.svg", ":/help/button_select.svg", 
+ // 											":/help/button_l.svg", ":/help/button_r.svg" };
+ 
+-static const int inputCount = 24;
++static const int inputCount = 12;
+ static const char* inputName[inputCount] =
+ {
+ 	"Up",
+@@ -29,46 +29,22 @@
+ 	"X",
+ 	"Y",
+ 	"LeftShoulder",
+-	"RightShoulder",
+-	"LeftTrigger",
+-	"RightTrigger",
+-	"LeftThumb",
+-	"RightThumb",
+-	"LeftAnalogUp",
+-	"LeftAnalogDown",
+-	"LeftAnalogLeft",
+-	"LeftAnalogRight",
+-	"RightAnalogUp",
+-	"RightAnalogDown",
+-	"RightAnalogLeft",
+-	"RightAnalogRight"
+-};
++	"RightShoulder"
++	};
+ static const bool inputSkippable[inputCount] =
+ {
+ 	false,
+ 	false,
+ 	false,
+ 	false,
+-	true,
+-	true,
++	false,
++	false,
++	false,
+ 	false,
+ 	true,
+ 	true,
+ 	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true
++	true	
+ };
+ static const char* inputDispName[inputCount] =
+ {
+@@ -83,19 +59,7 @@
+ 	"X",
+ 	"Y",
+ 	"LEFT SHOULDER",
+-	"RIGHT SHOULDER",
+-	"LEFT TRIGGER",
+-	"RIGHT TRIGGER",
+-	"LEFT THUMB",
+-	"RIGHT THUMB",
+-	"LEFT ANALOG UP",
+-	"LEFT ANALOG DOWN",
+-	"LEFT ANALOG LEFT",
+-	"LEFT ANALOG RIGHT",
+-	"RIGHT ANALOG UP",
+-	"RIGHT ANALOG DOWN",
+-	"RIGHT ANALOG LEFT",
+-	"RIGHT ANALOG RIGHT"
++	"RIGHT SHOULDER"	
+ };
+ static const char* inputIcon[inputCount] =
+ {
+@@ -110,19 +74,7 @@
+ 	":/help/button_x.svg",
+ 	":/help/button_y.svg",
+ 	":/help/button_l.svg",
+-	":/help/button_r.svg",
+-	":/help/button_l.svg",
+-	":/help/button_r.svg",
+-	":/help/analog_thumb.svg",
+-	":/help/analog_thumb.svg",
+-	":/help/analog_up.svg",
+-	":/help/analog_down.svg",
+-	":/help/analog_left.svg",
+-	":/help/analog_right.svg",
+-	":/help/analog_up.svg",
+-	":/help/analog_down.svg",
+-	":/help/analog_left.svg",
+-	":/help/analog_right.svg"
++	":/help/button_r.svg"	
+ };
+ 
+ //MasterVolUp and MasterVolDown are also hooked up, but do not appear on this screen.
