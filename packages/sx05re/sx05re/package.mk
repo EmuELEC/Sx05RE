@@ -23,11 +23,9 @@ if [ "$TARGET_ARCH" == "arm" ]; then
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET fuse-libretro lutro ppsspp beetle-pcfx picodrive"
 fi
 
-
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET vba-next libretro-beetle-pce-fast advancemame PPSSPPSDL emulationstation"
 
-
-#these packages are experimental, they do not compile at all yet.
+#these packages are experimental, they do not compile or have other problems.
 
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET attract" 
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET jum52"
