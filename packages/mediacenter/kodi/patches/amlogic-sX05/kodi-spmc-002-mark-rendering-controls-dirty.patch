@@ -1,0 +1,38 @@
+From b2df73dfdd28442372a4dabb9e6650f9d1e62c25 Mon Sep 17 00:00:00 2001
+From: "Chris \"Koying\" Browet" <cbro@semperpax.com>
+Date: Mon, 26 Dec 2016 13:49:15 +0100
+Subject: [PATCH] FIX: mark rendering controls dirty whether bypass or not
+
+---
+ xbmc/guilib/GUIVideoControl.cpp            | 3 +--
+ xbmc/video/windows/GUIWindowFullScreen.cpp | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/xbmc/guilib/GUIVideoControl.cpp b/xbmc/guilib/GUIVideoControl.cpp
+index d2f88a5..e4c2ecd 100644
+--- a/xbmc/guilib/GUIVideoControl.cpp
++++ b/xbmc/guilib/GUIVideoControl.cpp
+@@ -37,8 +37,7 @@ CGUIVideoControl::~CGUIVideoControl(void)
+ void CGUIVideoControl::Process(unsigned int currentTime, CDirtyRegionList &dirtyregions)
+ {
+   //! @todo Proper processing which marks when its actually changed. Just mark always for now.
+-  if (g_application.m_pPlayer->IsRenderingGuiLayer())
+-    MarkDirtyRegion();
++  MarkDirtyRegion();
+ 
+   CGUIControl::Process(currentTime, dirtyregions);
+ }
+diff --git a/xbmc/video/windows/GUIWindowFullScreen.cpp b/xbmc/video/windows/GUIWindowFullScreen.cpp
+index 4d2a37e..b62300a 100644
+--- a/xbmc/video/windows/GUIWindowFullScreen.cpp
++++ b/xbmc/video/windows/GUIWindowFullScreen.cpp
+@@ -390,8 +390,7 @@ void CGUIWindowFullScreen::FrameMove()
+ 
+ void CGUIWindowFullScreen::Process(unsigned int currentTime, CDirtyRegionList &dirtyregion)
+ {
+-  if (g_application.m_pPlayer->IsRenderingGuiLayer())
+-    MarkDirtyRegion();
++  MarkDirtyRegion();
+ 
+   CGUIWindow::Process(currentTime, dirtyregion);
+ 

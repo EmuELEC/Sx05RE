@@ -57,6 +57,10 @@ post_install() {
     ln -sf /usr/bin $ROOT/$BUILD/initramfs/bin
     ln -sf /usr/sbin $ROOT/$BUILD/initramfs/sbin
 
+    rm $ROOT/$BUILD/initramfs/splash/splash-768.png
+    rm $ROOT/$BUILD/initramfs/splash/splash-1200.png
+    rm $ROOT/$BUILD/initramfs/splash/splash-2160.png
+
     mkdir -p $ROOT/$BUILD/image/
     fakeroot -- sh -c \
       "mkdir -p dev; mknod -m 600 dev/console c 5 1; find . | cpio -H newc -ov -R 0:0 | gzip -n -9 -f > $ROOT/$BUILD/image/initramfs.cpio"
