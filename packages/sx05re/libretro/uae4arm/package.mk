@@ -18,34 +18,36 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="puae"
-PKG_VERSION="03fe971"
+PKG_NAME="uae4arm"
+PKG_VERSION="0e9dd6e"
 PKG_REV="1"
-PKG_ARCH="any"
+PKG_ARCH="arm"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/libretro/libretro-uae"
-PKG_URL="https://github.com/libretro/libretro-uae/archive/$PKG_VERSION.tar.gz"
+PKG_SITE="https://github.com/libretro/uae4arm-libretro"
+PKG_URL="https://github.com/libretro/uae4arm-libretro/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="WIP libretro port of UAE (P-UAE and libco) Expect bugs"
-PKG_LONGDESC="WIP libretro port of UAE (P-UAE and libco) Expect bugs"
+PKG_SHORTDESC="Port of uae4arm for libretro (rpi/android)"
+PKG_LONGDESC="Port of uae4arm for libretro (rpi/android) "
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-post_unpack() { 
-  mv $BUILD/libretro-uae-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION 
+post_unpack() {
+  mv $BUILD/uae4arm-libretro-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
 }
 
-pre_configure_target() {
+make_target() {
   strip_lto
-  if [ "$ARCH" == "arm" ]; then
-    CFLAGS="$CFLAGS -DARM -marm"
+  CFLAGS="$CFLAGS -DARM -marm"
+  if [[ "$TARGET_FPU" =~ "neon" ]]; then
+    CFLAGS="-D__NEON_OPT"
   fi
+  make HAVE_NEON=1 USE_PICASSO96=1
 }
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp puae_libretro.so $INSTALL/usr/lib/libretro/
+  cp uae4arm_libretro.so $INSTALL/usr/lib/libretro/
 }
