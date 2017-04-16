@@ -1,17 +1,17 @@
-From 1c4d5ae67f5b355e1f1648da770c5d6a3ce15b72 Mon Sep 17 00:00:00 2001
+From 0cdff4e1434b2663609ebe3bd62b3e44d63bb344 Mon Sep 17 00:00:00 2001
 From: kszaq <kszaquitto@gmail.com>
 Date: Fri, 31 Mar 2017 23:39:05 +0200
 Subject: [PATCH] aml: Implement drain
 
 ---
- .../cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp | 25 ++++++++++++++++------
- xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.h  |  2 ++
- .../DVDCodecs/Video/DVDVideoCodecAmlogic.cpp       |  6 ++++++
+ .../cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp | 31 +++++++++++++++++-----
+ xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.h  |  3 +++
+ .../DVDCodecs/Video/DVDVideoCodecAmlogic.cpp       |  6 +++++
  .../DVDCodecs/Video/DVDVideoCodecAmlogic.h         |  1 +
- 4 files changed, 27 insertions(+), 7 deletions(-)
+ 4 files changed, 35 insertions(+), 6 deletions(-)
 
 diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp b/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
-index 11b08b5..7af5e3a 100644
+index 11b08b5..b24ee8a 100644
 --- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
 +++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
 @@ -1431,6 +1431,7 @@ bool CAMLCodec::OpenDecoder(CDVDStreamInfo &hints)
@@ -22,24 +22,45 @@ index 11b08b5..7af5e3a 100644
    m_cur_pts = INT64_0;
    m_dst_rect.SetRect(0, 0, 0, 0);
    m_zoom = -1;
-@@ -1889,16 +1890,25 @@ int CAMLCodec::Decode(uint8_t *pData, size_t iSize, double dts, double pts)
+@@ -1441,6 +1442,7 @@ bool CAMLCodec::OpenDecoder(CDVDStreamInfo &hints)
+   m_state = 0;
+   m_frameSizes.clear();
+   m_frameSizeSum = 0;
++  m_noPictureLoop = 0;
+ 
+   if (!OpenAmlVideo(hints))
+   {
+@@ -1799,6 +1801,8 @@ void CAMLCodec::Reset()
+   m_start_adj = 0;
+   m_frameSizes.clear();
+   m_frameSizeSum = 0;
++  m_drain = false;
++  m_noPictureLoop = 0;
+ 
+   SetSpeed(m_speed);
+ 
+@@ -1889,16 +1893,30 @@ int CAMLCodec::Decode(uint8_t *pData, size_t iSize, double dts, double pts)
         m_state |= STATE_PREFILLED;
    }
  
 -  if ((m_state & STATE_PREFILLED) != 0 && timesize > 0.5 &&  DequeueBuffer() == 0)
 -    rtn |= VC_PICTURE;
--
--  if (((rtn & VC_PICTURE) == 0 && timesize < 2.0) || timesize < 1.0)
--    rtn |= VC_BUFFER;
 +  if (m_drain)
 +  {
 +    if (DequeueBuffer() == 0)
++    {
 +      rtn = VC_PICTURE;
-+    else if (timesize <= 0)
++      m_noPictureLoop = 0;
++    }
++    else if (++m_noPictureLoop == 10) // EOS
 +      rtn = VC_BUFFER;
 +  }
 +  else
 +  {
++    m_noPictureLoop = 0;
+ 
+-  if (((rtn & VC_PICTURE) == 0 && timesize < 2.0) || timesize < 1.0)
+-    rtn |= VC_BUFFER;
 +    if ((m_state & STATE_PREFILLED) != 0 && timesize > 0.5 && DequeueBuffer() == 0)
 +      rtn |= VC_PICTURE;
  
@@ -54,7 +75,7 @@ index 11b08b5..7af5e3a 100644
        rtn,
        static_cast<unsigned int>(iSize),
        dts / DVD_TIME_BASE, am_private->am_pkt.avdts,
-@@ -1907,7 +1917,8 @@ int CAMLCodec::Decode(uint8_t *pData, size_t iSize, double dts, double pts)
+@@ -1907,7 +1925,8 @@ int CAMLCodec::Decode(uint8_t *pData, size_t iSize, double dts, double pts)
        static_cast<float>(m_cur_pts)/PTS_FREQ,
        static_cast<int>(m_cur_pts),
        m_bufferIndex,
@@ -65,7 +86,7 @@ index 11b08b5..7af5e3a 100644
    }
  
 diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.h b/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.h
-index 2885a88..a3d79c3 100644
+index 2885a88..763daee 100644
 --- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.h
 +++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.h
 @@ -47,6 +47,7 @@ public:
@@ -76,11 +97,12 @@ index 2885a88..a3d79c3 100644
    void          SetVideoRect(const CRect &SrcRect, const CRect &DestRect);
    void          SetVideoRate(int videoRate);
    int64_t       GetCurPts() const { return m_cur_pts + m_start_adj; }
-@@ -78,6 +79,7 @@ private:
+@@ -78,6 +79,8 @@ private:
    DllLibAmCodec   *m_dll;
    bool             m_opened;
    bool             m_ptsIs64us;
 +  bool             m_drain;
++  int              m_noPictureLoop;
    am_private_t    *am_private;
    CDVDStreamInfo   m_hints;
    int              m_speed;
