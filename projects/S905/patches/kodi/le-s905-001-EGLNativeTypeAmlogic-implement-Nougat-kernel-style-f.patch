@@ -38,16 +38,19 @@ index 3cbb604..6921be4 100644
  }
  
  bool CEGLNativeTypeAmlogic::SetNativeResolution(const RESOLUTION_INFO &res)
-@@ -143,11 +152,7 @@ bool CEGLNativeTypeAmlogic::SetNativeResolution(const RESOLUTION_INFO &res)
-   }
+@@ -143,10 +152,11 @@ bool CEGLNativeTypeAmlogic::SetNativeResolution(const RESOLUTION_INFO &res)
  #endif
  
--  // Don't set the same mode as current
+   // Don't set the same mode as current
 -  std::string mode;
 -  SysfsUtils::GetString("/sys/class/display/mode", mode);
 -  if (res.strId != mode)
 -    result = SetDisplayResolution(res.strId.c_str());
-+  result = SetDisplayResolution(res);
++  RESOLUTION_INFO current_resolution;
++  GetNativeResolution(&current_resolution);
++  if (current_resolution.strId != res.strId ||
++    current_resolution.fRefreshRate != res.fRefreshRate)
++    result = SetDisplayResolution(res);
  
    DealWithScale(res);
  
