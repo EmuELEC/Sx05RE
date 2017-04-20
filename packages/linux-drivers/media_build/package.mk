@@ -73,13 +73,6 @@ make_target() {
     cp -a "$(kernel_path)/include/media/videobuf-res.h" "linux/include/media/"
     echo "obj-m += videobuf-res.o" >> "linux/drivers/media/v4l2-core/Makefile"
 
-    # Use meson-ir module from kernel tree, patch it and force to be built
-    if [ -e "$(kernel_path)/drivers/media/rc/meson-ir.c" ]; then
-      cp -a "$(kernel_path)/drivers/media/rc/meson-ir.c" "linux/drivers/media/rc/"
-      sed -i 's,allowed_protos,allowed_protocols,g' "linux/drivers/media/rc/meson-ir.c"
-      echo "obj-m += meson-ir.o" >> "linux/drivers/media/rc/Makefile"
-    fi
-
   fi
 
   make VER=$KERNEL_VER SRCDIR=$(kernel_path)
