@@ -1,4 +1,4 @@
-From 5975bea076b46d874eb829ff72c036bcbb31aa30 Mon Sep 17 00:00:00 2001
+From b9a7d68e2a5f9fb8bec7fdd240cc4ad03aab07fc Mon Sep 17 00:00:00 2001
 From: kszaq <kszaquitto@gmail.com>
 Date: Fri, 3 Mar 2017 22:15:38 +0100
 Subject: [PATCH] TEMP: S912: don't allow resolutions different than 1920x1080
@@ -10,7 +10,7 @@ Subject: [PATCH] TEMP: S912: don't allow resolutions different than 1920x1080
  2 files changed, 7 insertions(+), 47 deletions(-)
 
 diff --git a/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp b/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
-index d849b8e..65aa279 100644
+index 0af8b48..fc9e088 100644
 --- a/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
 +++ b/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
 @@ -63,9 +63,9 @@ bool CEGLNativeTypeAmlogic::CheckCompatibility()
@@ -33,7 +33,7 @@ index d849b8e..65aa279 100644
    return true;
  #else
    return false;
-@@ -136,14 +134,6 @@ bool CEGLNativeTypeAmlogic::SetNativeResolution(const RESOLUTION_INFO &res)
+@@ -144,14 +142,6 @@ bool CEGLNativeTypeAmlogic::SetNativeResolution(const RESOLUTION_INFO &res)
  {
    bool result = false;
  
@@ -45,10 +45,10 @@ index d849b8e..65aa279 100644
 -  }
 -#endif
 -
-   result = SetDisplayResolution(res);
- 
-   DealWithScale(res);
-@@ -162,7 +152,9 @@ bool CEGLNativeTypeAmlogic::ProbeResolutions(std::vector<RESOLUTION_INFO> &resol
+   // Don't set the same mode as current
+   RESOLUTION_INFO current_resolution;
+   GetNativeResolution(&current_resolution);
+@@ -175,7 +165,9 @@ bool CEGLNativeTypeAmlogic::ProbeResolutions(std::vector<RESOLUTION_INFO> &resol
    for (std::vector<std::string>::const_iterator i = probe_str.begin(); i != probe_str.end(); ++i)
    {
      if(aml_mode_to_resolution(i->c_str(), &res))
@@ -59,7 +59,7 @@ index d849b8e..65aa279 100644
  
      switch ((int)res.fRefreshRate)
      {
-@@ -179,6 +171,7 @@ bool CEGLNativeTypeAmlogic::ProbeResolutions(std::vector<RESOLUTION_INFO> &resol
+@@ -188,6 +180,7 @@ bool CEGLNativeTypeAmlogic::ProbeResolutions(std::vector<RESOLUTION_INFO> &resol
          resolutions.push_back(res);
          break;
      }
@@ -67,7 +67,7 @@ index d849b8e..65aa279 100644
    }
    return resolutions.size() > 0;
  
-@@ -189,8 +182,8 @@ bool CEGLNativeTypeAmlogic::GetPreferredResolution(RESOLUTION_INFO *res) const
+@@ -198,8 +191,8 @@ bool CEGLNativeTypeAmlogic::GetPreferredResolution(RESOLUTION_INFO *res) const
    // check display/mode, it gets defaulted at boot
    if (!GetNativeResolution(res))
    {
@@ -78,7 +78,7 @@ index d849b8e..65aa279 100644
    }
  
    return true;
-@@ -215,8 +208,6 @@ bool CEGLNativeTypeAmlogic::SetDisplayResolution(const RESOLUTION_INFO &res)
+@@ -224,8 +217,6 @@ bool CEGLNativeTypeAmlogic::SetDisplayResolution(const RESOLUTION_INFO &res)
  
    SysfsUtils::SetString("/sys/class/display/mode", mode.c_str());
  
@@ -87,7 +87,7 @@ index d849b8e..65aa279 100644
    return true;
  }
  
-@@ -270,30 +261,3 @@ void CEGLNativeTypeAmlogic::DisableFreeScale()
+@@ -279,30 +270,3 @@ void CEGLNativeTypeAmlogic::DisableFreeScale()
    SysfsUtils::SetInt("/sys/class/graphics/fb0/free_scale", 0);
    SysfsUtils::SetInt("/sys/class/graphics/fb1/free_scale", 0);
  }
