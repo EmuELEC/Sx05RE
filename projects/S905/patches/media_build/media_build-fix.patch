@@ -17,10 +17,11 @@ diff --git a/v4l/versions.txt b/v4l/versions.txt
 index 0a84755..4bb122f 100644
 --- a/v4l/versions.txt
 +++ b/v4l/versions.txt
-@@ -1,5 +1,6 @@
+@@ -1,5 +1,7 @@
  # Use this for stuff for drivers that don't compile
  [9.255.255]
 +VIDEO_S5C73M3
++DVB_CXD2880
  
  [4.2.0]
  # needs led_trigger_remove

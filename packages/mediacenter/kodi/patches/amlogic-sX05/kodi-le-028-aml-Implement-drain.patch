@@ -1,4 +1,4 @@
-From 0cdff4e1434b2663609ebe3bd62b3e44d63bb344 Mon Sep 17 00:00:00 2001
+From c36e20e98eeb14d36c0634ee8014d81cf82c700d Mon Sep 17 00:00:00 2001
 From: kszaq <kszaquitto@gmail.com>
 Date: Fri, 31 Mar 2017 23:39:05 +0200
 Subject: [PATCH] aml: Implement drain
@@ -11,7 +11,7 @@ Subject: [PATCH] aml: Implement drain
  4 files changed, 35 insertions(+), 6 deletions(-)
 
 diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp b/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
-index 11b08b5..b24ee8a 100644
+index 11b08b5..eba385d 100644
 --- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
 +++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
 @@ -1431,6 +1431,7 @@ bool CAMLCodec::OpenDecoder(CDVDStreamInfo &hints)
@@ -52,7 +52,7 @@ index 11b08b5..b24ee8a 100644
 +      rtn = VC_PICTURE;
 +      m_noPictureLoop = 0;
 +    }
-+    else if (++m_noPictureLoop == 10) // EOS
++    else if (++m_noPictureLoop == 10 || timesize == 0.0) // EOS
 +      rtn = VC_BUFFER;
 +  }
 +  else
