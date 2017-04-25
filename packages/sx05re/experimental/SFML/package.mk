@@ -31,8 +31,8 @@ PKG_LONGDESC="A graphical front-end for command line emulators that hides the un
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-PKG_CONFIGURE_OPTS_TARGET="-DSFML_OPENGL_ES=TRUE"
+PKG_CONFIGURE_OPTS_TARGET="-DSFML_OPENGL_ES=1"
 
 make_target() {
-  make -DSFML_OPENGL_ES=TRUE
+  make -DSFML_OPENGL_ES=1
 }
