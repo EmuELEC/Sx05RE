@@ -1,0 +1,21 @@
+--- a/xbmc/cores/VideoPlayer/VideoPlayer.cpp	2017-04-24 19:29:12.904035000 +0200
++++ b/xbmc/cores/VideoPlayer/VideoPlayer.cpp	2017-04-24 21:55:07.299783701 +0200
+@@ -2600,6 +2600,8 @@
+       // This should always be the case.
+       if(m_pDemuxer && m_pDemuxer->SeekChapter(msg.GetChapter(), &start))
+       {
++        CLog::Log(LOGDEBUG, "VideoPlayer: m_pDemuxer->SeekChapter beforeSeek:%0.0f start:%0.0f",  beforeSeek, DVD_TIME_TO_MSEC(start)); 
++        start = DVD_MSEC_TO_TIME(beforeSeek);
+         FlushBuffers(start, true, true);
+         offset = DVD_TIME_TO_MSEC(start) - beforeSeek;
+         m_callback.OnPlayBackSeekChapter(msg.GetChapter());
+@@ -3933,7 +3936,7 @@
+ 
+ void CVideoPlayer::FlushBuffers(double pts, bool accurate, bool sync)
+ {
+-  CLog::Log(LOGDEBUG, "CVideoPlayer::FlushBuffers - flushing buffers");
++  CLog::Log(LOGDEBUG, "CVideoPlayer::FlushBuffers - flushing buffers pts:%0.0f",static_cast<float>(pts));
+ 
+   double startpts;
+   if (accurate && !m_omxplayer_mode)
+
