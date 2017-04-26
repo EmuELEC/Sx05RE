@@ -1,17 +1,18 @@
-From c36e20e98eeb14d36c0634ee8014d81cf82c700d Mon Sep 17 00:00:00 2001
+From 93b5c7fb21822df6ee715e5e36c872f3ba915226 Mon Sep 17 00:00:00 2001
 From: kszaq <kszaquitto@gmail.com>
 Date: Fri, 31 Mar 2017 23:39:05 +0200
-Subject: [PATCH] aml: Implement drain
+Subject: [PATCH] aml: Implement drain, lower prefill to 0.5, check timesize
+ later
 
 ---
- .../cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp | 31 +++++++++++++++++-----
- xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.h  |  3 +++
- .../DVDCodecs/Video/DVDVideoCodecAmlogic.cpp       |  6 +++++
+ .../cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp | 37 ++++++++++++++++------
+ xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.h  |  3 ++
+ .../DVDCodecs/Video/DVDVideoCodecAmlogic.cpp       |  6 ++++
  .../DVDCodecs/Video/DVDVideoCodecAmlogic.h         |  1 +
- 4 files changed, 35 insertions(+), 6 deletions(-)
+ 4 files changed, 37 insertions(+), 10 deletions(-)
 
 diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp b/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
-index 11b08b5..eba385d 100644
+index 11b08b5..b1954d4 100644
 --- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
 +++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
 @@ -1431,6 +1431,7 @@ bool CAMLCodec::OpenDecoder(CDVDStreamInfo &hints)
@@ -39,12 +40,29 @@ index 11b08b5..eba385d 100644
  
    SetSpeed(m_speed);
  
-@@ -1889,16 +1893,30 @@ int CAMLCodec::Decode(uint8_t *pData, size_t iSize, double dts, double pts)
-        m_state |= STATE_PREFILLED;
+@@ -1812,7 +1816,6 @@ int CAMLCodec::Decode(uint8_t *pData, size_t iSize, double dts, double pts)
+ 
+   int rtn(0);
+ 
+-  float timesize(GetTimeSize());
+   if (pData)
+   {
+     m_frameSizes.push_back(iSize);
+@@ -1884,21 +1887,34 @@ int CAMLCodec::Decode(uint8_t *pData, size_t iSize, double dts, double pts)
+     if (loop == 100)
+       // Decoder got stuck; Reset
+       Reset();
+-
+-    if ((m_state & STATE_PREFILLED) == 0 && timesize >= 1.0)
+-       m_state |= STATE_PREFILLED;
    }
  
 -  if ((m_state & STATE_PREFILLED) != 0 && timesize > 0.5 &&  DequeueBuffer() == 0)
 -    rtn |= VC_PICTURE;
++  float timesize(GetTimeSize());
+ 
+-  if (((rtn & VC_PICTURE) == 0 && timesize < 2.0) || timesize < 1.0)
+-    rtn |= VC_BUFFER;
 +  if (m_drain)
 +  {
 +    if (DequeueBuffer() == 0)
@@ -59,11 +77,9 @@ index 11b08b5..eba385d 100644
 +  {
 +    m_noPictureLoop = 0;
  
--  if (((rtn & VC_PICTURE) == 0 && timesize < 2.0) || timesize < 1.0)
--    rtn |= VC_BUFFER;
-+    if ((m_state & STATE_PREFILLED) != 0 && timesize > 0.5 && DequeueBuffer() == 0)
++    if (timesize > 0.5 && DequeueBuffer() == 0)
 +      rtn |= VC_PICTURE;
- 
++
 +    if (timesize < 1.0)
 +      rtn |= VC_BUFFER;
 +  }
@@ -75,7 +91,7 @@ index 11b08b5..eba385d 100644
        rtn,
        static_cast<unsigned int>(iSize),
        dts / DVD_TIME_BASE, am_private->am_pkt.avdts,
-@@ -1907,7 +1925,8 @@ int CAMLCodec::Decode(uint8_t *pData, size_t iSize, double dts, double pts)
+@@ -1907,7 +1923,8 @@ int CAMLCodec::Decode(uint8_t *pData, size_t iSize, double dts, double pts)
        static_cast<float>(m_cur_pts)/PTS_FREQ,
        static_cast<int>(m_cur_pts),
        m_bufferIndex,
