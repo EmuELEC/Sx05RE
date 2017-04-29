@@ -6,7 +6,7 @@
        // get. Skipping a frame is easier than having decoder dropping one (lateframes > 10)
 -      double x = (m_lateframes <= 6) ? 0.98 : 0;
 -      if (renderPts < m_Queue[*iter].pts + x * frametime)
-+      if (renderPts < m_Queue[*iter].pts + 16.0 * frametime)
++      if (renderPts < m_Queue[*iter].pts + 24.0 * frametime)
          break;
        idx = *iter;
        ++iter;
