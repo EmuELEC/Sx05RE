@@ -1,0 +1,42 @@
+--- a/xbmc/cores/VideoPlayer/VideoPlayer.cpp	2017-04-24 19:29:12.904035000 +0200
++++ b/xbmc/cores/VideoPlayer/VideoPlayer.cpp	2017-04-24 19:29:12.904035000 +0200
+@@ -2024,7 +2025,7 @@
+       else if (m_CurrentAudio.starttime != DVD_NOPTS_VALUE && m_CurrentAudio.packets > 0)
+       {
+         if (m_pInputStream->IsRealtime())
+-          clock = m_CurrentAudio.starttime - m_CurrentAudio.cachetotal - DVD_MSEC_TO_TIME(400);
++          clock = m_CurrentAudio.starttime - m_CurrentAudio.cachetime - DVD_MSEC_TO_TIME(40);
+         else
+           clock = m_CurrentAudio.starttime - m_CurrentAudio.cachetime;
+         if (m_CurrentVideo.starttime != DVD_NOPTS_VALUE &&
+@@ -2600,6 +2600,8 @@  avoid double seeking
+       // This should always be the case.
+       if(m_pDemuxer && m_pDemuxer->SeekChapter(msg.GetChapter(), &start))
+       {
++        CLog::Log(LOGDEBUG, "VideoPlayer: m_pDemuxer->SeekChapter beforeSeek:%0.0f start:%0.0f",  beforeSeek, DVD_TIME_TO_MSEC(start)); 
++        start = DVD_MSEC_TO_TIME(beforeSeek);
+         FlushBuffers(start, true, true);
+         offset = DVD_TIME_TO_MSEC(start) - beforeSeek;
+         m_callback.OnPlayBackSeekChapter(msg.GetChapter());
+@@ -3933,7 +3935,7 @@
+ 
+ void CVideoPlayer::FlushBuffers(double pts, bool accurate, bool sync)
+ {
+-  CLog::Log(LOGDEBUG, "CVideoPlayer::FlushBuffers - flushing buffers");
++  CLog::Log(LOGDEBUG, "CVideoPlayer::FlushBuffers - flushing buffers pts:%0.0f",static_cast<float>(pts));
+ 
+   double startpts;
+   if (accurate && !m_omxplayer_mode)
+--- a/xbmc/cores/AudioEngine/Engines/ActiveAE/ActiveAE.cpp	2017-04-19 15:44:27.000000000 +0200
++++ b/xbmc/cores/AudioEngine/Engines/ActiveAE/ActiveAE.cpp	2017-04-27 19:55:09.793374401 +0200
+@@ -2299,7 +2299,7 @@
+   }
+ 
+   double error;
+-  double threshold = 100;
++  double threshold = 200;
+   if (stream->m_resampleMode)
+   {
+     threshold *= 2;
+
+
