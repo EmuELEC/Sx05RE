@@ -16,51 +16,26 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="mame2014"
-PKG_VERSION="7dc561f"
+PKG_NAME="emulationstation-theme-nes-mini"
+PKG_VERSION="ed686d1"
 PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="GPLv2"
-PKG_SITE="https://github.com/libretro/mame2014-libretro"
-PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_LICENSE="GPL"
+PKG_SITE="https://github.com/ruckage/es-theme-nes-mini"
+PKG_URL="https://github.com/ruckage/es-theme-nes-mini/archive/$PKG_VERSION.tar.gz"
+PKG_SOURCE_DIR="es-theme-nes-mini*"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_SECTION="libretro"
-PKG_SHORTDESC="Late 2014 version of MAME (0.159-ish) for libretro and MAME 0.159 romsets"
-
+PKG_SECTION="xmedia/games"
+PKG_SHORTDESC="Carbon theme for Emulationstation"
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-pre_make_target() {
-  export REALCC=$CC
-  export CC=$CXX
-  export LD=$CXX
-  strip_lto
-}
-
 make_target() {
-  case $PROJECT in
-    RPi)
-      make platform=armv6-hardfloat-arm1176jzf-s
-      ;;
-    RPi2)
-      make platform=armv7-neon-hardfloat-cortex-a7
-      ;;
-    imx6)
-      make platform=armv7-neon-hardfloat-cortex-a9
-      ;;
-    WeTek_Play)
-      make platform=armv7-neon-hardfloat-cortex-a9
-      ;;
-    Odroid_C2|WeTek_Hub|WeTek_Play_2|S905)
-      make platform=armv-neon-hardfloat
-      ;;
-    Generic)
-      make
-      ;;
-  esac
+  : not
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL/usr/lib/libretro
-  cp mame2014_libretro.so $INSTALL/usr/lib/libretro/
+
+    mkdir -p $INSTALL/usr/config/emulationstation/themes/es-theme-nes-mini
+    cp -r * $INSTALL/usr/config/emulationstation/themes/es-theme-nes-mini
 }
