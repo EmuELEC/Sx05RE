@@ -1,35 +1,12 @@
 --- a/xbmc/cores/VideoPlayer/VideoRenderers/RenderManager.cpp	2017-04-21 14:42:16.371525222 +0200
 +++ b/xbmc/cores/VideoPlayer/VideoRenderers/RenderManager.cpp	2017-04-21 14:43:32.295525222 +0200
-@@ -1315,26 +1315,17 @@
+@@ -1315,8 +1315,8 @@
        // renderer/drivers have internal queues, being slightliy late here does not mean that
        // we are really late. The likelihood that we recover decreases the greater m_lateframes
        // get. Skipping a frame is easier than having decoder dropping one (lateframes > 10)
 -      double x = (m_lateframes <= 6) ? 0.98 : 0;
--      if (renderPts < m_Queue[*iter].pts + x * frametime)
-+      if (renderPts < m_Queue[*iter].pts + 24.0 * frametime)
++      double x = (m_lateframes <= 6) ? 2.0 : 0;
+       if (renderPts < m_Queue[*iter].pts + x * frametime)
          break;
        idx = *iter;
        ++iter;
--    }
--
-     // skip late frames
--    while (m_queued.front() != idx)
--    {
--      requeue(m_discard, m_queued);
--      m_QueueSkip++;
-+      CLog::Log(LOGDEBUG, "CRenderManager::PrepareNextRender: skip late frames  idx:%d m_lateframes:%d, m_Queue[idx].pts:%0.4f, renderPts:%0.4f",
-+          idx, m_QueueSkip, m_Queue[m_queued.front()].pts / DVD_TIME_BASE, renderPts / DVD_TIME_BASE);
-+      requeue(m_discard, m_queued);
-+      m_QueueSkip++;
-     }
--
--    int lateframes = (renderPts - m_Queue[idx].pts) * m_fps / DVD_TIME_BASE;
--    if (lateframes)
--      m_lateframes += lateframes;
--    else
--      m_lateframes = 0;
--    
-+    m_lateframes = 0;
-     m_presentstep = PRESENT_FLIP;
-     m_discard.push_back(m_presentsource);
-     m_presentsource = idx;
