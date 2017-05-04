@@ -1,0 +1,35 @@
+https://github.com/libretro/RetroArch/commit/ed53be7c81527c5b70c881c0952804190e25f042
+
+
+configuration.c: In function 'config_set_defaults':
+configuration.c:1140:12: error: 'settings_t {aka struct settings}' has no member named 'ssh_enable'
+    settings->ssh_enable                        = path_file_exists(LAKKA_SSH_PATH);
+            ^~
+configuration.c:1141:12: error: 'settings_t {aka struct settings}' has no member named 'samba_enable'
+    settings->samba_enable                      = path_file_exists(LAKKA_SAMBA_PATH);
+            ^~
+configuration.c:1142:12: error: 'settings_t {aka struct settings}' has no member named 'bluetooth_enable'
+    settings->bluetooth_enable                  = path_file_exists(LAKKA_BLUETOOTH_PATH);
+            ^~
+configuration.c: In function 'config_load_file':
+configuration.c:2157:12: error: 'settings_t {aka struct settings}' has no member named 'ssh_enable'
+    settings->ssh_enable       = path_file_exists(LAKKA_SSH_PATH);
+            ^~
+configuration.c:2158:12: error: 'settings_t {aka struct settings}' has no member named 'samba_enable'
+    settings->samba_enable     = path_file_exists(LAKKA_SAMBA_PATH);
+            ^~
+configuration.c:2159:12: error: 'settings_t {aka struct settings}' has no member named 'bluetooth_enable'
+    settings->bluetooth_enable = path_file_exists(LAKKA_BLUETOOTH_PATH);
+            ^~
+configuration.c: In function 'config_save_file':
+configuration.c:3100:16: error: 'settings_t {aka struct settings}' has no member named 'ssh_enable'
+    if (settings->ssh_enable)
+                ^~
+configuration.c:3104:16: error: 'settings_t {aka struct settings}' has no member named 'samba_enable'
+    if (settings->samba_enable)
+                ^~
+configuration.c:3108:16: error: 'settings_t {aka struct settings}' has no member named 'bluetooth_enable'
+    if (settings->bluetooth_enable)
+                ^~
+make[1]: *** [Makefile:157: obj-unix/configuration.o] Error 1
+

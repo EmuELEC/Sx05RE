@@ -26,7 +26,7 @@ PKG_URL="https://github.com/ruckage/es-theme-nes-mini/archive/$PKG_VERSION.tar.g
 PKG_SOURCE_DIR="es-theme-nes-mini*"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_SECTION="xmedia/games"
-PKG_SHORTDESC="Carbon theme for Emulationstation"
+PKG_SHORTDESC="the nes-mini Emulationstation theme by ruckage"
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
