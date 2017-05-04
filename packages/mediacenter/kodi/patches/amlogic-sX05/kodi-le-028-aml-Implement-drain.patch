@@ -1,4 +1,4 @@
-From 93b5c7fb21822df6ee715e5e36c872f3ba915226 Mon Sep 17 00:00:00 2001
+From 53dd9ef9292b279c67e90692d28861adf506269f Mon Sep 17 00:00:00 2001
 From: kszaq <kszaquitto@gmail.com>
 Date: Fri, 31 Mar 2017 23:39:05 +0200
 Subject: [PATCH] aml: Implement drain, lower prefill to 0.5, check timesize
@@ -12,7 +12,7 @@ Subject: [PATCH] aml: Implement drain, lower prefill to 0.5, check timesize
  4 files changed, 37 insertions(+), 10 deletions(-)
 
 diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp b/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
-index 11b08b5..b1954d4 100644
+index 11b08b5..6f64119 100644
 --- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
 +++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/AMLCodec.cpp
 @@ -1431,6 +1431,7 @@ bool CAMLCodec::OpenDecoder(CDVDStreamInfo &hints)
@@ -80,7 +80,7 @@ index 11b08b5..b1954d4 100644
 +    if (timesize > 0.5 && DequeueBuffer() == 0)
 +      rtn |= VC_PICTURE;
 +
-+    if (timesize < 1.0)
++    if (timesize < 1.0 || ((rtn & VC_PICTURE) && timesize < 2.0))
 +      rtn |= VC_BUFFER;
 +  }
  
