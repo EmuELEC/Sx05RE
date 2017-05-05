@@ -1,6 +1,8 @@
---- a/xbmc/cores/VideoPlayer/VideoRenderers/RenderManager.cpp	2017-04-21 14:42:16.371525222 +0200
-+++ b/xbmc/cores/VideoPlayer/VideoRenderers/RenderManager.cpp	2017-04-21 14:43:32.295525222 +0200
-@@ -1315,8 +1315,8 @@
+diff --git a/xbmc/cores/VideoPlayer/VideoRenderers/RenderManager.cpp b/xbmc/cores/VideoPlayer/VideoRenderers/RenderManager.cpp
+index 482142e..0e05b4e 100644
+--- a/xbmc/cores/VideoPlayer/VideoRenderers/RenderManager.cpp
++++ b/xbmc/cores/VideoPlayer/VideoRenderers/RenderManager.cpp
+@@ -1311,7 +1311,7 @@ void CRenderManager::PrepareNextRender()
        // renderer/drivers have internal queues, being slightliy late here does not mean that
        // we are really late. The likelihood that we recover decreases the greater m_lateframes
        // get. Skipping a frame is easier than having decoder dropping one (lateframes > 10)
@@ -9,4 +11,12 @@
        if (renderPts < m_Queue[*iter].pts + x * frametime)
          break;
        idx = *iter;
-       ++iter;
+@@ -1327,7 +1327,7 @@ void CRenderManager::PrepareNextRender()
+ 
+     int lateframes = (renderPts - m_Queue[idx].pts) * m_fps / DVD_TIME_BASE;
+     if (lateframes)
+-      m_lateframes += lateframes;
++      m_lateframes = lateframes;
+     else
+       m_lateframes = 0;
+     
