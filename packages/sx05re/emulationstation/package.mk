@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="emulationstation"
-PKG_VERSION="6313698"
+PKG_VERSION="6c7b2c8"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"

@@ -18,32 +18,29 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="meteor"
-PKG_VERSION="21412cf"
+PKG_NAME="dolphin"
+PKG_VERSION="169059e"
 PKG_REV="1"
-PKG_ARCH="any"
-PKG_LICENSE="GPLv3"
-PKG_SITE="https://github.com/libretro/meteor-libretro"
-PKG_URL="https://github.com/libretro/meteor-libretro/archive/$PKG_VERSION.tar.gz"
+PKG_ARCH="x86_64"
+PKG_LICENSE="GPLv2"
+PKG_SITE="https://github.com/libretro/dolphin"
+PKG_URL="https://github.com/libretro/dolphin/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="Libretro port of Meteor GBA emulator."
-PKG_LONGDESC="Meteor is a Nintendo Gameboy Advance emulator."
+PKG_SHORTDESC="Dolphin is a GameCube / Wii emulator, allowing you to play games for these two platforms on PC with improvements."
+PKG_LONGDESC="Dolphin is a GameCube / Wii emulator, allowing you to play games for these two platforms on PC with improvements."
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 PKG_USE_CMAKE="no"
 
-post_unpack() {
-  mv $BUILD/meteor-libretro-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
-}
-
 make_target() {
-  make -C ../libretro
+  cd $ROOT/$PKG_BUILD
+  make -C Source/Core/DolphinLibretro
 }
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp ../libretro/meteor_libretro.so $INSTALL/usr/lib/libretro/
+  cp Source/Core/DolphinLibretro/dolphin_libretro.so $INSTALL/usr/lib/libretro/
 }

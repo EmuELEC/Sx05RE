@@ -26,8 +26,8 @@ PKG_URL="https://github.com/libretro/beetle-pce-fast-libretro/archive/$PKG_VERSI
 PKG_SOURCE_DIR="beetle-pce-fast-libretro-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_SECTION="xmedia/games"
-PKG_SHORTDESC="Optimized port of VBA-M to Libretro"
-PKG_LONGDESC="Optimized port of VBA-M to Libretro"
+PKG_SHORTDESC="libretro-beetle-pce-fast"
+PKG_LONGDESC="libretro-beetle-pce-fast"
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
@@ -39,3 +39,4 @@ makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
     cp `find . -name "*.so" | xargs echo` $INSTALL/usr/lib/libretro/
 }
+

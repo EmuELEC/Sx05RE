@@ -18,27 +18,23 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="common-shaders"
-PKG_VERSION="7b403c8"
+PKG_NAME="pokemini"
+PKG_VERSION="e6ed871"
 PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/libretro/common-shaders"
-PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_LICENSE="GPLv3"
+PKG_SITE="https://github.com/libretro/pokemini"
+PKG_URL="https://github.com/libretro/pokemini/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="Common GSLS shaders for RetroArch"
-PKG_LONGDESC="Common GSLS shaders for RetroArch"
+PKG_SHORTDESC="Obscure nintendo handheld emulator (functional,no color files or savestates currently)"
+PKG_LONGDESC="Obscure nintendo handheld emulator (functional,no color files or savestates currently)"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-make_target() {
-  :
-}
-
 makeinstall_target() {
-  mkdir -p $INSTALL/usr/share/common-shaders
-  cp -r * $INSTALL/usr/share/common-shaders
+  mkdir -p $INSTALL/usr/lib/libretro
+  cp pokemini_libretro.so $INSTALL/usr/lib/libretro/
 }

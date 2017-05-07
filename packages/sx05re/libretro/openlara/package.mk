@@ -18,32 +18,41 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="meteor"
-PKG_VERSION="21412cf"
+PKG_NAME="openlara"
+PKG_VERSION="229cf9d"
 PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="GPLv3"
-PKG_SITE="https://github.com/libretro/meteor-libretro"
-PKG_URL="https://github.com/libretro/meteor-libretro/archive/$PKG_VERSION.tar.gz"
+PKG_LICENSE="BSD"
+PKG_SITE="https://github.com/libretro/openlara"
+PKG_URL="https://github.com/libretro/openlara/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="Libretro port of Meteor GBA emulator."
-PKG_LONGDESC="Meteor is a Nintendo Gameboy Advance emulator."
+PKG_SHORTDESC="Classic Tomb Raider open-source engine"
+PKG_LONGDESC="Classic Tomb Raider open-source engine"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
-PKG_USE_CMAKE="no"
-
-post_unpack() {
-  mv $BUILD/meteor-libretro-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
-}
 
 make_target() {
-  make -C ../libretro
+  case $PROJECT in
+    RPi|RPi2|Gamegirl)
+      CFLAGS="$CFLAGS -I$SYSROOT_PREFIX/usr/include/interface/vcos/pthreads \
+                      -I$SYSROOT_PREFIX/usr/include/interface/vmcs_host/linux"
+      make -C src/platform/libretro GLES=1
+      ;;
+    imx6)
+      CFLAGS="$CFLAGS -DLINUX -DEGL_API_FB"
+      CPPFLAGS="$CPPFLAGS -DLINUX -DEGL_API_FB"
+      make -C src/platform/libretro
+      ;;
+    *)
+      make -C src/platform/libretro
+      ;;
+  esac
 }
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp ../libretro/meteor_libretro.so $INSTALL/usr/lib/libretro/
+  cp src/platform/libretro/*_libretro.so $INSTALL/usr/lib/libretro/
 }
