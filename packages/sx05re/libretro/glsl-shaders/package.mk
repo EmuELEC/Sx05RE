@@ -18,33 +18,28 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="sameboy"
-PKG_VERSION="fb55c35"
+PKG_NAME="glsl-shaders"
+PKG_VERSION="88b3f33"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/LIJI32/SameBoy"
-PKG_URL="https://github.com/LIJI32/SameBoy/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="SameBoy*"
-PKG_DEPENDS_TARGET="toolchain SDL2"
+PKG_SITE="https://github.com/libretro/glsl-shaders"
+PKG_URL="https://github.com/libretro/glsl-shaders/archive/master.tar.gz"
+PKG_DEPENDS_TARGET="toolchain"
+#PKG_SOURCE_DIR="glsl-shaders*"
 PKG_PRIORITY="optional"
-PKG_SECTION="sx05re"
-PKG_SHORTDESC="Gameboy and Gameboy Color emulator written in C https://sameboy.github.io/"
-PKG_LONGDESC="Gameboy and Gameboy Color emulator written in C https://sameboy.github.io/"
+PKG_SECTION="libretro"
+PKG_SHORTDESC="Common GSLS shaders for RetroArch"
+PKG_LONGDESC="Common GSLS shaders for RetroArch"
 
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="no" 
-
-
-
-pre_configure_target() {
-  strip_lto
-}
+PKG_AUTORECONF="no"
 
 make_target() {
+  :
+}
 
-make 
-
- }
-
-
+makeinstall_target() {
+  mkdir -p $INSTALL/usr/share/common-shaders
+  cp -r * $INSTALL/usr/share/common-shaders
+}

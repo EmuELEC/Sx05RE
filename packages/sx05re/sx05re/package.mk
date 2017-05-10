@@ -10,7 +10,7 @@ PKG_ARCH="arm aarch64"
 PKG_LICENSE="GPLv3"
 PKG_SITE=""
 PKG_URL=""
-PKG_DEPENDS_TARGET="retroarch-sx05re 2048 4do 81 atari800 beetle-lynx beetle-ngp beetle-pce beetle-saturn beetle-supergrafx beetle-vb beetle-wswan bluemsx cap32 crocods desmume dinothawr dosbox easyrpg fbalpha fceumm gambatte genesis-plus-gx gpsp gw-libretro handy hatari mame2003 mgba mrboom mupen64plus nestopia nxengine o2em parallel-n64 pcsx_rearmed pocketcdg prboom prosystem puae scummvm snes9x snes9x2002 snes9x2005 snes9x2010 stella tyrquake uae4arm uzebox vbam vecx vice virtualjaguar xrick yabause mame2014"
+PKG_DEPENDS_TARGET="retroarch-sx05re 2048 4do 81 atari800 beetle-lynx beetle-ngp beetle-pce beetle-pcfx beetle-saturn beetle-supergrafx beetle-vb beetle-wswan bluemsx cap32 crocods desmume dinothawr dolphin dosbox easyrpg fbalpha fceumm fuse-libretro gambatte genesis-plus-gx gpsp gw-libretro handy hatari lutro mame2003 melonds mgba mrboom mupen64plus nestopia nxengine o2em parallel-n64 pcsx_rearmed picodrive pocketcdg ppsspp prboom prosystem puae px68k sameboy scummvm snes9x snes9x2002 snes9x2005 snes9x2010 stella tyrquake uae4arm uzebox vbam vecx vice virtualjaguar xrick yabause mame2014"
 PKG_SECTION="sx05re"
 PKG_SHORTDESC="Sx05re Meta Package"
 PKG_LONGDESC="Sx05re Meta Package"
@@ -19,9 +19,9 @@ PKG_AUTORECONF="no"
 
 
 #these packages do not compile on aarch64 yet.
-if [ "$TARGET_ARCH" == "arm" ]; then
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET fuse-libretro lutro ppsspp beetle-pcfx picodrive"
-fi
+#if [ "$TARGET_ARCH" == "arm" ]; then
+#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET fuse-libretro lutro ppsspp beetle-pcfx picodrive"
+#fi
 
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET vba-next libretro-beetle-pce-fast advancemame PPSSPPSDL emulationstation"
 
@@ -30,7 +30,6 @@ PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET vba-next libretro-beetle-pce-fast advanc
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET attract" 
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET jum52"
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET reicastsa"
-#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET sameboy"
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET hurrican"
 
 

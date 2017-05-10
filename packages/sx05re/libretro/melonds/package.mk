@@ -18,31 +18,29 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="fbalpha"
-PKG_VERSION="e2a7b83"
+PKG_NAME="melonds"
+PKG_VERSION="9c05197"
 PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="Non-commercial"
-PKG_SITE="https://github.com/libretro/fbalpha"
-PKG_URL="https://github.com/libretro/fbalpha/archive/$PKG_VERSION.tar.gz"
+PKG_LICENSE="GPLv3"
+PKG_SITE="https://github.com/libretro/melonds"
+PKG_URL="https://github.com/libretro/melonds/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
+PKG_SOURCE_DIR="melonDS*"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="Port of Final Burn Alpha to Libretro (v0.2.97.38)."
-PKG_LONGDESC="Currently, FB Alpha supports games on Capcom CPS-1 and CPS-2 hardware, SNK Neo-Geo hardware, Toaplan hardware, Cave hardware, and various games on miscellaneous hardware. "
+PKG_SHORTDESC="DS emulator, sorta"
+PKG_LONGDESC="DS emulator, sorta"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
+PKG_USE_CMAKE="no"
 
-make_target() {
-  if [ "$ARCH" == "arm" ]; then
-    make -f makefile.libretro CC=$CC CXX=$CXX profile=performance
-  else
-    make -f makefile.libretro CC=$CC CXX=$CXX profile=accuracy
-  fi
+configure_target() {
+  cd $ROOT/$PKG_BUILD
 }
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp fbalpha_libretro.so $INSTALL/usr/lib/libretro/
+  cp melonds_libretro.so $INSTALL/usr/lib/libretro/
 }
