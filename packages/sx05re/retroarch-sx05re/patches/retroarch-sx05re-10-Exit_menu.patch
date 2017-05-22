@@ -19,13 +19,14 @@
           break;
        case CMD_EVENT_LOAD_STATE:
           {
-@@ -1993,6 +1992,9 @@
+@@ -1797,6 +1797,10 @@
           }
           break;
        case CMD_EVENT_QUIT:
-+remove("/var/lock/start.retro");
-+system("touch /var/lock/start.games");
-+system("systemctl start emustation.service"); system("systemctl stop retroarch.service");
-          handle_quit_event();
-          break;
++      remove("/var/lock/start.retro");
++      system("touch /var/lock/start.games");
++      system("systemctl start emustation.service");
++      system("systemctl stop retroarch.service");
+          return retroarch_main_quit();
        case CMD_EVENT_CHEEVOS_HARDCORE_MODE_TOGGLE:
+ #ifdef HAVE_CHEEVOS

@@ -73,10 +73,8 @@ for part in /sys/block/*/queue/add_random; do
   echo 0 > "$part"
 done
 
-# Set 500MHz minimum CPU speed for both clusters
+# Set 500MHz minimum CPU speed
 echo 500000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
-echo 500000 > /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq
-
 
 # set smp_affinity
 #            Binary       Hex
@@ -90,3 +88,4 @@ echo 8 > /proc/irq/62/smp_affinity   # dwc_otg, dwc_otg_hcd:usb2, dwc_otg_pcd
 
 # DEC_CONTROL_FLAG_DISABLE_FAST_POC
 echo 4 > /sys/module/amvdec_h264/parameters/dec_control
+

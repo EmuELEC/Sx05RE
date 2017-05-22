@@ -61,11 +61,7 @@ fi
 
 case "$TARGET_ARCH" in
   arm)
-    FFMPEG_TABLES="--enable-hardcoded-tables"
     CFLAGS="$CFLAGS -mthumb"
-    ;;
-  *)
-    FFMPEG_TABLES="--disable-hardcoded-tables"
     ;;
 esac
 
@@ -159,7 +155,6 @@ configure_target() {
               $FFMPEG_VDPAU \
               --disable-dxva2 \
               --enable-runtime-cpudetect \
-              $FFMPEG_TABLES \
               --disable-memalign-hack \
               --disable-encoders \
               --enable-encoder=ac3 \
