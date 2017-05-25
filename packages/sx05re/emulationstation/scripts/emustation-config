@@ -3,7 +3,7 @@
 BIOS_DIR="/storage/roms/bios"
 N64_DIR="/storage/roms/n64"
 CONFIG_DIR="/storage/.emulationstation"
-
+CONFIG_DIR2="/storage/.config/emulationstation"
 
 # initial ES setup
 load_bios () {
@@ -20,9 +20,14 @@ fi
 
 if [ ! -d "$CONFIG_DIR" ]; then
  mkdir -p $CONFIG_DIR
- cp -rf /usr/config/emulationstation/* $CONFIG_DIR/
+ cp -urf /usr/config/emulationstation/* $CONFIG_DIR/
 fi
 
+cp -urf /usr/config/emulationstation/themes/* $CONFIG_DIR/themes
+
+if [ -d "$CONFIG_DIR2" ]; then
+rm -rf $CONFIG_DIR2
+fi 
 
 }
 
