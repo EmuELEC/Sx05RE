@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="emulationstation-theme-nes-mini"
-PKG_VERSION="ed686d1"
+PKG_VERSION="b137f27"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"

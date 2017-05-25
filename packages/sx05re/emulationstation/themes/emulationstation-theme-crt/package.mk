@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="emulationstation-theme-crt"
-PKG_VERSION="486011c"
+PKG_VERSION="a427bfd"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"

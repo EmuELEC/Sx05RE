@@ -18,29 +18,42 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="melonds"
-PKG_VERSION="9c05197"
+PKG_NAME="pegasus-frontend"
+PKG_VERSION="dad554e"
 PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="GPLv3"
-PKG_SITE="https://github.com/libretro/melonds"
-PKG_URL="https://github.com/libretro/melonds/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="melonDS*"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_LICENSE="GPL"
+PKG_SITE="https://github.com/mmatyas/pegasus-frontend"
+PKG_URL="https://github.com/mmatyas/pegasus-frontend/archive/$PKG_VERSION.tar.gz"
+PKG_SOURCE_DIR="pegasus-frontend*"
+PKG_DEPENDS_TARGET="toolchain SDL2 qt5"
 PKG_PRIORITY="optional"
-PKG_SECTION="libretro"
-PKG_SHORTDESC="DS emulator, sorta"
-PKG_LONGDESC="DS emulator, sorta"
+PKG_SECTION="sx05re"
+PKG_SHORTDESC="A cross platform, customizable graphical frontend for launching emulators and managing your game collection. "
+PKG_LONGDESC="A cross platform, customizable graphical frontend for launching emulators and managing your game collection. "
 
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="no"
-PKG_USE_CMAKE="no"
+PKG_AUTORECONF="no" 
 
-configure_target() {
-  cd $ROOT/$PKG_BUILD
+post_unpack() {
+  rm -rf $BUILD/$PKG_NAME-*/
+  git clone https://github.com/mmatyas/pegasus-frontend.git $BUILD/$PKG_NAME-$PKG_VERSION/
+  cd $BUILD/$PKG_NAME-$PKG_VERSION/
+  git checkout $PKG_VERSION
+  git submodule update --init
+  cd $ROOT
 }
 
-makeinstall_target() {
-  mkdir -p $INSTALL/usr/lib/libretro
-  cp melonds_libretro.so $INSTALL/usr/lib/libretro/
+
+pre_configure_target() {
+  strip_lto
 }
+
+
+make_target() {
+qmake
+cd $ROOT/$PKG_BUILD
+make
+}
+
+

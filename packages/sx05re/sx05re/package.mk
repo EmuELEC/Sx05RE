@@ -31,7 +31,7 @@ PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET vba-next libretro-beetle-pce-fast advanc
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET jum52"
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET reicastsa"
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET hurrican"
-
+#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET pegasus-frontend"
 
 make_target() {
   : not
