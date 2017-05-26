@@ -18,27 +18,31 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="glsl-shaders"
-PKG_VERSION="c3b252c"
+PKG_NAME="meowpc98"
+PKG_VERSION="3a80e2c"
 PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/libretro/glsl-shaders"
-PKG_URL="https://github.com/libretro/glsl-shaders/archive/master.tar.gz"
+PKG_LICENSE="Unknown"
+PKG_SITE="https://github.com/libretro/libretro-meowPC98"
+PKG_URL="https://github.com/libretro/libretro-meowPC98/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="Common GSLS shaders for RetroArch"
-PKG_LONGDESC="Common GSLS shaders for RetroArch"
+PKG_SHORTDESC="Neko Project 2 (PC98 emulator) port for libretro/RetroArch"
+PKG_LONGDESC="Neko Project 2 (PC98 emulator) port for libretro/RetroArch"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
+post_unpack() {
+  mv $BUILD/libretro-meowPC98-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
+}
+
 make_target() {
-  :
+  make -C libretro -f Makefile.libretro
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL/usr/share/common-shaders
-  cp -r * $INSTALL/usr/share/common-shaders
+  mkdir -p $INSTALL/usr/lib/libretro
+  cp libretro/neko2p_libretro.so $INSTALL/usr/lib/libretro/
 }
