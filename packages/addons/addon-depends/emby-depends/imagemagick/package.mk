@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="imagemagick"
-PKG_VERSION="7.0.5-7"
+PKG_VERSION="7.0.5-8"
 PKG_LICENSE="http://www.imagemagick.org/script/license.php"
 PKG_SITE="http://www.imagemagick.org/"
 PKG_URL="http://www.imagemagick.org/download/releases/ImageMagick-$PKG_VERSION.tar.xz"
