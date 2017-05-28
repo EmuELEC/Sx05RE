@@ -1,4 +1,3 @@
-#!/bin/sh
 ################################################################################
 #      This file is part of LibreELEC - https://libreelec.tv
 #      Copyright (C) 2016 Team LibreELEC
@@ -17,16 +16,26 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-. /etc/profile
-oe_setup_addon service.emby
+PKG_NAME="lan951x-led-ctl"
+PKG_VERSION="0291b91"
+PKG_ARCH="arm"
+PKG_LICENSE="GPL"
+PKG_SITE="https://github.com/dradermacher/lan951x-led-ctl"
+PKG_URL="https://github.com/dradermacher/lan951x-led-ctl/archive/$PKG_VERSION.tar.gz"
+PKG_DEPENDS_TARGET="toolchain libusb"
+PKG_SECTION="rpi-tools"
+PKG_SHORTDESC="Control LEDs connected to LAN9512/LAN9514 ethernet USB controllers"
+PKG_LONGDESC="Control LEDs connected to LAN9512/LAN9514 ethernet USB controllers"
+PKG_AUTORECONF="no"
 
-chmod +x $ADDON_DIR/bin/*
-mkdir -p $ADDON_HOME
+make_target() {
+  $CC -std=c11 -I./include -Wall -Wstrict-prototypes -Wconversion \
+      -Wmissing-prototypes -Wshadow -Wextra -Wunused \
+      $CFLAGS -lusb-1.0 $LDFLAGS -o lan951x-led-ctl src/lan951x-led-ctl.c
 
-if [ "$emby_ffmpeg" != "false" ]
-then
-  emby_flags="-ffmpeg $ADDON_DIR/bin/ffmpegx -ffprobe $ADDON_DIR/bin/ffprobex"
-fi
+  $STRIP lan951x-led-ctl
+}
 
-mono $ADDON_DIR/Emby.Mono/MediaBrowser.Server.Mono.exe -programdata $ADDON_HOME \
-  $emby_flags
+makeinstall_target() {
+  : # nop
+}

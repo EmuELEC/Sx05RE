@@ -1,7 +1,6 @@
-#!/bin/sh
 ################################################################################
 #      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016 Team LibreELEC
+#      Copyright (C) 2017-present Team LibreELEC
 #
 #  LibreELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -17,16 +16,32 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-. /etc/profile
-oe_setup_addon service.emby
+PKG_NAME="pngquant"
+PKG_VERSION="2.9.1"
+PKG_ARCH="any"
+PKG_LICENSE="GPLv3"
+PKG_SITE="https://pngquant.org"
+PKG_URL="http://pngquant.org/pngquant-${PKG_VERSION}-src.tar.gz"
+PKG_DEPENDS_HOST="toolchain libpng:host zlib:host"
+PKG_SECTION="graphics"
+PKG_SHORTDESC="lossy PNG compressor"
+PKG_LONGDESC="a PNG compresor that significantly reduces file sizes by converting images to a more efficient 8-bit PNG format"
 
-chmod +x $ADDON_DIR/bin/*
-mkdir -p $ADDON_HOME
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="no"
 
-if [ "$emby_ffmpeg" != "false" ]
-then
-  emby_flags="-ffmpeg $ADDON_DIR/bin/ffmpegx -ffprobe $ADDON_DIR/bin/ffprobex"
-fi
+configure_host() {
+  : #
+}
 
-mono $ADDON_DIR/Emby.Mono/MediaBrowser.Server.Mono.exe -programdata $ADDON_HOME \
-  $emby_flags
+make_host() {
+  cd $ROOT/$PKG_BUILD
+  BIN=$ROOT/$PKG_BUILD/pngquant make
+
+  $STRIP $ROOT/$PKG_BUILD/pngquant
+}
+
+makeinstall_host() {
+  mkdir -p $ROOT/$TOOLCHAIN/bin
+    cp $ROOT/$PKG_BUILD/pngquant $ROOT/$TOOLCHAIN/bin
+}
