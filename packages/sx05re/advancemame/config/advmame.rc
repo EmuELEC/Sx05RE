@@ -438,7 +438,7 @@ sound_equalizer_lowvolume 0
 sound_equalizer_midvolume 0
 sound_latency 0.05
 sound_mode auto
-sound_normalize yes
+sound_normalize no
 sound_samplerate 44100
 sound_samples yes
 sound_volume -3
