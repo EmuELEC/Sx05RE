@@ -1,10 +1,10 @@
 PKG_NAME="qt-everywhere"
-PKG_VERSION="5.8.0"
+PKG_VERSION="5.9.0"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://qt-project.org"
-PKG_URL="http://download.qt.io/official_releases/qt/5.8/$PKG_VERSION/single/$PKG_NAME-opensource-src-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="pcre zlib"
+PKG_URL="http://download.qt.io/official_releases/qt/5.9/$PKG_VERSION/single/$PKG_NAME-opensource-src-$PKG_VERSION.tar.xz"
+PKG_DEPENDS_TARGET="pcre zlib freetype libjpeg-turbo"
 PKG_SOURCE_DIR="$PKG_NAME-opensource-src-$PKG_VERSION"
 PKG_LONGDESC="A cross-platform application and UI framework"
 
@@ -24,11 +24,9 @@ PKG_CONFIGURE_OPTS_TARGET="-prefix /usr
                            -system-zlib
                            -no-mtdev
                            -no-gif
-                           -no-libjpeg
                            -no-harfbuzz
                            -no-openssl
                            -no-libproxy
-                           -system-pcre
                            -no-glib
                            -no-pulseaudio
                            -no-alsa
@@ -41,11 +39,12 @@ PKG_CONFIGURE_OPTS_TARGET="-prefix /usr
                            -no-strip
                            -no-fontconfig
                            -no-dbus
-                           -no-opengl
+                           -opengl es2
                            -no-libudev
                            -no-libinput
                            -no-gstreamer
-                           -no-eglfs"
+                           -no-eglfs
+			   -skip qtxmlpatterns -skip qtx11extras -skip qtwinextras -skip qtspeech -skip qtdatavis3d -skip qtcharts -skip qtandroidextras -skip qt3d -skip qtlocation  -skip qtmacextras -skip qtdoc  -skip qtdatavis3d -skip  qtpurchasing -skip  qtnetworkauth -skip  qtscript -skip qtwebengine -skip qtwebview"
 
 configure_target() {
   QMAKE_CONF_DIR="qtbase/mkspecs/devices/linux-libreelec-g++"
