@@ -4,46 +4,49 @@ PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://qt-project.org"
 PKG_URL="http://download.qt.io/official_releases/qt/5.9/$PKG_VERSION/single/$PKG_NAME-opensource-src-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="pcre zlib freetype libjpeg-turbo"
+PKG_DEPENDS_TARGET="pcre zlib freetype libjpeg-turbo zlib:host zlib libpng tiff sqlite sqlite:host"
 PKG_SOURCE_DIR="$PKG_NAME-opensource-src-$PKG_VERSION"
 PKG_LONGDESC="A cross-platform application and UI framework"
 
-PKG_CONFIGURE_OPTS_TARGET="-prefix /usr
-                           -sysroot $SYSROOT_PREFIX
-                           -hostprefix $ROOT/$TOOLCHAIN
-                           -device linux-libreelec-g++
-                           -opensource -confirm-license
-                           -release
-                           -static
-                           -make libs
-                           -force-pkg-config
-                           -no-accessibility
-                           -no-sql-sqlite
-                           -no-sql-mysql
-                           -no-qml-debug
-                           -system-zlib
-                           -no-mtdev
-                           -no-gif
-                           -no-harfbuzz
-                           -no-openssl
-                           -no-libproxy
-                           -no-glib
-                           -no-pulseaudio
-                           -no-alsa
-                           -silent
-                           -no-cups
-                           -no-iconv
-                           -no-evdev
-                           -no-tslib
-                           -no-icu
-                           -no-strip
-                           -no-fontconfig
-                           -no-dbus
-                           -opengl es2
-                           -no-libudev
-                           -no-libinput
-                           -no-gstreamer
-                           -no-eglfs
+PKG_CONFIGURE_OPTS_TARGET=" -sysroot $SYSROOT_PREFIX \
+                           -hostprefix $ROOT/$BUILD \
+                           -device linux-libreelec-g++ \
+                           -device-option CROSS_COMPILE=$TARGET_PREFIX \
+                           -opensource -confirm-license \
+                           -release \
+                           -make libs \
+                           -force-pkg-config \
+                           -no-accessibility \
+                           -no-sql-mysql \
+                           -no-qml-debug \
+                           -system-zlib \
+                           -no-mtdev \
+                           -no-gif \
+                           -no-harfbuzz \
+                           -no-openssl \
+                           -no-libproxy \
+                           -no-glib \
+                           -no-pulseaudio \
+                           -no-alsa \
+                           -silent \
+                           -no-cups \
+                           -no-iconv \
+                           -no-evdev \
+                           -no-tslib \
+                           -no-icu \
+                           -strip \
+                           -no-fontconfig \
+                           -no-dbus \
+                           -system-libjpeg \
+                           -opengl es2 \
+                           -no-libudev \
+                           -no-libinput \
+                           -no-gstreamer \
+                           -no-eglfs \
+                           -no-rpath \
+                           -no-sql-sqlite \
+                           -no-use-gold-linker \
+	                   -system-libpng \
 			   -skip qtxmlpatterns -skip qtx11extras -skip qtwinextras -skip qtspeech -skip qtdatavis3d -skip qtcharts -skip qtandroidextras -skip qt3d -skip qtlocation  -skip qtmacextras -skip qtdoc  -skip qtdatavis3d -skip  qtpurchasing -skip  qtnetworkauth -skip  qtscript -skip qtwebengine -skip qtwebview"
 
 configure_target() {
@@ -70,10 +73,12 @@ configure_target() {
   echo "QMAKE_CFLAGS = $CFLAGS" >> $QMAKE_CONF
   echo "QMAKE_CXXFLAGS = $CXXFLAGS" >> $QMAKE_CONF
   echo "QMAKE_LFLAGS = $LDFLAGS" >> $QMAKE_CONF
+  echo "QMAKE_LIBS_EGL += -lMali" >> $QMAKE_CONF
+  echo "EGLFS_DEVICE_INTEGRATION = eglfs_mali" >> $QMAKE_CONF
   echo "load(qt_config)" >> $QMAKE_CONF
   echo '#include "../../linux-g++/qplatformdefs.h"' >> $QMAKE_CONF_DIR/qplatformdefs.h
 
   unset CC CXX LD RANLIB AR AS CPPFLAGS CFLAGS LDFLAGS CXXFLAGS
-  ./configure $PKG_CONFIGURE_OPTS_TARGET
+  ./configure -prefix /usr -extprefix $INSTALL/usr $PKG_CONFIGURE_OPTS_TARGET
 }
 

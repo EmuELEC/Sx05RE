@@ -1,0 +1,11 @@
+--- a/qtimageformats/src/plugins/imageformats/tiff/tiff.pro	2016-04-01 22:25:20.724000000 +0200
++++ b/qtimageformats/src/plugins/imageformats/tiff/tiff.pro	2016-04-01 22:25:10.420000000 +0200
+@@ -10,7 +10,7 @@
+ OTHER_FILES += tiff.json
+ 
+ config_libtiff {
+-    unix|mingw: LIBS += -ltiff
++    unix|mingw: LIBS += -ltiff -ljpeg -lz
+     else:win32: LIBS += libtiff.lib
+ } else {
+     include($$PWD/../../../3rdparty/libtiff.pri)
