@@ -43,7 +43,6 @@ PKG_CONFIGURE_OPTS_TARGET="-prefix /usr \
                            -no-libudev \
                            -no-libinput \
                            -no-gstreamer \
-                           -no-eglfs \
                            -no-sql-sqlite \
                            -no-use-gold-linker \
 	                   -system-libpng \
