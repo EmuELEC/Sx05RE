@@ -8,10 +8,10 @@
 	</extension>
 	<extension point="xbmc.addon.metadata">
 		<platform>all</platform>
-		<summary lang="en">EmulationStation Sx05RE</summary>
-		<description lang="en">Starts Emulationstation </description>
+		<summary lang="en">Retroarch Sx05RE</summary>
+		<description lang="en">Starts Retroarch </description>
 		<license>GNU General Public License, v2</license>
 		<language></language>
-		<website>http://www.emulationstation.org</website>
+		<website>https://www.libretro.com/</website>
 	</extension>
 </addon>

@@ -18,7 +18,7 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET vba-next libretro-beetle-pce-fast advancemame PPSSPPSDL emulationstation"
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET vba-next libretro-beetle-pce-fast"
 
 #these packages are experimental, they do not compile or have other problems, any help getting these to work is highly appreciated!.
 

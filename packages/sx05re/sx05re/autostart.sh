@@ -52,5 +52,5 @@ systemctl start smbd
 
  #if you don't want EmulationStation to start first, comment the next 3 lines
  rm -rf /var/lock/start.kodi
- touch /var/lock/start.games
- systemctl start emustation
+ touch /var/lock/start.retro
+ systemctl start retroarch

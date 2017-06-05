@@ -1,7 +1,7 @@
 #!/bin/sh
 
-    touch /var/lock/start.games
-    systemctl start emustation
+    touch /var/lock/start.retro
+    systemctl start retroarch
     rm /var/lock/start.kodi
     systemctl stop kodi
 

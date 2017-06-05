@@ -15,7 +15,7 @@ diff -Naurp kodi-17.0-beta7-b9fe8e9/addons/resource.language.en_gb/resources/str
  #: addons/skin.estouchy/xml/Home.xml
  msgctxt "#13012"
 -msgid "Exit"
-+msgid "Emulationstation"
++msgid "Retroarch"
  msgstr ""
  
  #: addons/skin.estuary/1080i/DialogButtonMenu.xml
@@ -64,8 +64,8 @@ diff -Naurp kodi-17.0-beta7-b9fe8e9/xbmc/Application.cpp kodi-17.0-beta7-b9fe8e9
 +  else if (m_ExitCode == EXITCODE_GAMES)
 +  {
 +    
-+    creat("/var/lock/start.games", S_IRUSR|S_IROTH);
-+    system("systemctl start emustation.service"); system("systemctl stop kodi");
++    creat("/var/lock/start.retro", S_IRUSR|S_IROTH);
++    system("systemctl start retroarch.service"); system("systemctl stop kodi");
 +  }
 +
    Sleep(200);

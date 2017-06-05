@@ -24,8 +24,8 @@
           break;
        case CMD_EVENT_QUIT:
 +      remove("/var/lock/start.retro");
-+      system("touch /var/lock/start.games");
-+      system("systemctl start emustation.service");
++      system("touch /var/lock/start.kodi");
++      system("systemctl start kodi.service");
 +      system("systemctl stop retroarch.service");
           return retroarch_main_quit();
        case CMD_EVENT_CHEEVOS_HARDCORE_MODE_TOGGLE:

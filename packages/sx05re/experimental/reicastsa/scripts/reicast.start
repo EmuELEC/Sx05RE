@@ -1,9 +1,0 @@
-#!/bin/sh
-
-. /etc/profile
-
-kodifreeze.sh freeze
-
-reicast "$@" > /tmp/reicast.log 2>&1
-
-pidof emulationstation > /dev/null 2>&1 || kodifreeze.sh unfreeze
