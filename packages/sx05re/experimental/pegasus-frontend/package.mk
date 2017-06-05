@@ -26,7 +26,7 @@ PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/mmatyas/pegasus-frontend"
 PKG_URL="https://github.com/mmatyas/pegasus-frontend/archive/$PKG_VERSION.tar.gz"
 PKG_SOURCE_DIR="pegasus-frontend*"
-PKG_DEPENDS_TARGET="toolchain:host SDL2 qt-everywhere"
+PKG_DEPENDS_TARGET="toolchain SDL2 qt-everywhere"
 PKG_PRIORITY="optional"
 PKG_SECTION="sx05re"
 PKG_SHORTDESC="A cross platform, customizable graphical frontend for launching emulators and managing your game collection. "
@@ -51,7 +51,8 @@ pre_configure_target() {
 
 
 make_target() {
-qmake
+#Nasty hack to get qmake to work, if you change qt-everywhere version, make sure you change this.
+$ROOT/$BUILD/qt-everywhere-5.9.0/qtbase/qmake/qmake INSTALLDIR=${INSTALL}/usr/bin
 cd $ROOT/$PKG_BUILD
 make
 }

@@ -8,10 +8,11 @@ PKG_DEPENDS_TARGET="pcre zlib freetype libjpeg-turbo zlib:host zlib libpng tiff 
 PKG_SOURCE_DIR="$PKG_NAME-opensource-src-$PKG_VERSION"
 PKG_LONGDESC="A cross-platform application and UI framework"
 
-PKG_CONFIGURE_OPTS_TARGET=" -sysroot $SYSROOT_PREFIX \
+PKG_CONFIGURE_OPTS_TARGET="-prefix /usr \
+                           -sysroot $SYSROOT_PREFIX \
                            -hostprefix $ROOT/$BUILD \
                            -device linux-libreelec-g++ \
-                           -device-option CROSS_COMPILE=$TARGET_PREFIX \
+                           -device-option CROSS_COMPILE=${TARGET_PREFIX} \
                            -opensource -confirm-license \
                            -release \
                            -make libs \
@@ -34,7 +35,7 @@ PKG_CONFIGURE_OPTS_TARGET=" -sysroot $SYSROOT_PREFIX \
                            -no-evdev \
                            -no-tslib \
                            -no-icu \
-                           -strip \
+                           -no-strip \
                            -no-fontconfig \
                            -no-dbus \
                            -system-libjpeg \
@@ -43,7 +44,6 @@ PKG_CONFIGURE_OPTS_TARGET=" -sysroot $SYSROOT_PREFIX \
                            -no-libinput \
                            -no-gstreamer \
                            -no-eglfs \
-                           -no-rpath \
                            -no-sql-sqlite \
                            -no-use-gold-linker \
 	                   -system-libpng \
@@ -78,7 +78,26 @@ configure_target() {
   echo "load(qt_config)" >> $QMAKE_CONF
   echo '#include "../../linux-g++/qplatformdefs.h"' >> $QMAKE_CONF_DIR/qplatformdefs.h
 
-  unset CC CXX LD RANLIB AR AS CPPFLAGS CFLAGS LDFLAGS CXXFLAGS
-  ./configure -prefix /usr -extprefix $INSTALL/usr $PKG_CONFIGURE_OPTS_TARGET
+
+  # Undefines compiler options
+  BACKUP_STRIP=$STRIP
+  unset CC CXX AR OBJCOPY STRIP CFLAGS CXXFLAGS CPPFLAGS LDFLAGS LD RANLIB
+  export QT_FORCE_PKGCONFIG=yes
+  unset QMAKESPEC
+
+ # unset CC CXX LD RANLIB AR AS CPPFLAGS CFLAGS LDFLAGS CXXFLAGS
+  ./configure  -extprefix ${INSTALL}/usr/local/qt5/ $PKG_CONFIGURE_OPTS_TARGET
 }
+
+
+makeinstall_target() {
+  # deploy to SYSROOT
+  cd ${ROOT}/${BUILD}/${PKG_NAME}-${PKG_VERSION}
+  make install DESTDIR=${SYSROOT_PREFIX}/usr/
+
+  #restore strip value
+  STRIP=$BACKUP_STRIP
+  debug_strip ${INSTALL}/usr/local/qt5/
+}
+
 
