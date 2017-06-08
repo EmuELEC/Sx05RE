@@ -4,7 +4,7 @@ PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://qt-project.org"
 PKG_URL="http://download.qt.io/official_releases/qt/5.9/$PKG_VERSION/single/$PKG_NAME-opensource-src-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="pcre zlib freetype libjpeg-turbo zlib:host zlib libpng tiff sqlite sqlite:host"
+PKG_DEPENDS_TARGET="pcre zlib freetype libjpeg-turbo zlib:host zlib libpng tiff glib:host glib sqlite:host sqlite gst-plugins-base"
 PKG_SOURCE_DIR="$PKG_NAME-opensource-src-$PKG_VERSION"
 PKG_LONGDESC="A cross-platform application and UI framework"
 
@@ -28,7 +28,7 @@ PKG_CONFIGURE_OPTS_TARGET="-prefix /usr \
                            -no-libproxy \
                            -no-glib \
                            -no-pulseaudio \
-                           -no-alsa \
+                           -alsa \
                            -silent \
                            -no-cups \
                            -no-iconv \
@@ -36,16 +36,19 @@ PKG_CONFIGURE_OPTS_TARGET="-prefix /usr \
                            -no-tslib \
                            -no-icu \
                            -no-strip \
-                           -no-fontconfig \
+                           -fontconfig \
+                           -gstreamer 1.0 \
                            -no-dbus \
                            -system-libjpeg \
                            -opengl es2 \
                            -no-libudev \
                            -no-libinput \
-                           -no-gstreamer \
                            -no-sql-sqlite \
                            -no-use-gold-linker \
 	                   -system-libpng \
+			   -optimized-qmake \
+                           -reduce-exports \
+                           -no-glib \
 			   -skip qtxmlpatterns -skip qtx11extras -skip qtwinextras -skip qtspeech -skip qtdatavis3d -skip qtcharts -skip qtandroidextras -skip qt3d -skip qtlocation  -skip qtmacextras -skip qtdoc  -skip qtdatavis3d -skip  qtpurchasing -skip  qtnetworkauth -skip  qtscript -skip qtwebengine -skip qtwebview"
 
 configure_target() {
@@ -80,14 +83,13 @@ configure_target() {
 
   # Undefines compiler options
   BACKUP_STRIP=$STRIP
-  unset CC CXX AR OBJCOPY STRIP CFLAGS CXXFLAGS CPPFLAGS LDFLAGS LD RANLIB
+  #unset CC CXX AR OBJCOPY STRIP CFLAGS CXXFLAGS CPPFLAGS LDFLAGS LD RANLIB
   export QT_FORCE_PKGCONFIG=yes
   unset QMAKESPEC
 
  # unset CC CXX LD RANLIB AR AS CPPFLAGS CFLAGS LDFLAGS CXXFLAGS
   ./configure  -extprefix ${INSTALL}/usr/local/qt5/ $PKG_CONFIGURE_OPTS_TARGET
 }
-
 
 makeinstall_target() {
   # deploy to SYSROOT

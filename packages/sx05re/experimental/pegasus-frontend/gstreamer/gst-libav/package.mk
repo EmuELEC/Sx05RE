@@ -18,43 +18,26 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="pegasus-frontend"
-PKG_VERSION="c3db839"
+PKG_NAME="gst-libav"
+PKG_VERSION="1.12.0"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/mmatyas/pegasus-frontend"
-PKG_URL="https://github.com/mmatyas/pegasus-frontend/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="pegasus-frontend*"
-PKG_DEPENDS_TARGET="toolchain SDL2 qt-everywhere"
+PKG_SITE="https://github.com/GStreamer/gst-libav"
+PKG_URL="https://gstreamer.freedesktop.org/src/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_DEPENDS_TARGET="toolchain gstreamer"
 PKG_PRIORITY="optional"
 PKG_SECTION="sx05re"
-PKG_SHORTDESC="A cross platform, customizable graphical frontend for launching emulators and managing your game collection. "
-PKG_LONGDESC="A cross platform, customizable graphical frontend for launching emulators and managing your game collection. "
+PKG_SHORTDESC="Gstreamer"
+PKG_LONGDESC="Gstreamer"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no" 
 
-post_unpack() {
-  rm -rf $BUILD/$PKG_NAME-*/
-  git clone https://github.com/mmatyas/pegasus-frontend.git $BUILD/$PKG_NAME-$PKG_VERSION/
-  cd $BUILD/$PKG_NAME-$PKG_VERSION/
-  git checkout $PKG_VERSION
-  git submodule update --init
-  cd $ROOT
-}
-
 
 pre_configure_target() {
-  strip_lto
-}
-
-
-make_target() {
-#Nasty hack to get qmake to work, if you change qt-everywhere version, make sure you change this.
-$ROOT/$BUILD/qt-everywhere-5.9.0/qtbase/qmake/qmake INSTALLDIR=${INSTALL}/usr/bin
-cd $ROOT/$PKG_BUILD
-make
+ 
+strip_lto
 }
 
 
