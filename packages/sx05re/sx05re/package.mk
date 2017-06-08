@@ -26,7 +26,9 @@ PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET vba-next libretro-beetle-pce-fast advanc
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET jum52"
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET reicastsa"
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET hurrican"
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET pegasus-frontend"
+
+#Pegasus-FE works, but it is still in very early stage, if you enable you need to set the disk size to 600 in the distro options.
+#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET pegasus-frontend"
 
 make_target() {
   : not
