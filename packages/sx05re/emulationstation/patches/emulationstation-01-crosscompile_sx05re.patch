@@ -1,0 +1,24 @@
+diff U3 a/EmulationStation-master/CMakeLists.txt b/test/EmulationStation-master/CMakeLists.txt
+--- a/CMakeLists.txt	Thu Jun 08 07:58:22 2017
++++ b/CMakeLists.txt	Thu Jun 08 17:25:50 2017
+@@ -28,7 +28,8 @@
+ #-------------------------------------------------------------------------------
+ #check if we're running on olinuxino / odroid / etc
+ MESSAGE("Looking for libMali.so")
+-if(EXISTS "/usr/lib/libMali.so" OR
++if(EXISTS "${CMAKE_FIND_ROOT_PATH}/usr/lib/libMali.so" OR
++   EXISTS "/usr/lib/libMali.so" OR
+    EXISTS "/usr/lib/arm-linux-gnueabihf/libMali.so" OR
+    EXISTS "/usr/lib/aarch64-linux-gnu/libMali.so" OR
+    EXISTS "/usr/lib/arm-linux-gnueabihf/mali-egl/libmali.so" OR
+@@ -91,8 +92,8 @@
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-attributes -O0") #support C++11 for std::, optimize
+     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -O0")
+ else()
+-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-attributes -O2") #support C++11 for std::, optimize
+-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -O2")  #-s = strip binary
++    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-attributes -O2 -ldl -lm") #support C++11 for std::, optimize
++    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -O2 -ldl -lm")  #-s = strip binary
+ endif()
+ endif()
+ 
