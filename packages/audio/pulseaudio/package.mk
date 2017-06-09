@@ -82,7 +82,7 @@ PKG_CONFIGURE_OPTS_TARGET="--disable-silent-rules \
                            --disable-bluez5-ofono-headset \
                            --disable-bluez5-native-headset \
                            --enable-udev \
-                           --with-udev-rules-dir=/usr/lib/udev/rules.d
+                           --with-udev-rules-dir=/usr/lib/udev/rules.d \
                            --disable-hal-compat \
                            --enable-ipv6 \
                            --enable-openssl \
