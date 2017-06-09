@@ -17,22 +17,18 @@
 ################################################################################
 
 PKG_NAME="SFML"
-PKG_VERSION="40ae477"
+PKG_VERSION="c43b599"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MAME"
 PKG_SITE="https://github.com/SFML/SFML"
 PKG_URL="https://github.com/SFML/SFML/archive/$PKG_VERSION.tar.gz"
 PKG_SOURCE_DIR="SFML-$PKG_VERSION*"
-PKG_DEPENDS_TARGET="toolchain libX11 libXrandr opengl-meson"
+PKG_DEPENDS_TARGET="toolchain libX11"
 PKG_SECTION="sx05re/mod"
 PKG_SHORTDESC="Attract mode"
 PKG_LONGDESC="A graphical front-end for command line emulators that hides the underlying operating system and is intended to be controlled with a joystick or gamepad. "
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="no"
+PKG_AUTORECONF="no" 
 
-PKG_CONFIGURE_OPTS_TARGET="-DSFML_OPENGL_ES=1"
-
-make_target() {
-  make -DSFML_OPENGL_ES=1
-}
+PKG_CMAKE_OPTS_TARGET="-DSFML_OPENGL_ES=1 -DSFML_X11=0"

@@ -1,0 +1,11 @@
+--- SFML-c43b599/src/SFML/Window/EglContext.hpp	2017-06-08 23:01:57.991814500 -0500
++++ SFML-c43b599/src/SFML/Window/EglContext.hpp	2017-06-08 23:02:20.416246349 -0500
+@@ -33,7 +33,7 @@
+ #include <SFML/Window/EGLCheck.hpp>
+ #include <SFML/Window/GlContext.hpp>
+ #include <SFML/OpenGL.hpp>
+-
++#include <X11/Xutil.h>
+ 
+ namespace sf
+ {

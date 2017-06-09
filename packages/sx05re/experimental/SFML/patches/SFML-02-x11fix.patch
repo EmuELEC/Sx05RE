@@ -1,0 +1,10 @@
+--- SFML-c43b599/src/SFML/Window/GlContext.cpp	2017-06-08 23:01:57.991814500 -0500
++++ SFML-c43b599/src/SFML/Window/GlContext.cpp	2017-06-08 23:02:20.416246349 -0500
+@@ -39,6 +39,7 @@
+ #include <cstdlib>
+ #include <cstring>
+ #include <cassert>
++#include <X11/Xutil.h>
+ 
+ #if !defined(SFML_OPENGL_ES)
+ 

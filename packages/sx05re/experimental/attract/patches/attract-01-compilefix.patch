@@ -1,0 +1,62 @@
+diff --git Makefile Makefile
+index b431f37..cf66e33 100644
+--- a/Makefile
++++ b/Makefile
+@@ -24,7 +24,7 @@
+ # BUILD CONFIGURATION OPTIONS:
+ #
+ # Uncomment next line to build GLES version (embedded systems)
+-#USE_GLES=1
++USE_GLES=1
+ #
+ # Uncomment next line to disable movie support (i.e. no FFmpeg).
+ #NO_MOVIE=1
+@@ -42,7 +42,7 @@
+ #WINDOWS_STATIC=1
+ #
+ # Uncomment the next line to disable SWF support (i.e. no game_swf)
+-#NO_SWF=1
++NO_SWF=1
+ ###############################
+ 
+ #FE_DEBUG=1
+@@ -241,7 +241,7 @@
+    ifeq ($(USE_GLES),1)
+     LIBS += -ldl -lGLESv1_CM
+    else
+-    LIBS += -ldl -lGL
++    LIBS += -ldl -lGLESv1_CM
+    endif
+    TEMP_LIBS += freetype2
+    CFLAGS += $(shell $(PKG_CONFIG) --cflags --silence-errors freetype2)
+@@ -290,7 +290,7 @@
+  CFLAGS += -g -Wall
+  FE_FLAGS += -DFE_DEBUG
+ else
+- CFLAGS += -O$(OPTIMIZE) -DNDEBUG
++ CFLAGS += -O$(OPTIMIZE) -DNDEBUG -DUSE_GLES
+ endif
+ 
+ ifeq ($(FE_RPI),1)
+@@ -647,7 +647,7 @@
+ ifeq ($(USE_GLES),1)
+ 	GAMESWFOBJS += $(GAMESWF_OBJ_DIR)/gameswf_render_handler_ogles.o
+ else
+-	GAMESWFOBJS += $(GAMESWF_OBJ_DIR)/gameswf_render_handler_ogl.o
++	GAMESWFOBJS += $(GAMESWF_OBJ_DIR)/gameswf_render_handler_ogles.o
+ endif
+ 
+ $(OBJ_DIR)/libgameswf.a: $(GAMESWFOBJS) | $(GAMESWF_OBJ_DIR) $(GSBASE_OBJ_DIR)
+diff --git extlibs/gameswf/gameswf/gameswf_freetype.h extlibs/gameswf/gameswf/gameswf_freetype.h
+index 968c0b3..2c5681b 100644
+--- a/extlibs/gameswf/gameswf/gameswf_freetype.h
++++ b/extlibs/gameswf/gameswf/gameswf_freetype.h
+@@ -16,7 +16,7 @@
+ 
+ #if TU_CONFIG_LINK_TO_FREETYPE == 1
+ 
+-#include <ft2build.h>
++#include <freetype2/ft2build.h>
+ #include FT_OUTLINE_H
+ #include FT_FREETYPE_H
+ #include FT_GLYPH_H
