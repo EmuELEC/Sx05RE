@@ -31,6 +31,13 @@ if [[ -z "${FULLPATHTOROMS}" ]]; then
  fi
 
 
+#set reicast BIOS dir to point to /storage/roms/bios
+if [ ! -L /storage/.local/share/reicast/data ]; then
+mkdir -p /storage/.local/share/reicast 
+rm -rf /storage/.local/share/reicast/data
+ln -s /storage/roms/bios /storage/.local/share/reicast/data
+fi
+
 #hacky way to get samba on boot
 /usr/lib/samba/samba-config
 systemctl start smbd

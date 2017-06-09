@@ -20,11 +20,14 @@ PKG_AUTORECONF="no"
 
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET vba-next libretro-beetle-pce-fast advancemame PPSSPPSDL emulationstation"
 
+# Thanks to magicseb  Reicast SA now WORKS :D
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET reicastsa"
+
+
 #these packages are experimental, they do not compile or have other problems, any help getting these to work is highly appreciated!.
 
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET attract" 
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET jum52"
-#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET reicastsa"
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET hurrican"
 
 #Pegasus-FE works, but it is still in very early stage, if you enable you need to set the disk size to 600 in the distro options.
