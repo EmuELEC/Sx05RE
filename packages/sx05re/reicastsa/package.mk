@@ -43,15 +43,18 @@ make_target() {
 }
 
 makeinstall_target() {
+  
   mkdir -p $INSTALL/usr/bin
   cp reicast.elf $INSTALL/usr/bin/reicast
   cp tools/reicast-joyconfig.py $INSTALL/usr/bin/
-  #cp $PKG_DIR/scripts/* $INSTALL/usr/bin/
+
   mkdir -p $INSTALL/usr/config
   cp -r $PKG_DIR/config/* $INSTALL/usr/config/
-
+  
+ mkdir -p $INSTALL/usr/lib/python2.7/site-packages/evdev
+  cp -r $PKG_DIR/evdev/* $INSTALL/usr/lib/python2.7/site-packages/evdev
 }
 
-postinstall_target() {
-  enable_service reicast-biosdir.service
-}
+#postinstall_target() {
+#  enable_service reicast-biosdir.service
+#}
