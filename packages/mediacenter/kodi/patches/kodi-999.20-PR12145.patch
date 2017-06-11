@@ -1,0 +1,51 @@
+From 58d4b3c68144b377ef57bcb08446de0d0e0c5c97 Mon Sep 17 00:00:00 2001
+From: fritsch <Peter.Fruehberger@gmail.com>
+Date: Mon, 22 May 2017 12:44:14 +0200
+Subject: [PATCH 1/2] SMBFile: Remove year old workaround
+
+---
+ xbmc/filesystem/SMBFile.cpp | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+diff --git a/xbmc/filesystem/SMBFile.cpp b/xbmc/filesystem/SMBFile.cpp
+index 08fc39006875..8bcf3e641b9e 100644
+--- a/xbmc/filesystem/SMBFile.cpp
++++ b/xbmc/filesystem/SMBFile.cpp
+@@ -503,15 +503,6 @@ ssize_t CSMBFile::Read(void *lpBuf, size_t uiBufSize)
+ 
+   CSingleLock lock(smb); // Init not called since it has to be "inited" by now
+   smb.SetActivityTime();
+-  /* work around stupid bug in samba */
+-  /* some samba servers has a bug in it where the */
+-  /* 17th bit will be ignored in a request of data */
+-  /* this can lead to a very small return of data */
+-  /* also worse, a request of exactly 64k will return */
+-  /* as if eof, client has a workaround for windows */
+-  /* thou it seems other servers are affected too */
+-  if( uiBufSize >= 64*1024-2 )
+-    uiBufSize = 64*1024-2;
+ 
+   ssize_t bytesRead = smbc_read(m_fd, lpBuf, (int)uiBufSize);
+ 
+
+From 9251f173295008acdebdd01f56d974af564dd848 Mon Sep 17 00:00:00 2001
+From: fritsch <Peter.Fruehberger@gmail.com>
+Date: Mon, 22 May 2017 12:44:46 +0200
+Subject: [PATCH 2/2] SMBFile: Remove socket option (only affects new configs)
+
+---
+ xbmc/filesystem/SMBFile.cpp | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/xbmc/filesystem/SMBFile.cpp b/xbmc/filesystem/SMBFile.cpp
+index 8bcf3e641b9e..99d1590ef3de 100644
+--- a/xbmc/filesystem/SMBFile.cpp
++++ b/xbmc/filesystem/SMBFile.cpp
+@@ -118,7 +118,6 @@ void CSMB::Init()
+         fprintf(f, "\tclient lanman auth = yes\n");
+         fprintf(f, "\tlanman auth = yes\n");
+ 
+-        fprintf(f, "\tsocket options = TCP_NODELAY IPTOS_LOWDELAY SO_RCVBUF=65536 SO_SNDBUF=65536\n");      
+         fprintf(f, "\tlock directory = %s/.smb/\n", getenv("HOME"));
+ 
+         // set wins server if there's one. name resolve order defaults to 'lmhosts host wins bcast'.
