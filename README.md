@@ -2,6 +2,11 @@
 An emulation fork for Sx05 devices.
 to build use
 
+sudo apt update && sudo apt upgrade
+sudo apt install gcc make git gcc-multilib lib32stdc++6
+sudo dpkg-reconfigure dash (select no, to install bash as the default)
+git clone https://github.com/shantigilbert/LibreELEC.tv.git Sx05RE
+cd Sx05RE
 make image PROJECT=S905 ARCH=arm DISTRO=Sx05RE
 
 # LibreELEC
