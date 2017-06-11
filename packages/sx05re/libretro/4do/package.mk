@@ -19,7 +19,7 @@
 ################################################################################
 
 PKG_NAME="4do"
-PKG_VERSION="1c3ee3c"
+PKG_VERSION="f1d2b31"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="LGPL with additional notes"
@@ -36,6 +36,10 @@ PKG_AUTORECONF="no"
 
 post_unpack() {
   mv $BUILD/4do-libretro-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
+}
+
+make_target() {
+  make CC=$CC LD=$LD AR=$AR
 }
 
 makeinstall_target() {
