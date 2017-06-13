@@ -198,7 +198,9 @@
   SYSTEM_PART_START=2048
 
 
- LAKKA_MIRROR="http://sources.lakka.tv"
+LAKKA_MIRROR="http://sources.lakka.tv"
+
+LIBRETRO_CORES="2048 4do 81 atari800 beetle-lynx beetle-ngp beetle-pce beetle-pcfx beetle-saturn beetle-supergrafx beetle-vb beetle-wswan bluemsx cap32 crocods desmume dinothawr dolphin dosbox easyrpg fbalpha fceumm fuse-libretro gambatte genesis-plus-gx gpsp gw-libretro handy hatari lutro mame2003 melonds mgba mrboom mupen64plus nestopia nxengine o2em openlara parallel-n64 pcsx_rearmed picodrive pocketcdg ppsspp prboom prosystem puae px68k sameboy scummvm snes9x snes9x2002 snes9x2005 snes9x2010 stella tyrquake uae4arm uzebox vbam vecx vice virtualjaguar xrick yabause"
 
 RA_PLAYLIST_NAMES=""\
 "Atari - 2600.lpl;"\
@@ -229,6 +231,7 @@ RA_PLAYLIST_NAMES=""\
 "Nintendo - Game Boy Color.lpl;"\
 "Nintendo - Game Boy.lpl;"\
 "Nintendo - Nintendo 64.lpl;"\
+"Nintendo - Nintendo DS.lpl;"\
 "Nintendo - Nintendo DS Decrypted.lpl;"\
 "Nintendo - Nintendo DS (Download Play) (BETA).lpl;"\
 "Nintendo - Nintendo DSi Decrypted.lpl;"\
@@ -284,6 +287,7 @@ RA_PLAYLIST_NAMES=""\
 "/tmp/cores/desmume_libretro.so;"\
 "/tmp/cores/desmume_libretro.so;"\
 "/tmp/cores/desmume_libretro.so;"\
+"/tmp/cores/desmume_libretro.so;"\
 "/tmp/cores/nestopia_libretro.so;"\
 "/tmp/cores/snes9x2010_libretro.so;"\
 "/tmp/cores/snes9x2010_libretro.so;"\
@@ -300,4 +304,4 @@ RA_PLAYLIST_NAMES=""\
 "/tmp/cores/mednafen_ngp_libretro.so;"\
 "/tmp/cores/mednafen_ngp_libretro.so;"\
 "/tmp/cores/ppsspp_libretro.so;"\
-"/tmp/cores/pcsx_rearmed_libretro.so"
+"/tmp/cores/pcsx_rearmed_libretro.so" 

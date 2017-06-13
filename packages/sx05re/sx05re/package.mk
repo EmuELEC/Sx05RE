@@ -10,7 +10,7 @@ PKG_ARCH="arm aarch64"
 PKG_LICENSE="GPLv3"
 PKG_SITE=""
 PKG_URL=""
-PKG_DEPENDS_TARGET="retroarch-sx05re 2048 4do 81 atari800 beetle-lynx beetle-ngp beetle-pce beetle-pcfx beetle-saturn beetle-supergrafx beetle-vb beetle-wswan bluemsx cap32 crocods desmume dinothawr dolphin dosbox easyrpg fbalpha fceumm fuse-libretro gambatte genesis-plus-gx gpsp gw-libretro handy hatari lutro mame2003 melonds mgba mrboom mupen64plus nestopia nxengine o2em parallel-n64 pcsx_rearmed picodrive pocketcdg ppsspp prboom prosystem puae px68k sameboy scummvm snes9x snes9x2002 snes9x2005 snes9x2010 stella tyrquake uae4arm uzebox vbam vecx vice virtualjaguar xrick yabause mame2014"
+PKG_DEPENDS_TARGET="retroarch-sx05re $LIBRETRO_CORES"
 PKG_SECTION="sx05re"
 PKG_SHORTDESC="Sx05re Meta Package"
 PKG_LONGDESC="Sx05re Meta Package"
@@ -18,20 +18,21 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET vba-next libretro-beetle-pce-fast advancemame PPSSPPSDL emulationstation"
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mame2014 vba-next libretro-beetle-pce-fast advancemame PPSSPPSDL emulationstation"
 
 # Thanks to magicseb  Reicast SA now WORKS :D
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET reicastsa"
 
+# Pegasus-FE works, but it is still in very early stage, if you enable you need to set the disk size to 600 in the distro options.
+#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET pegasus-frontend"
 
-#these packages are experimental, they do not compile or have other problems, any help getting these to work is highly appreciated!.
+
+# These packages are experimental, they do not compile or have other problems, any help getting these to work is highly appreciated!.
 
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET attract" 
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET jum52"
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET hurrican"
 
-#Pegasus-FE works, but it is still in very early stage, if you enable you need to set the disk size to 600 in the distro options.
-#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET pegasus-frontend"
 
 make_target() {
   : not
