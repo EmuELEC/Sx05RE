@@ -19,13 +19,13 @@
 ################################################################################
 
 PKG_NAME="retroarch-sx05re"
-PKG_VERSION="33905af"
+PKG_VERSION="39ea7de"
 PKG_REV="4"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/RetroArch"
 PKG_URL="https://github.com/libretro/RetroArch/archive/$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain alsa-lib freetype zlib retroarch-assets retroarch-overlays core-info retroarch-joypad-autoconfig glsl-shaders libretro-database ffmpeg libass libvdpau libxkbfile xkeyboard-config libxkbcommon openal-soft joyutils sixpair"
+PKG_DEPENDS_TARGET="toolchain alsa-lib freetype zlib retroarch-assets retroarch-overlays core-info retroarch-joypad-autoconfig glsl-shaders libretro-database ffmpeg libass libvdpau libxkbfile xkeyboard-config libxkbcommon openal-soft joyutils sixpair empty"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="Reference frontend for the libretro API."
