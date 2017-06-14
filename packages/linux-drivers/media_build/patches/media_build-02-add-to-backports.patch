@@ -1,6 +1,6 @@
 --- a/backports/backports.txt
 +++ b/backports/backports.txt
-@@ -25,6 +25,14 @@
+@@ -25,6 +25,15 @@
  add pr_fmt.patch
  add debug.patch
  add drx39xxj.patch
@@ -11,6 +11,7 @@
 +add linux-057-Removed-MCE-customer-code-restriction-in-rc6-decode.patch
 +add linux-062-imon_pad_ignore_diagonal.patch
 +add linux-260-fix-for-kernel-4.11.patch
++add linux-277-dmx_h.patch
 +add cxd2880-support.patch
 
  [4.8.255]
