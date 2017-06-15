@@ -30,3 +30,21 @@
           return retroarch_main_quit();
        case CMD_EVENT_CHEEVOS_HARDCORE_MODE_TOGGLE:
  #ifdef HAVE_CHEEVOS
+@@ -2095,7 +2095,7 @@
+ #if defined(__linux__) && !defined(ANDROID)
+          runloop_msg_queue_push(msg_hash_to_str(MSG_VALUE_SHUTTING_DOWN), 1, 180, true);
+          command_event(CMD_EVENT_MENU_SAVE_CURRENT_CONFIG, NULL);
+-         command_event(CMD_EVENT_QUIT, NULL);
++         retroarch_main_quit();
+          system("shutdown -P now");
+ #endif
+          break;
+@@ -2103,7 +2103,7 @@
+ #if defined(__linux__) && !defined(ANDROID)
+          runloop_msg_queue_push(msg_hash_to_str(MSG_VALUE_REBOOTING), 1, 180, true);
+          command_event(CMD_EVENT_MENU_SAVE_CURRENT_CONFIG, NULL);
+-         command_event(CMD_EVENT_QUIT, NULL);
++         retroarch_main_quit();
+          system("shutdown -r now");
+ #endif
+          break;
