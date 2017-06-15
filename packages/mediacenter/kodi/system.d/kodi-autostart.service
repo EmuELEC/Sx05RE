@@ -1,7 +1,7 @@
 [Unit]
 Description=Kodi user autostart script
 Before=kodi.service
-After=network-online.target graphical.target
+After=kodi-waitonnetwork.service graphical.target
 ConditionPathExists=/storage/.config/autostart.sh
 
 [Service]

@@ -1,9 +1,8 @@
 [Unit]
 Description=Kodi Media Center
-After=network-online.target graphical.target gui-switch.service
-Requires=graphical.target gui-switch.service
-Wants=network-online.target
-ConditionPathExists=/var/lock/start.kodi
+After=kodi-waitonnetwork.service graphical.target
+Requires=graphical.target
+Wants=kodi-waitonnetwork.service
 
 [Service]
 Environment=__GL_YIELD=USLEEP
@@ -25,3 +24,4 @@ LimitNOFILE=16384
 
 [Install]
 WantedBy=kodi.target
+

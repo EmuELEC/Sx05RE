@@ -1,0 +1,9 @@
+[Unit]
+Description=Amlogic WiFi module loader
+
+[Service]
+Type=simple
+ExecStart=/sbin/modprobe wifi_dummy
+
+[Install]
+WantedBy=basic.target
