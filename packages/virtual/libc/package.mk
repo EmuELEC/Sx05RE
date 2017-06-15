@@ -33,10 +33,7 @@ PKG_LONGDESC="Meta package for installing various tools and libs needed for libc
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-if [ "$BOOTLOADER" = "bcm2835-bootloader" ] \
-  || [ "$PROJECT" = "S805" ] \
-  || [ "$PROJECT" = "S905" -a "$ARCH" = "arm" ] \
-  || [ "$PROJECT" = "S912" -a "$ARCH" = "arm" ] ; then
+if [ "$BOOTLOADER" = "bcm2835-bootloader" ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET arm-mem"
   PKG_DEPENDS_INIT="$PKG_DEPENDS_INIT arm-mem:init"
 fi
