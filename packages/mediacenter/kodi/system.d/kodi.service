@@ -3,6 +3,7 @@ Description=Kodi Media Center
 After=kodi-waitonnetwork.service graphical.target
 Requires=graphical.target
 Wants=kodi-waitonnetwork.service
+ConditionPathExists=/var/lock/start.kodi
 
 [Service]
 Environment=__GL_YIELD=USLEEP
