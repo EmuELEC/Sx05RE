@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="dvb_tv-aml"
-PKG_VERSION="b79c56d"
+PKG_VERSION="a995089"
 PKG_REV="1"
 PKG_ARCH="arm aarch64"
 PKG_LICENSE="GPL"
