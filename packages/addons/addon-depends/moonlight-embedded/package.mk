@@ -52,6 +52,7 @@ pre_configure_target() {
   [ "$PROJECT" = "imx6" ] && strip_gold || true
 }
 
-makeinstall_target() {
-  :
-}
+
+post_makeinstall_target() {
+chmod +x $INSTALL/usr/lib/*
+ }

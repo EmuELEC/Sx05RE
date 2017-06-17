@@ -1,0 +1,10 @@
+--- a/src/platform.c	2017-06-12 06:15:04.000000000 -0500
++++ b/src/platform.c	2017-06-15 18:09:23.611304233 -0500
+@@ -55,6 +55,7 @@
+   #ifdef HAVE_AML
+   if (std || strcmp(name, "aml") == 0) {
+     void *handle = dlopen("libmoonlight-aml.so", RTLD_NOW | RTLD_GLOBAL);
++    printf("Handle error: %s\n", dlerror()); printf("Access /dev/amvideo: %i\n", access("/dev/amvideo", F_OK));
+     if (handle != NULL && access("/dev/amvideo", F_OK) != -1)
+       return AML;
+   }
