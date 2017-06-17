@@ -17,19 +17,29 @@
 ################################################################################
 
 PKG_NAME="attract"
-PKG_VERSION="49c3ff5"
+PKG_VERSION="035cca8"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MAME"
 PKG_SITE="https://github.com/mickelson/attract"
 PKG_URL="https://github.com/mickelson/attract/archive/$PKG_VERSION.tar.gz"
 PKG_SOURCE_DIR="attract-$PKG_VERSION*"
-PKG_DEPENDS_TARGET="toolchain SFML openal-soft fontconfig freetype"
+PKG_DEPENDS_TARGET="toolchain SFML openal-soft fontconfig freetype ffmpeg"
 PKG_SECTION="sx05re/mod"
 PKG_SHORTDESC="Attract mode"
 PKG_LONGDESC="A graphical front-end for command line emulators that hides the underlying operating system and is intended to be controlled with a joystick or gamepad. "
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
+
+
+post_unpack() {
+  rm -rf $BUILD/$PKG_NAME-*/
+  git clone $PKG_SITE $BUILD/$PKG_NAME-$PKG_VERSION/
+  cd $BUILD/$PKG_NAME-$PKG_VERSION/
+  git checkout $PKG_VERSION
+  git submodule update --init
+  cd $ROOT
+}
 
 make_target() {
   make USE_GLES=1
