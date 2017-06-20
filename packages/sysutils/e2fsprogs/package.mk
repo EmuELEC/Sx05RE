@@ -62,6 +62,7 @@ PKG_CONFIGURE_OPTS_TARGET="BUILD_CC=$HOST_CC \
                            --disable-uuidd \
                            --disable-nls \
                            --disable-rpath \
+                           --disable-fuse2fs \
                            --with-gnu-ld"
 
 PKG_CONFIGURE_OPTS_INIT="$PKG_CONFIGURE_OPTS_TARGET"
@@ -107,12 +108,12 @@ make_host() {
 }
 
 makeinstall_host() {
-  make -C lib/et DESTDIR=$(pwd)/.install install
-  make -C lib/ext2fs DESTDIR=$(pwd)/.install install
+  make -C lib/et LIBMODE=644 DESTDIR=$(pwd)/.install install
+  make -C lib/ext2fs LIBMODE=644 DESTDIR=$(pwd)/.install install
 
   rm -fr $(pwd)/.install/bin
   rm -fr $(pwd)/.install/usr/share
 
-  cp -Pa $(pwd)/.install/usr/* $ROOT/$TOOLCHAIN
+  cp -fPa $(pwd)/.install/usr/* $ROOT/$TOOLCHAIN
 }
 

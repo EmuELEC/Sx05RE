@@ -1,6 +1,8 @@
+#!/bin/sh
+
 ################################################################################
 #      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
+#      Copyright (C) 2016 kszaq
 #
 #  LibreELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -16,21 +18,11 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="imagemagick"
-PKG_VERSION="7.0.5-8"
-PKG_LICENSE="http://www.imagemagick.org/script/license.php"
-PKG_SITE="http://www.imagemagick.org/"
-PKG_URL="https://github.com/ImageMagick/ImageMagick/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="ImageMagick-$PKG_VERSION"
-PKG_DEPENDS_TARGET="toolchain libX11"
-PKG_LONGDESC="Software suite to create, edit, compose, or convert bitmap images"
-
-PKG_CONFIGURE_OPTS_TARGET="--enable-static \
-                           --enable-shared \
-                           --with-quantum-depth=8 \
-                           --enable-hdri=no \
-                           --disable-openmp"
-
-makeinstall_target() {
-  make install DESTDIR=$INSTALL
-}
+HDMI_UNPLUGGED=0
+while :; do
+  ! grep -q . /sys/class/amhdmitx/amhdmitx0/disp_cap &&
+    grep -q 0 /sys/class/amhdmitx/amhdmitx0/hpd_state &&
+    HDMI_UNPLUGGED=1 && sleep 2 && continue ||
+  break
+done
+[ $HDMI_UNPLUGGED = 1 ] && systemctl restart kodi
