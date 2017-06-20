@@ -1,0 +1,10 @@
+[Unit]
+Description=WeTek DVB module loader
+ConditionPathExists=/proc/device-tree/dvb/dev_name
+
+[Service]
+Type=simple
+ExecStart=/bin/sh -c '[ `cat /proc/device-tree/dvb/dev_name` = "wetek-dvb" ] && /sbin/modprobe wetekdvb'
+
+[Install]
+WantedBy=basic.target
