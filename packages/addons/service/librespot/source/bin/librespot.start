@@ -95,5 +95,6 @@ esac
 librespot $bitrate                     \
           --cache "$ADDON_HOME/cache"  \
           $device                      \
+          --disable-audio-cache        \
           $discovery                   \
           --name "Librespot@$HOSTNAME"
