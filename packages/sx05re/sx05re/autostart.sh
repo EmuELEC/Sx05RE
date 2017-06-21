@@ -2,13 +2,17 @@
 # USB roms 
 sleep 2
 
+#since the ROMS folder is not getting created at boot, we check if it exists, if it doesn't then we create it. 
+if [ ! -d "/storage/roms" ] || [ ! -d "/storage/roms2" ]; then
+  mkdir /storage/roms
+fi
+
 #name of the file we need to put in the roms folder in your USB or SDCARD 
 ROMFILE="sx05reroms"
 
 
 # we look for the file in the rompath
 FULLPATHTOROMS="$(find /media/*/roms/ -name $ROMFILE -maxdepth 1)"
-#echo "${FULLPATHTOROMS}"
 
 
 if [[ -z "${FULLPATHTOROMS}" ]]; then
@@ -18,6 +22,7 @@ if [[ -z "${FULLPATHTOROMS}" ]]; then
       rm /storage/roms
       mv /storage/roms2 /storage/roms
  fi
+
     else
       mv /storage/roms /storage/roms2
       #echo "move the roms folder"
