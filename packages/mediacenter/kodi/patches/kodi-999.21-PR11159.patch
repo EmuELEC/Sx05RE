@@ -1,0 +1,38 @@
+From 9353b0cdec3869bbfd85347a6ba53e32dfdef511 Mon Sep 17 00:00:00 2001
+From: Markus Pfau <pfau@peak3d.de>
+Date: Tue, 13 Dec 2016 12:09:36 +0100
+Subject: [PATCH] [AML] read display modes optionally from file
+
+---
+ xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp b/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
+index 88cd385842df..4347c23d1b4c 100644
+--- a/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
++++ b/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
+@@ -23,6 +23,7 @@
+ #include "utils/AMLUtils.h"
+ #include "utils/StringUtils.h"
+ #include "utils/SysfsUtils.h"
++#include "filesystem/SpecialProtocol.h"
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+@@ -152,8 +153,14 @@ bool CEGLNativeTypeAmlogic::SetNativeResolution(const RESOLUTION_INFO &res)
+ 
+ bool CEGLNativeTypeAmlogic::ProbeResolutions(std::vector<RESOLUTION_INFO> &resolutions)
+ {
+-  std::string valstr;
+-  SysfsUtils::GetString("/sys/class/amhdmitx/amhdmitx0/disp_cap", valstr);
++  std::string valstr, dcapfile;
++  dcapfile = CSpecialProtocol::TranslatePath("special://home/userdata/disp_cap");
++
++  if (SysfsUtils::GetString(dcapfile, valstr) < 0)
++  {
++    if (SysfsUtils::GetString("/sys/class/amhdmitx/amhdmitx0/disp_cap", valstr) < 0)
++      return false;
++  }
+   std::vector<std::string> probe_str = StringUtils::Split(valstr, "\n");
+ 
+   resolutions.clear();

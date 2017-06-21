@@ -1,6 +1,6 @@
 ################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
+#      This file is part of LibreELEC - https://LibreELEC.tv
+#      Copyright (C) 2017 Team LibreELEC
 #
 #  LibreELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -16,21 +16,30 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="imagemagick"
-PKG_VERSION="7.0.5-8"
-PKG_LICENSE="http://www.imagemagick.org/script/license.php"
-PKG_SITE="http://www.imagemagick.org/"
-PKG_URL="https://github.com/ImageMagick/ImageMagick/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="ImageMagick-$PKG_VERSION"
-PKG_DEPENDS_TARGET="toolchain libX11"
-PKG_LONGDESC="Software suite to create, edit, compose, or convert bitmap images"
+PKG_NAME="dvb_tv-aml"
+PKG_VERSION="a995089"
+PKG_REV="1"
+PKG_ARCH="arm aarch64"
+PKG_LICENSE="GPL"
+PKG_SITE="https://github.com/kszaq/dvb_tv-aml"
+PKG_URL="$PKG_SITE/archive/$PKG_VERSION.tar.gz"
+PKG_SOURCE_DIR="$PKG_NAME-$PKG_VERSION*"
+PKG_DEPENDS_TARGET="toolchain"
+PKG_SECTION="driver"
+PKG_SHORTDESC="dvb_tv-aml: Internal DVB tuner driver for Amlogic devices developed by afl1"
+PKG_LONGDESC="dvb_tv-aml: Internal DVB tuner driver for Amlogic devices developed by afl1"
 
-PKG_CONFIGURE_OPTS_TARGET="--enable-static \
-                           --enable-shared \
-                           --with-quantum-depth=8 \
-                           --enable-hdri=no \
-                           --disable-openmp"
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="no"
+
+make_target() {
+  : # nop
+}
 
 makeinstall_target() {
-  make install DESTDIR=$INSTALL
+  : # nop
+}
+
+post_install() {
+  enable_service amlogic-dvb.service
 }
