@@ -18,25 +18,37 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="citra"
-PKG_VERSION="ae8cfe6"
+PKG_NAME="mame2010"
+PKG_VERSION="683114a"
 PKG_REV="1"
-PKG_ARCH="x86_64"
-PKG_LICENSE="GPLv2+"
-PKG_SITE="https://github.com/libretro/citra"
-PKG_URL="https://github.com/libretro/citra/archive/$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain boost"
+PKG_ARCH="any"
+PKG_LICENSE="MAME"
+PKG_SITE="https://github.com/libretro/mame2010-libretro.git"
+PKG_URL="https://github.com/libretro/mame2010-libretro/archive/$PKG_VERSION.tar.gz"
+PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="A Nintendo 3DS Emulator"
-PKG_LONGDESC="A Nintendo 3DS Emulator"
+PKG_SHORTDESC="Late 2010 version of MAME (0.139) for libretro. Compatible with MAME 0.139 romsets."
+PKG_LONGDESC="Late 2010 version of MAME (0.139) for libretro. Compatible with MAME 0.139 romsets."
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-PKG_CMAKE_OPTS_TARGET="-DENABLE_LIBRETRO=1 -DENABLE_SDL2=0 -DENABLE_QT=0 -DCMAKE_BUILD_TYPE=\"Release\" --target citra_libretro -DBOOST_ROOT=$(get_build_dir boost) -DTHREADS_PTHREAD_ARG=OFF -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_C_FLAGS=-fPIC -DCMAKE_NO_SYSTEM_FROM_IMPORTED=1"
+post_unpack() {
+  mv $BUILD/mame2010-libretro-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
+}
+
+make_target() {
+  if [ "$ARCH" == "arm" ]; then
+    make CC="$CC" LD="$CC" PLATCFLAGS="$CFLAGS" PTR64=0 ARM_ENABLED=1 LCPU=arm
+  elif [ "$ARCH" == "i386" ]; then
+    make CC="$CC" LD="$CC" PLATCFLAGS="$CFLAGS" PTR64=0 ARM_ENABLED=0 LCPU=x86
+  elif [ "$ARCH" == "x86_64" ]; then
+    make CC="$CC" LD="$CC" PLATCFLAGS="$CFLAGS" PTR64=1 ARM_ENABLED=0 LCPU=x86_64
+  fi
+}
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp src/citra_libretro/citra_libretro.so $INSTALL/usr/lib/libretro/
+  cp mame2010_libretro.so $INSTALL/usr/lib/libretro/
 }
