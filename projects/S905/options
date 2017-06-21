@@ -31,7 +31,7 @@
     KERNEL_TARGET="Image.lzo"
 
   # Kernel extra targets to build
-    KERNEL_UBOOT_EXTRA_TARGET="gxbb_p200.dtb gxbb_p200_2G.dtb gxl_p212_1g.dtb gxl_p212_2g.dtb"
+    KERNEL_UBOOT_EXTRA_TARGET="gxbb_p200.dtb gxbb_p200_2G.dtb gxl_p212_1g.dtb gxl_p212_2g.dtb gxl_p230_2g.dtb"
 
   # Build Android kernel image using mkbootimg
     BUILD_ANDROID_BOOTIMG="yes"
@@ -48,7 +48,7 @@
   # Kernel to use. values can be:
   # default:  default mainline kernel
     LINUX="custom"
-    KERNEL_VERSION="1286521"
+    KERNEL_VERSION="00221a7"
     KERNEL_URL="https://github.com/kszaq/linux-amlogic-le/archive/$KERNEL_VERSION.tar.gz"
     KERNEL_SOURCE_DIR="linux-amlogic-le-$KERNEL_VERSION*"
     KERNEL_PATCH_DIRS="amlogic-3.14"
@@ -97,7 +97,7 @@
     KODIPLAYER_DRIVER="libamcodec"
 
   # Modules to install in initramfs for early boot
-    INITRAMFS_MODULES="font softcursor bitblit fbcon"
+    INITRAMFS_MODULES="font softcursor bitblit fbcon dwc_otg"
 
   # additional drivers to install:
   # for a list of additinoal drivers see packages/linux-drivers
