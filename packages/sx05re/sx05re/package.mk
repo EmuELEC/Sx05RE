@@ -18,7 +18,7 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mame2014 vba-next libretro-beetle-pce-fast"
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mame2010 mame2014 vba-next libretro-beetle-pce-fast"
 
 
 make_target() {
