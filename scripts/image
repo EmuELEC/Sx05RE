@@ -280,7 +280,7 @@ if [ "$BUILD_ANDROID_BOOTIMG" = "yes" ]; then
 # **** SX05RE **** if we have a DTB and it was specified in the command line copy it
 if [ -n "$DEVICEDTB" ]; then 
     echo "Using DTB for $DEVICEDTB..."
-    cp -f $ROOT/$DEVICEDTB/dtb.img $TARGET_IMG/$IMAGE_NAME.dtb
+    cp -f $ROOT/distributions/$DISTRONAME/devices/$DEVICEDTB/dtb.img $TARGET_IMG/$IMAGE_NAME.dtb
 fi 
   fi
   echo "...done"
