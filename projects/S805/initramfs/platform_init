@@ -35,6 +35,8 @@ for arg in $(cat /proc/cmdline); do
   esac
 done
 
+echo $display_mode > /sys/class/display/mode
+
 # Force enable CEC if configuration parameter not present or empty
 if [ -z "$hdmitx" ]; then
   echo 0xf > /sys/class/amhdmitx/amhdmitx0/cec_config
