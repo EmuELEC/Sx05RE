@@ -25,7 +25,6 @@ BACKUP_DATE=$(date +%Y%m%d%H%M%S)
 
 install_to_nand() {
   if [ -f $IMAGE_KERNEL -a -f $IMAGE_SYSTEM ] ; then
-    fw_setenv upgrade_step 2
 
     if grep -q /dev/system /proc/mounts ; then
       echo "Unmounting SYSTEM partiton."
@@ -36,13 +35,13 @@ install_to_nand() {
     mount -o rw,remount /flash
     if [ -e /dev/dtb ] ; then
       echo -n "Backing up device tree..."
-      dd if="/dev/dtb" of="/flash/dtb$BACKUP_DATE.img" status=none && sync
+      dd if=/dev/dtb of="/flash/dtb$BACKUP_DATE.img" bs=256k conv=fsync status=none
       echo "done."
     fi
 
     if [ -e /dev/recovery ] ; then
       echo -n "Backing up recovery partition..."
-      dd if="/dev/recovery" of="/flash/recovery$BACKUP_DATE.img" bs=64K status=none && sync
+      dd if=/dev/recovery of="/flash/recovery$BACKUP_DATE.img" bs=64k conv=fsync status=none
       echo "done."
     fi
 
@@ -52,7 +51,7 @@ install_to_nand() {
     echo "done."
 
     echo -n "Writing kernel image..."
-    dd if="$IMAGE_KERNEL" of="/dev/boot" bs=64K status=none && sync
+    dd if="$IMAGE_KERNEL" of=/dev/boot bs=64k status=none
     echo "done."
 
     echo -n "Copying SYSTEM files..."
@@ -68,7 +67,8 @@ install_to_nand() {
 
     if [ -f $IMAGE_DTB ] ; then
       echo -n "Writing device tree image..."
-      dd if="$IMAGE_DTB" of="/dev/dtb" bs=262144 status=none && sync
+      dd if=/dev/zero of=/dev/dtb bs=256k count=1
+      dd if="$IMAGE_DTB" of=/dev/dtb bs=256k
       echo "done."
     fi
 
@@ -89,14 +89,14 @@ install_to_nand() {
         mkdir -p /tmp/data
         mount -o rw /dev/data /tmp/data
         cp -pPRv /storage/. /tmp/data
-        echo -n "Restarting Kodi..."
-        systemctl start kodi
-        echo "done."
         ;;
     esac
 
-    echo "All done! You can now continue using your LE system or type \"rebootfromnand\" to reboot from internal memory."
-    echo "WARNING: If your internal memory layout is different from standard Amlogic, you have to reboot and perform this operation again!"
+    echo "All done! Rebooting now..."
+    echo "WARNING: If your internal memory layout is different from standard Amlogic, you have to perform this operation again!"
+    echo "Your system will continue booting from SD/USB until you remove it."
+
+    reboot
 
   else
     echo "No LE image found on /flash! Exiting..."
