@@ -1,0 +1,93 @@
+diff -Naur a/drivers/media/rc/Kconfig b/drivers/media/rc/Kconfig
+--- a/drivers/media/rc/Kconfig	2017-01-23 18:15:27.000000000 +0100
++++ b/drivers/media/rc/Kconfig	2017-04-26 11:38:26.462658281 +0200
+@@ -227,7 +227,6 @@
+ config IR_MESON
+ 	tristate "Amlogic Meson IR remote receiver"
+ 	depends on RC_CORE
+-	depends on ARCH_MESON || COMPILE_TEST
+ 	---help---
+ 	   Say Y if you want to use the IR remote receiver available
+ 	   on Amlogic Meson SoCs.
+diff -Naur a/drivers/media/rc/meson-ir.c b/drivers/media/rc/meson-ir.c
+--- a/drivers/media/rc/meson-ir.c	2017-01-23 18:15:27.000000000 +0100
++++ b/drivers/media/rc/meson-ir.c	2017-04-26 11:41:08.501085408 +0200
+@@ -19,6 +19,7 @@
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/spinlock.h>
++#include <linux/pinctrl/consumer.h>
+ 
+ #include <media/rc-core.h>
+ 
+@@ -97,7 +98,7 @@
+ 
+ 	rawir.pulse = !!(readl(ir->reg + IR_DEC_STATUS) & STATUS_IR_DEC_IN);
+ 
+-	ir_raw_event_store_with_filter(ir->rc, &rawir);
++	ir_raw_event_store(ir->rc, &rawir);
+ 	ir_raw_event_handle(ir->rc);
+ 
+ 	spin_unlock(&ir->lock);
+@@ -113,6 +114,7 @@
+ 	const char *map_name;
+ 	struct meson_ir *ir;
+ 	int ret;
++	struct pinctrl *pinctrl;
+ 
+ 	ir = devm_kzalloc(dev, sizeof(struct meson_ir), GFP_KERNEL);
+ 	if (!ir)
+@@ -159,6 +161,15 @@
+ 		goto out_free;
+ 	}
+ 
++	if (of_get_property(node, "pinctrl-names", NULL)) {
++		pinctrl = devm_pinctrl_get_select_default(dev);
++		if (IS_ERR(pinctrl)) {
++			dev_err(dev, "failed to get pinctrl\n");
++			ret = PTR_ERR(pinctrl);
++			goto out_unreg;
++		}
++	}
++
+ 	ret = devm_request_irq(dev, ir->irq, meson_ir_irq, 0, "ir-meson", ir);
+ 	if (ret) {
+ 		dev_err(dev, "failed to request irq\n");
+@@ -212,6 +223,29 @@
+ 	return 0;
+ }
+ 
++static void meson_ir_shutdown(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *node = dev->of_node;
++	struct meson_ir *ir = platform_get_drvdata(pdev);
++	unsigned long flags;
++
++	spin_lock_irqsave(&ir->lock, flags);
++
++	/* Set operation mode to NEC/hardware decoding to give uboot a chance to power on the device */
++	if (of_device_is_compatible(node, "amlogic,meson6-ir"))
++		meson_ir_set_mask(ir, IR_DEC_REG1, REG1_MODE_MASK,
++				  DECODE_MODE_NEC << REG1_MODE_SHIFT);
++	else
++		meson_ir_set_mask(ir, IR_DEC_REG2, REG2_MODE_MASK,
++				  DECODE_MODE_NEC << REG2_MODE_SHIFT);
++
++	/* Set rate to default value */
++	meson_ir_set_mask(ir, IR_DEC_REG0, REG0_RATE_MASK, 0x13);
++
++	spin_unlock_irqrestore(&ir->lock, flags);
++}
++
+ static const struct of_device_id meson_ir_match[] = {
+ 	{ .compatible = "amlogic,meson6-ir" },
+ 	{ .compatible = "amlogic,meson8b-ir" },
+@@ -223,6 +257,7 @@
+ static struct platform_driver meson_ir_driver = {
+ 	.probe		= meson_ir_probe,
+ 	.remove		= meson_ir_remove,
++	.shutdown	= meson_ir_shutdown,
+ 	.driver = {
+ 		.name		= DRIVER_NAME,
+ 		.of_match_table	= meson_ir_match,

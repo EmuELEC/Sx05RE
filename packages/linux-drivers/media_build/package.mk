@@ -86,6 +86,9 @@ make_target() {
       echo "obj-y += dvb_tv/" >> "linux/drivers/media/Makefile"
     fi 
     echo "obj-y += amlogic/dvb_tv/" >> "linux/drivers/media/Makefile"
+
+  # Meson-IR driver
+    echo "obj-m += meson-ir.o" >> "linux/drivers/media/rc/Makefile"
   fi
 
   make VER=$KERNEL_VER SRCDIR=$(kernel_path)
