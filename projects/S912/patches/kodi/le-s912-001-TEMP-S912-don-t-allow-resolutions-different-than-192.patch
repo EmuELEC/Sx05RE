@@ -1,30 +1,27 @@
-From 9463e18c475c541ce567610977e4242021f86118 Mon Sep 17 00:00:00 2001
+From e9ded93d4768af6190505f5159b8b026a08b26d6 Mon Sep 17 00:00:00 2001
 From: kszaq <kszaquitto@gmail.com>
 Date: Fri, 3 Mar 2017 22:15:38 +0100
 Subject: [PATCH] TEMP: S912: don't allow resolutions different than 1920x1080
  framebuffer size
 
 ---
- xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp | 50 +++--------------------------
+ xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp | 48 +++--------------------------
  xbmc/windowing/egl/EGLNativeTypeAmlogic.h   |  4 ---
- 2 files changed, 5 insertions(+), 49 deletions(-)
+ 2 files changed, 4 insertions(+), 48 deletions(-)
 
 diff --git a/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp b/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
-index 67f9984..4080b6d 100644
+index 421a2af..e2cf772 100644
 --- a/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
 +++ b/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
-@@ -62,9 +62,9 @@ bool CEGLNativeTypeAmlogic::CheckCompatibility()
+@@ -64,7 +64,6 @@ bool CEGLNativeTypeAmlogic::CheckCompatibility()
  
  void CEGLNativeTypeAmlogic::Initialize()
  {
 -  aml_permissions();
    DisableFreeScale();
  }
-+
  void CEGLNativeTypeAmlogic::Destroy()
- {
-   return;
-@@ -87,8 +87,6 @@ bool CEGLNativeTypeAmlogic::CreateNativeWindow()
+@@ -89,8 +88,6 @@ bool CEGLNativeTypeAmlogic::CreateNativeWindow()
    nativeWindow->height = 1080;
    m_nativeWindow = nativeWindow;
  
@@ -33,10 +30,10 @@ index 67f9984..4080b6d 100644
    return true;
  #else
    return false;
-@@ -135,14 +133,6 @@ bool CEGLNativeTypeAmlogic::SetNativeResolution(const RESOLUTION_INFO &res)
+@@ -136,13 +133,6 @@ bool CEGLNativeTypeAmlogic::GetNativeResolution(RESOLUTION_INFO *res) const
+ bool CEGLNativeTypeAmlogic::SetNativeResolution(const RESOLUTION_INFO &res)
  {
    bool result = false;
- 
 -#if defined(_FBDEV_WINDOW_H_)
 -  if (m_nativeWindow)
 -  {
@@ -44,11 +41,10 @@ index 67f9984..4080b6d 100644
 -    ((fbdev_window *)m_nativeWindow)->height = res.iScreenHeight;
 -  }
 -#endif
--
+ 
    // Don't set the same mode as current
    std::string mode;
-   SysfsUtils::GetString("/sys/class/display/mode", mode);
-@@ -165,7 +155,8 @@ bool CEGLNativeTypeAmlogic::ProbeResolutions(std::vector<RESOLUTION_INFO> &resol
+@@ -176,7 +166,8 @@ bool CEGLNativeTypeAmlogic::ProbeResolutions(std::vector<RESOLUTION_INFO> &resol
    for (std::vector<std::string>::const_iterator i = probe_str.begin(); i != probe_str.end(); ++i)
    {
      if(aml_mode_to_resolution(i->c_str(), &res))
@@ -58,7 +54,7 @@ index 67f9984..4080b6d 100644
    }
    return resolutions.size() > 0;
  
-@@ -176,8 +167,8 @@ bool CEGLNativeTypeAmlogic::GetPreferredResolution(RESOLUTION_INFO *res) const
+@@ -187,8 +178,8 @@ bool CEGLNativeTypeAmlogic::GetPreferredResolution(RESOLUTION_INFO *res) const
    // check display/mode, it gets defaulted at boot
    if (!GetNativeResolution(res))
    {
@@ -69,7 +65,7 @@ index 67f9984..4080b6d 100644
    }
  
    return true;
-@@ -196,10 +187,6 @@ bool CEGLNativeTypeAmlogic::SetDisplayResolution(const char *resolution)
+@@ -207,10 +198,6 @@ bool CEGLNativeTypeAmlogic::SetDisplayResolution(const char *resolution)
    // switch display resolution
    SysfsUtils::SetString("/sys/class/display/mode", mode.c_str());
  
@@ -80,7 +76,7 @@ index 67f9984..4080b6d 100644
    return true;
  }
  
-@@ -253,30 +240,3 @@ void CEGLNativeTypeAmlogic::DisableFreeScale()
+@@ -264,30 +251,3 @@ void CEGLNativeTypeAmlogic::DisableFreeScale()
    SysfsUtils::SetInt("/sys/class/graphics/fb0/free_scale", 0);
    SysfsUtils::SetInt("/sys/class/graphics/fb1/free_scale", 0);
  }
