@@ -81,3 +81,5 @@ echo "$cmdline" > /proc/cmdline
 for part in /sys/block/*/queue/add_random; do
   echo 0 > "$part"
 done
+
+echo 1 > /sys/devices/system/cpu/cpufreq/ondemand/io_is_busy
