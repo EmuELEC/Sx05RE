@@ -33,9 +33,9 @@ PKG_AUTORECONF="no"
 # theme for Emulationstation
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation-theme-simple-dark"
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation-theme-carbon"
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation-theme-nes-mini"
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation-theme-tronkyfran"
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation-theme-crt"
+#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation-theme-nes-mini"
+#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation-theme-tronkyfran"
+#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation-theme-crt"
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation-theme-ComicBook"
 
 post_unpack() {
