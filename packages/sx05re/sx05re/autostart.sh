@@ -61,6 +61,8 @@ systemctl start smbd
 #echo 1536000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
 #echo performance > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 
+#make sure the requirement to run kodi is met.
+touch  /var/lock/start.kodi
 
  #if you don't want EmulationStation to start first, comment the next 3 lines
  rm -rf /var/lock/start.kodi
