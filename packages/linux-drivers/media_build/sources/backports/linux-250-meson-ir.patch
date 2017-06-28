@@ -1,0 +1,46 @@
+diff -Naur a/drivers/media/rc/Kconfig b/drivers/media/rc/Kconfig
+--- a/drivers/media/rc/Kconfig	2017-01-23 18:15:27.000000000 +0100
++++ b/drivers/media/rc/Kconfig	2017-04-26 11:38:26.462658281 +0200
+@@ -227,7 +227,6 @@
+ config IR_MESON
+ 	tristate "Amlogic Meson IR remote receiver"
+ 	depends on RC_CORE
+-	depends on ARCH_MESON || COMPILE_TEST
+ 	---help---
+ 	   Say Y if you want to use the IR remote receiver available
+ 	   on Amlogic Meson SoCs.
+diff -Naur a/drivers/media/rc/meson-ir.c b/drivers/media/rc/meson-ir.c
+--- a/drivers/media/rc/meson-ir.c	2017-01-23 18:15:27.000000000 +0100
++++ b/drivers/media/rc/meson-ir.c	2017-04-26 11:41:08.501085408 +0200
+@@ -19,6 +19,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/spinlock.h>
+ #include <linux/bitfield.h>
++#include <linux/pinctrl/consumer.h>
+ 
+ #include <media/rc-core.h>
+ 
+@@ -113,6 +114,7 @@
+ 	const char *map_name;
+ 	struct meson_ir *ir;
+ 	int irq, ret;
++	struct pinctrl *pinctrl;
+ 
+ 	ir = devm_kzalloc(dev, sizeof(struct meson_ir), GFP_KERNEL);
+ 	if (!ir)
+@@ -159,6 +161,15 @@
+ 		return ret;
+ 	}
+ 
++	if (of_get_property(node, "pinctrl-names", NULL)) {
++		pinctrl = devm_pinctrl_get_select_default(dev);
++		if (IS_ERR(pinctrl)) {
++			dev_err(dev, "failed to get pinctrl\n");
++			ret = PTR_ERR(pinctrl);
++			return ret;
++		}
++	}
++
+ 	ret = devm_request_irq(dev, irq, meson_ir_irq, 0, NULL, ir);
+ 	if (ret) {
+ 		dev_err(dev, "failed to request irq\n");
