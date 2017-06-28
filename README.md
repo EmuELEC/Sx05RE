@@ -1,5 +1,5 @@
 **Sx05RE**
-An emulation fork for Sx05 devices, Most of the code is from [Kszaq's LE](https://github.com/kszaq/LibreELEC.tv) and [Lakka](https://github.com/libretro/Lakka-LibreELEC), I just combine tham with some changes, add Emulationstation and some standalone emulators (Advancemame, PPSSPP, Reicast). 
+An emulation fork for Sx05 devices, Most of the code is from [Kszaq's LE](https://github.com/kszaq/LibreELEC.tv) and [Lakka](https://github.com/libretro/Lakka-LibreELEC), I just combine them with some changes, add Emulationstation and some standalone emulators (Advancemame, PPSSPP, Reicast). 
 
 To build use:  
 
