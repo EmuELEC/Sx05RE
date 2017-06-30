@@ -1,8 +1,8 @@
 [Unit]
 Description=Kodi Media Center
-After=kodi-waitonnetwork.service graphical.target
+After=network-online.target graphical.target
 Requires=graphical.target
-Wants=kodi-waitonnetwork.service
+Wants=network-online.target
 
 [Service]
 Environment=__GL_YIELD=USLEEP
