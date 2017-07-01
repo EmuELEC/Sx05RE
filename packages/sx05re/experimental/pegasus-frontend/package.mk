@@ -51,8 +51,8 @@ pre_configure_target() {
 
 
 make_target() {
-#Nasty hack to get qmake to work, if you change qt-everywhere version, make sure you change this.
-$ROOT/$BUILD/qt-everywhere-5.9.0/qtbase/qmake/qmake INSTALLDIR=${INSTALL}/usr/bin
+# Nasty hack to get qmake to work, if you change qt-everywhere version, make sure you change this.
+$ROOT/$BUILD/qt-everywhere-5.9.1/qtbase/qmake/qmake INSTALLDIR=${INSTALL}/usr/bin
 cd $ROOT/$PKG_BUILD
 make
 }
