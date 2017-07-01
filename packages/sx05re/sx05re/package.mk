@@ -28,7 +28,7 @@ PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mame2010 mame2014 vba-next libretro-beet
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET reicastsa"
 
 # Pegasus-FE works, but it is still in very early stage, if you enable make sure you have enought space on the partition.
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET pegasus-frontend"
+# PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET pegasus-frontend"
 
 
 # These packages are experimental, they do not compile or have other problems, any help getting these to work is highly appreciated!.
