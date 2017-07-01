@@ -4,7 +4,7 @@ PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://qt-project.org"
 PKG_URL="http://download.qt.io/official_releases/qt/5.9/$PKG_VERSION/single/$PKG_NAME-opensource-src-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="pcre zlib freetype libjpeg-turbo zlib:host zlib libpng tiff glib:host glib sqlite:host sqlite gst-plugins-base"
+PKG_DEPENDS_TARGET="pcre zlib freetype libjpeg-turbo libpng tiff glib gst-plugins-base"
 PKG_SOURCE_DIR="$PKG_NAME-opensource-src-$PKG_VERSION"
 PKG_LONGDESC="A cross-platform application and UI framework"
 
@@ -49,7 +49,41 @@ PKG_CONFIGURE_OPTS_TARGET="-prefix /usr \
 			   -optimized-qmake \
                            -reduce-exports \
                            -no-glib \
-			   -skip qtxmlpatterns -skip qtx11extras -skip qtwinextras -skip qtspeech -skip qtdatavis3d -skip qtcharts -skip qtandroidextras -skip qt3d -skip qtlocation  -skip qtmacextras -skip qtdoc  -skip qtdatavis3d -skip  qtpurchasing -skip  qtnetworkauth -skip  qtscript -skip qtwebengine -skip qtwebview"
+			   -skip qtxmlpatterns \
+                           -skip qtx11extras \
+                           -skip qtwinextras \
+                           -skip qtspeech \
+                           -skip qtdatavis3d \
+                           -skip qtcharts \
+                           -skip qtandroidextras \
+                           -skip qt3d \
+                           -skip qtlocation \
+                           -skip qtmacextras \
+                           -skip qtdoc \
+                           -skip qtdatavis3d \
+                           -skip qtpurchasing \
+                           -skip qtnetworkauth \
+                           -skip qtscript \
+                           -skip qtwebengine \
+                           -skip qtwebview \
+                           -skip qtactiveqt \
+                           -skip qtcanvas3d \
+                           -skip qtconnectivity \
+                           -skip qtdoc \
+                           -skip qtquickcontrols \
+                           -skip qtremoteobjects \
+                           -skip qtscxml \
+                           -skip qtsensors \
+                           -skip qtserialbus \
+                           -skip qtserialport \
+                           -skip qttranslations \
+                           -skip qtvirtualkeyboard \
+                           -skip qtwayland \
+                           -skip qtwebchannel \
+                           -skip qtwebsockets"
+
+
+
 
 configure_target() {
   QMAKE_CONF_DIR="qtbase/mkspecs/devices/linux-libreelec-g++"
