@@ -1,6 +1,6 @@
 ################################################################################
-#      This file is part of LibreELEC - http://www.libreelec.tv
-#      Copyright (C) 2016 Team LibreELEC
+#      This file is part of LibreELEC - https://libreelec.tv
+#      Copyright (C) 2017-present Team LibreELEC
 #
 #  LibreELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -16,23 +16,23 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="p7zip"
-PKG_VERSION="16.02"
-PKG_ARCH="any"
-PKG_LICENSE="GPL"
-PKG_SITE="http://p7zip.sourceforge.net/"
-PKG_URL="http://downloads.sourceforge.net/project/p7zip/p7zip/${PKG_VERSION}/p7zip_${PKG_VERSION}_src_all.tar.bz2"
-PKG_SOURCE_DIR="${PKG_NAME}_${PKG_VERSION}"
-PKG_DEPENDS_TARGET="toolchain"
-PKG_SECTION="tools"
-PKG_SHORTDESC="p7zip is a port of 7za.exe for POSIX systems like Unix"
-PKG_LONGDESC="p7zip is a port of 7za.exe for POSIX systems like Unix"
-PKG_AUTORECONF="no"
+PKG_NAME="pyalsaaudio"
+PKG_VERSION="0.8.4"
+PKG_LICENSE="PSF"
+PKG_SITE="http://larsimmisch.github.io/pyalsaaudio/"
+PKG_URL="https://files.pythonhosted.org/packages/source/${PKG_NAME:0:1}/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.gz"
+PKG_DEPENDS_TARGET="toolchain Python distutilscross:host alsa-lib"
+PKG_LONGDESC="ALSA bindings"
 
 make_target() {
-  make TARGET_CXX=$CXX TARGET_CC=$CC 7z 7za
+  export LDSHARED="$CC -shared"
+  export PYTHONXCPREFIX="$SYSROOT_PREFIX/usr"
+  python setup.py build --cross-compile
 }
 
 makeinstall_target() {
-  : # nop
+  python setup.py install --root=$INSTALL --prefix=/usr
+  find $INSTALL/usr/lib -name "*.py" -exec rm -rf "{}" ";"
+  rm -rf $INSTALL/usr/lib/python*/site-packages/*.egg-info \
+         $INSTALL/usr/lib/python*/site-packages/*/tests
 }
