@@ -36,10 +36,6 @@ PKG_AUTORECONF="no"
 
 PKG_CONFIGURE_OPTS_TARGET="--enable-pulse=no --with-default-audiosink=alsasink"
 
-pre_configure_target() {
-  strip_lto
-}
-
 
 
 

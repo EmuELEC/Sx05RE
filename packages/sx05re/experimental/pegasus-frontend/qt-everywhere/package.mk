@@ -21,85 +21,105 @@ PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://qt-project.org"
 PKG_URL="http://download.qt.io/official_releases/qt/5.9/$PKG_VERSION/single/$PKG_NAME-opensource-src-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="pcre zlib freetype libjpeg-turbo libpng tiff glib gst-plugins-base"
+PKG_DEPENDS_TARGET="pcre zlib zlib:host freetype libjpeg-turbo libpng tiff glib glib:host gst-plugins-base gst-libav gst-plugins-good"
 PKG_SOURCE_DIR="$PKG_NAME-opensource-src-$PKG_VERSION"
 PKG_LONGDESC="A cross-platform application and UI framework"
 
 PKG_CONFIGURE_OPTS_TARGET="-prefix /usr \
-                           -sysroot $SYSROOT_PREFIX \
-                           -hostprefix $ROOT/$BUILD \
-                           -device linux-libreelec-g++ \
-                           -device-option CROSS_COMPILE=${TARGET_PREFIX} \
-                           -opensource -confirm-license \
-                           -release \
-                           -make libs \
-                           -force-pkg-config \
-                           -no-accessibility \
-                           -no-sql-mysql \
-                           -no-qml-debug \
-                           -system-zlib \
-                           -no-mtdev \
-                           -no-gif \
-                           -no-harfbuzz \
-                           -no-openssl \
-                           -no-libproxy \
-                           -no-glib \
-                           -no-pulseaudio \
-                           -alsa \
-                           -silent \
-                           -no-cups \
-                           -no-iconv \
-                           -no-evdev \
-                           -no-tslib \
-                           -no-icu \
-                           -no-strip \
-                           -fontconfig \
-                           -gstreamer 1.0 \
-                           -no-dbus \
-                           -system-libjpeg \
-                           -opengl es2 \
-                           -no-libudev \
-                           -no-libinput \
-                           -no-sql-sqlite \
-                           -no-use-gold-linker \
-	                   -system-libpng \
-			   -optimized-qmake \
-                           -reduce-exports \
-                           -no-glib \
-			   -skip qtxmlpatterns \
-                           -skip qtx11extras \
-                           -skip qtwinextras \
-                           -skip qtspeech \
-                           -skip qtdatavis3d \
-                           -skip qtcharts \
-                           -skip qtandroidextras \
-                           -skip qt3d \
-                           -skip qtlocation \
-                           -skip qtmacextras \
-                           -skip qtdoc \
-                           -skip qtdatavis3d \
-                           -skip qtpurchasing \
-                           -skip qtnetworkauth \
-                           -skip qtscript \
-                           -skip qtwebengine \
-                           -skip qtwebview \
-                           -skip qtactiveqt \
-                           -skip qtcanvas3d \
-                           -skip qtconnectivity \
-                           -skip qtdoc \
-                           -skip qtquickcontrols \
-                           -skip qtremoteobjects \
-                           -skip qtscxml \
-                           -skip qtsensors \
-                           -skip qtserialbus \
-                           -skip qtserialport \
-                           -skip qttranslations \
-                           -skip qtvirtualkeyboard \
-                           -skip qtwayland \
-                           -skip qtwebchannel \
-                           -skip qtwebsockets"
-
-
+                        -sysroot $SYSROOT_PREFIX \
+                        -hostprefix $ROOT/$BUILD \
+                        -device linux-libreelec-g++ \
+                        -device-option CROSS_COMPILE=${TARGET_PREFIX} \
+                        -fontconfig \
+			-opensource \
+			-confirm-license \
+			-release \
+			-strip \
+			-no-rpath \
+			-make libs \
+			-no-pch \
+			-opengl es2 \
+			-gstreamer 1.0 \
+			-no-xcb \
+			-no-feature-accessibility \
+			-no-feature-action \
+			-no-feature-clipboard \
+			-no-feature-cssparser \
+			-no-feature-cursor \
+			-no-feature-dbus \
+			-no-feature-directfb \
+			-no-feature-draganddrop \
+			-no-feature-ftp \
+			-no-feature-gbm \
+			-no-feature-gestures \
+			-no-feature-glib \
+			-no-feature-icu \
+			-no-feature-im \
+			-no-feature-image_heuristic_mask \
+			-no-feature-image_text \
+			-no-feature-imageformat_bmp \
+			-no-feature-imageformat_ppm \
+			-no-feature-imageformat_xpm \
+			-no-feature-linux_v4l \
+			-no-feature-linuxfb \
+			-no-feature-localserver \
+			-no-feature-mimetype \
+			-no-feature-mirclient \
+			-no-feature-mtdev \
+			-no-feature-pdf \
+			-no-feature-picture \
+			-no-feature-proxymodel \
+			-no-feature-qml-debug \
+			-no-feature-qml-profiler \
+			-no-feature-quick-designer \
+			-no-feature-sctp \
+			-no-feature-sessionmanager \
+			-no-feature-sharedmemory \
+			-no-feature-shortcut \
+			-no-feature-sql \
+			-no-feature-systemsemaphore \
+			-no-feature-systemtrayicon \
+			-no-feature-tabletevent \
+			-no-feature-texthtmlparser \
+			-no-feature-textodfwriter \
+			-no-feature-timezone \
+			-no-feature-tslib \
+			-no-feature-udpsocket \
+			-no-feature-validator \
+			-no-feature-vnc \
+			-no-feature-widgets \
+			-no-feature-xml \
+			-skip qtxmlpatterns \
+                        -skip qtx11extras \
+                        -skip qtwinextras \
+                        -skip qtspeech \
+                        -skip qtdatavis3d \
+                        -skip qtcharts \
+                        -skip qtandroidextras \
+                        -skip qt3d \
+                        -skip qtlocation \
+                        -skip qtmacextras \
+                        -skip qtdoc \
+                        -skip qtdatavis3d \
+                        -skip qtpurchasing \
+                        -skip qtnetworkauth \
+                        -skip qtscript \
+                        -skip qtwebengine \
+                        -skip qtwebview \
+                        -skip qtactiveqt \
+                        -skip qtcanvas3d \
+                        -skip qtconnectivity \
+                        -skip qtquickcontrols \
+                        -skip qtremoteobjects \
+                        -skip qtscxml \
+                        -skip qtsensors \
+                        -skip qtserialbus \
+                        -skip qtserialport \
+                        -skip qttranslations \
+                        -skip qtvirtualkeyboard \
+                        -skip qtwayland \
+                        -skip qtwebchannel \
+			-skip qtwebsockets"
 
 
 configure_target() {

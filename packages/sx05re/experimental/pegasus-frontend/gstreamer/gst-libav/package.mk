@@ -25,7 +25,7 @@ PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/GStreamer/gst-libav"
 PKG_URL="https://gstreamer.freedesktop.org/src/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="toolchain gstreamer"
+PKG_DEPENDS_TARGET="toolchain gstreamer ffmpeg"
 PKG_PRIORITY="optional"
 PKG_SECTION="sx05re"
 PKG_SHORTDESC="Gstreamer"
@@ -33,11 +33,5 @@ PKG_LONGDESC="Gstreamer"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no" 
-
-
-pre_configure_target() {
- 
-strip_lto
-}
 
 
