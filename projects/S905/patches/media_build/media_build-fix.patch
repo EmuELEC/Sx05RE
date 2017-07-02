@@ -11,32 +11,27 @@ index aee654a..03e1882 100644
  #endif
  
  #ifdef NEED_GET_USER_PAGES_UNLOCKED
-diff --git a/v4l/compat.h b/v4l/compat.h
-index 03e1882..1580ae5 100644
 diff --git a/v4l/versions.txt b/v4l/versions.txt
-index 0a84755..4bb122f 100644
+index d110820..0acded1 100644
 --- a/v4l/versions.txt
 +++ b/v4l/versions.txt
-@@ -1,13 +1,11 @@
+@@ -1,6 +1,8 @@
  # Use this for stuff for drivers that don't compile
  [9.255.255]
-+VIDEO_S5C73M3
+ INTEL_ATOMISP
 +DVB_CXD2880
++VIDEO_SAA7146_VV
  
- [4.7.0]
+ [4.12.0]
+ # needs V4L2_FWNODE
+@@ -31,10 +32,6 @@ VIDEO_XILINX
  # needs i2c_mux_alloc
  DVB_LGDT3306A
--
+ 
 -[4.4.0]
 -# needs regmap_write_bits
 -DVB_CXD2820R
- 
+-
  [4.2.0]
  # needs led_trigger_remove
-@@ -76,7 +77,6 @@ DVB_NETUP_UNIDVB
- [3.6.0]
- # needs include/linux/sizes.h
- VIDEO_M5MOLS
--VIDEO_S5C73M3
- # needs dma_mmap_coherent and sg_alloc_table_from_pages.
- VIDEOBUF2_DMA_CONTIG
+ V4L2_FLASH_LED_CLASS
