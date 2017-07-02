@@ -1,0 +1,219 @@
+diff --git a/drivers/media/rc/Kconfig b/drivers/media/rc/Kconfig
+index 5e83b76..8e7d07c 100644
+--- a/drivers/media/rc/Kconfig
++++ b/drivers/media/rc/Kconfig
+@@ -435,4 +435,15 @@ config IR_SIR
+ 	   To compile this driver as a module, choose M here: the module will
+ 	   be called sir-ir.
+ 
++config IR_GPIOPLUG_CIR
++	tristate "GPIOPLUG IR remote control"
++	depends on RC_CORE
++	select IR_GPIO_CIR
++	---help---
++	   Say Y if you want to use GPIOPLUG based IR Receiver.
++
++	   To compile this driver as a module, choose M here: the module will
++	   be called gpio-ir-recv.
++
++
+ endif #RC_DEVICES
+diff --git a/drivers/media/rc/Makefile b/drivers/media/rc/Makefile
+index 245e2c2..114d4df 100644
+--- a/drivers/media/rc/Makefile
++++ b/drivers/media/rc/Makefile
+@@ -32,6 +32,7 @@ obj-$(CONFIG_IR_STREAMZAP) += streamzap.o
+ obj-$(CONFIG_IR_WINBOND_CIR) += winbond-cir.o
+ obj-$(CONFIG_RC_LOOPBACK) += rc-loopback.o
+ obj-$(CONFIG_IR_GPIO_CIR) += gpio-ir-recv.o
++obj-$(CONFIG_IR_GPIOPLUG_CIR) += gpioplug-ir-recv.o
+ obj-$(CONFIG_IR_IGORPLUGUSB) += igorplugusb.o
+ obj-$(CONFIG_IR_IGUANA) += iguanair.o
+ obj-$(CONFIG_IR_TTUSBIR) += ttusbir.o
+diff --git a/drivers/media/rc/gpio-ir-recv.c b/drivers/media/rc/gpio-ir-recv.c
+index b4f773b..115971c 100644
+--- a/drivers/media/rc/gpio-ir-recv.c
++++ b/drivers/media/rc/gpio-ir-recv.c
+@@ -23,14 +23,23 @@
+ #include <media/rc-core.h>
+ #include <linux/platform_data/media/gpio-ir-recv.h>
+ 
+-#define GPIO_IR_DRIVER_NAME	"gpio-rc-recv"
+-#define GPIO_IR_DEVICE_NAME	"gpio_ir_recv"
++#if defined(CONFIG_ARCH_MESON64_ODROIDC2)
++#include <linux/amlogic/aml_gpio_consumer.h>
++#include <linux/amlogic/pinctrl_amlogic.h>
++
++#define MESON_GPIOIRQ_BASE	96
++#define GPIOIRQ_BANK_0		0
++#endif
+ 
+ struct gpio_rc_dev {
+ 	struct rc_dev *rcdev;
+ 	int gpio_nr;
+ 	bool active_low;
+ 	struct timer_list flush_timer;
++#if defined(CONFIG_ARCH_MESON64_ODROIDC2)
++	int irq0_bank;
++	int irq1_bank;
++#endif
+ };
+ 
+ #ifdef CONFIG_OF
+@@ -189,10 +198,34 @@ static int gpio_ir_recv_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, gpio_dev);
+ 
++#if !defined(CONFIG_ARCH_MESON64_ODROIDC2)
+ 	rc = request_any_context_irq(gpio_to_irq(pdata->gpio_nr),
+ 				gpio_ir_recv_irq,
+ 			IRQF_TRIGGER_FALLING | IRQF_TRIGGER_RISING,
+ 					"gpio-ir-recv-irq", gpio_dev);
++#else
++	gpio_dev->irq0_bank = meson_fix_irqbank(GPIOIRQ_BANK_0);
++
++	gpio_for_irq(pdata->gpio_nr,
++			AML_GPIO_IRQ(gpio_dev->irq0_bank,
++			FILTER_NUM0, GPIO_IRQ_FALLING));
++
++	rc = request_irq(gpio_dev->irq0_bank+MESON_GPIOIRQ_BASE,
++			gpio_ir_recv_irq, IRQF_DISABLED,
++			"gpio-ir-recv-irq0", gpio_dev);
++
++	gpio_dev->irq1_bank = meson_fix_irqbank(gpio_dev->irq0_bank+1);
++
++	gpio_for_irq(pdata->gpio_nr,
++			AML_GPIO_IRQ(gpio_dev->irq1_bank,
++			FILTER_NUM0, GPIO_IRQ_RISING));
++
++	rc = request_irq(gpio_dev->irq1_bank+MESON_GPIOIRQ_BASE,
++			gpio_ir_recv_irq, IRQF_DISABLED,
++			"gpio-ir-recv-irq1", gpio_dev);
++
++#endif /* defined(CONFIG_ARCH_MESON64_ODROIDC2) */
++
+ 	if (rc < 0)
+ 		goto err_request_irq;
+ 
+@@ -215,7 +248,12 @@ static int gpio_ir_recv_remove(struct platform_device *pdev)
+ {
+ 	struct gpio_rc_dev *gpio_dev = platform_get_drvdata(pdev);
+ 
++#if !defined(CONFIG_ARCH_MESON64_ODROIDC2)
+ 	free_irq(gpio_to_irq(gpio_dev->gpio_nr), gpio_dev);
++#else
++	free_irq(gpio_dev->irq0_bank+MESON_GPIOIRQ_BASE, gpio_dev);
++	free_irq(gpio_dev->irq1_bank+MESON_GPIOIRQ_BASE, gpio_dev);
++#endif
+ 	del_timer_sync(&gpio_dev->flush_timer);
+ 	rc_unregister_device(gpio_dev->rcdev);
+ 	gpio_free(gpio_dev->gpio_nr);
+diff --git a/drivers/media/rc/gpioplug-ir-recv.c b/drivers/media/rc/gpioplug-ir-recv.c
+new file mode 100644
+index 0000000..a7ffd25
+--- /dev/null
++++ b/drivers/media/rc/gpioplug-ir-recv.c
+@@ -0,0 +1,90 @@
++/*
++ * Pluggable GPIO IR receiver
++ *
++ * Copyright (c) 2015 Dongjin Kim (tobetter@gmail.com)
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/gpio.h>
++#include <linux/slab.h>
++#include <linux/platform_device.h>
++#include <linux/platform_data/media/gpio-ir-recv.h>
++
++static unsigned gpio_nr = -1;
++module_param(gpio_nr, uint, 0);
++MODULE_PARM_DESC(gpio_nr, "GPIO number to receive IR pulse");
++
++static bool active_low = 1;
++module_param(active_low, bool, 0);
++MODULE_PARM_DESC(active_low,
++		"IR pulse trigger level, (1=low active, 0=high active");
++
++static struct platform_device *pdev;
++static struct gpio_ir_recv_platform_data *pdata;
++
++static int __init gpio_init(void)
++{
++	int rc = -ENOMEM;
++
++	if (gpio_nr == -1) {
++		pr_err("gpioplug-ir-recv: missing module parameter: 'gpio_nr'\n");
++		return -EINVAL;
++	}
++
++	pdev = platform_device_alloc(GPIO_IR_DRIVER_NAME, -1);
++	if (!pdev)
++		return rc;
++
++	pdata = kzalloc(sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		goto err_free_platform_data;
++
++	pdev->dev.platform_data = pdata;
++
++	pdata->gpio_nr = gpio_nr;
++	pdata->active_low = active_low;
++	pdata->allowed_protos = 0;
++	pdata->map_name = NULL;
++
++	rc = platform_device_add(pdev);
++	if (rc < 0)
++		goto err_free_device;
++
++	dev_info(&pdev->dev,
++		"IR driver is initialized (gpio_nr=%d, pulse level=%s)\n",
++		pdata->gpio_nr, pdata->active_low ? "low" : "high");
++
++	return 0;
++
++err_free_platform_data:
++	kfree(pdata);
++
++err_free_device:
++	platform_device_put(pdev);
++
++	return rc;
++}
++
++static void __exit gpio_exit(void)
++{
++	dev_info(&pdev->dev, "gpioplug-ir-recv: IR driver is removed\n");
++	platform_device_unregister(pdev);
++}
++
++MODULE_DESCRIPTION("GPIO IR Receiver driver");
++MODULE_LICENSE("GPL v2");
++
++module_init(gpio_init);
++module_exit(gpio_exit);
+diff --git a/include/linux/platform_data/media/gpio-ir-recv.h b/include/linux/platform_data/media/gpio-ir-recv.h
+index 0c298f5..1a22fbd 100644
+--- a/include/linux/platform_data/media/gpio-ir-recv.h
++++ b/include/linux/platform_data/media/gpio-ir-recv.h
+@@ -13,6 +13,8 @@
+ #ifndef __GPIO_IR_RECV_H__
+ #define __GPIO_IR_RECV_H__
+ 
++#define GPIO_IR_DRIVER_NAME	"gpio-rc-recv"
++#define GPIO_IR_DEVICE_NAME	"gpio_ir_recv"
+ struct gpio_ir_recv_platform_data {
+ 	int		gpio_nr;
+ 	bool		active_low;
