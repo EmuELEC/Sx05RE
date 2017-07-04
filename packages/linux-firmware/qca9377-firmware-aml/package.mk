@@ -41,8 +41,8 @@ make_target() {
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL/usr/lib/firmware
+  mkdir -p $INSTALL/usr/lib
 
-  cp -P usr/share/doc/qca-firmware/copyright $INSTALL/usr/lib/firmware/LICENSE.qca
   cp -PR lib/firmware $INSTALL/usr/lib/firmware
+  cp -P usr/share/doc/qca-firmware/copyright $INSTALL/usr/lib/firmware/LICENSE.qca
 }
