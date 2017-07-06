@@ -70,7 +70,7 @@ make_target() {
   done
 
   for UBOOT_TARGET in $UBOOT_CONFIG; do
-    if [ "$PROJECT" = "Odroid_C2" ]; then
+    if [ "$UBOOT_VERSION" = "hardkernel" ]; then
       export PATH=$ROOT/$TOOLCHAIN/lib/gcc-linaro-aarch64-elf/bin/:$ROOT/$TOOLCHAIN/lib/gcc-linaro-arm-eabi/bin/:$PATH
       CROSS_COMPILE=aarch64-elf- ARCH=arm CFLAGS="" LDFLAGS="" make mrproper
       CROSS_COMPILE=aarch64-elf- ARCH=arm CFLAGS="" LDFLAGS="" make $UBOOT_TARGET
@@ -130,8 +130,8 @@ makeinstall_target() {
 
   cp -PR $PROJECT_DIR/$PROJECT/bootloader/uEnv*.txt $INSTALL/usr/share/bootloader 2>/dev/null || :
 
-  case $PROJECT in
-    Odroid_C2)
+  case $UBOOT_VERSION in
+    hardkernel)
       cp -PRv $PKG_DIR/scripts/update-c2.sh $INSTALL/usr/share/bootloader/update.sh
       cp -PRv $ROOT/$PKG_BUILD/u-boot.bin $INSTALL/usr/share/bootloader/u-boot
       if [ -f $PROJECT_DIR/$PROJECT/splash/boot-logo.bmp.gz ]; then
@@ -140,7 +140,7 @@ makeinstall_target() {
         cp -PRv $DISTRO_DIR/$DISTRO/splash/boot-logo.bmp.gz $INSTALL/usr/share/bootloader
       fi
       ;;
-    imx6)
+    imx6*)
       cp -PRv $PKG_DIR/scripts/update.sh $INSTALL/usr/share/bootloader
       ;;
   esac

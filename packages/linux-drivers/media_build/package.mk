@@ -1,6 +1,6 @@
 ################################################################################
 #      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
+#      Copyright (C) 2016-2017 Team LibreELEC
 #
 #  LibreELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="media_build"
-PKG_VERSION="2017-06-20-rpi"
+PKG_VERSION="2017-04-17-rpi"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/crazycat69/linux_media"
@@ -86,9 +86,6 @@ make_target() {
       echo "obj-y += dvb_tv/" >> "linux/drivers/media/Makefile"
     fi 
     echo "obj-y += amlogic/dvb_tv/" >> "linux/drivers/media/Makefile"
-
-  # Meson-IR driver
-    echo "obj-m += meson-ir.o" >> "linux/drivers/media/rc/Makefile"
   fi
 
   make VER=$KERNEL_VER SRCDIR=$(kernel_path)
