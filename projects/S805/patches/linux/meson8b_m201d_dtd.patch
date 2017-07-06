@@ -1,9 +1,9 @@
 diff --git a/arch/arm/boot/dts/amlogic/meson8b_m201d.dtd b/arch/arm/boot/dts/amlogic/meson8b_m201d.dtd
 new file mode 100644
-index 0000000..5f655ae
+index 0000000..8b70c1a
 --- /dev/null
 +++ b/arch/arm/boot/dts/amlogic/meson8b_m201d.dtd
-@@ -0,0 +1,1722 @@
+@@ -0,0 +1,1725 @@
 +/dts-v1/;
 +/// ***************************************************************************************\n
 +//$$ PROJECT="meson8b"
@@ -664,6 +664,9 @@ index 0000000..5f655ae
 +        vcck_dvfs {
 +            dvfs_id     = <1>;                                  /** must be value of (1 << n)            */
 +            table_count = <13>;                                 /** must be correct count for dvfs_table */
++            change-frequent-only;
++            post-reduce;
++            inc_threshold = <800000>;
 +            dvfs_table  = <
 +            /* NOTE: frequent in this table must be ascending order */
 +            /* frequent(Khz)    min_uV      max_uV                  */
