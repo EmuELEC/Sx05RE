@@ -58,6 +58,12 @@ case "$LINUX" in
     PKG_SOURCE_DIR="xbian-sources-kernel-${PKG_COMMIT}*"
     PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET imx6-status-led imx6-soc-fan irqbalanced"
     ;;
+  custom)
+    PKG_VERSION="$KERNEL_VERSION"
+    PKG_URL="$KERNEL_URL"
+    PKG_SOURCE_DIR="$KERNEL_SOURCE_DIR"
+    PKG_PATCH_DIRS="$KERNEL_PATCH_DIRS"
+    ;;
   *)
     PKG_VERSION="4.9.29"
     PKG_URL="http://www.kernel.org/pub/linux/kernel/v4.x/$PKG_NAME-$PKG_VERSION.tar.xz"
