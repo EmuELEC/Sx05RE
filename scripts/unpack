@@ -123,6 +123,10 @@ if [ -d "$SOURCES/$1" -o -d "$PKG_DIR/sources" ]; then
     PATCH_ARCH="$TARGET_ARCH"
   fi
 
+  if [ -n "$KERNEL_PATCH_ARCH" ]; then
+    PATCH_ARCH="$KERNEL_PATCH_ARCH"
+  fi
+
   PATCH_DIRS_PKG=""
   PATCH_DIRS_PRJ=""
   if [ -n "$PKG_PATCH_DIRS" ]; then
