@@ -1,0 +1,126 @@
+From e9ded93d4768af6190505f5159b8b026a08b26d6 Mon Sep 17 00:00:00 2001
+From: kszaq <kszaquitto@gmail.com>
+Date: Fri, 3 Mar 2017 22:15:38 +0100
+Subject: [PATCH] TEMP: S912: don't allow resolutions different than 1920x1080
+ framebuffer size
+
+---
+ xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp | 48 +++--------------------------
+ xbmc/windowing/egl/EGLNativeTypeAmlogic.h   |  4 ---
+ 2 files changed, 4 insertions(+), 48 deletions(-)
+
+diff --git a/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp b/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
+index 421a2af..e2cf772 100644
+--- a/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
++++ b/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
+@@ -64,7 +64,6 @@ bool CEGLNativeTypeAmlogic::CheckCompatibility()
+ 
+ void CEGLNativeTypeAmlogic::Initialize()
+ {
+-  aml_permissions();
+   DisableFreeScale();
+ }
+ void CEGLNativeTypeAmlogic::Destroy()
+@@ -89,8 +88,6 @@ bool CEGLNativeTypeAmlogic::CreateNativeWindow()
+   nativeWindow->height = 1080;
+   m_nativeWindow = nativeWindow;
+ 
+-  SetFramebufferResolution(nativeWindow->width, nativeWindow->height);
+-
+   return true;
+ #else
+   return false;
+@@ -136,13 +133,6 @@ bool CEGLNativeTypeAmlogic::GetNativeResolution(RESOLUTION_INFO *res) const
+ bool CEGLNativeTypeAmlogic::SetNativeResolution(const RESOLUTION_INFO &res)
+ {
+   bool result = false;
+-#if defined(_FBDEV_WINDOW_H_)
+-  if (m_nativeWindow)
+-  {
+-    ((fbdev_window *)m_nativeWindow)->width = res.iScreenWidth;
+-    ((fbdev_window *)m_nativeWindow)->height = res.iScreenHeight;
+-  }
+-#endif
+ 
+   // Don't set the same mode as current
+   std::string mode;
+@@ -176,7 +166,8 @@ bool CEGLNativeTypeAmlogic::ProbeResolutions(std::vector<RESOLUTION_INFO> &resol
+   for (std::vector<std::string>::const_iterator i = probe_str.begin(); i != probe_str.end(); ++i)
+   {
+     if(aml_mode_to_resolution(i->c_str(), &res))
+-      resolutions.push_back(res);
++      if(res.iWidth == 1920 && res.iHeight == 1080)
++        resolutions.push_back(res);
+   }
+   return resolutions.size() > 0;
+ 
+@@ -187,8 +178,8 @@ bool CEGLNativeTypeAmlogic::GetPreferredResolution(RESOLUTION_INFO *res) const
+   // check display/mode, it gets defaulted at boot
+   if (!GetNativeResolution(res))
+   {
+-    // punt to 720p if we get nothing
+-    aml_mode_to_resolution("720p", res);
++    // punt to 1080p if we get nothing
++    aml_mode_to_resolution("1080p60hz", res);
+   }
+ 
+   return true;
+@@ -207,10 +198,6 @@ bool CEGLNativeTypeAmlogic::SetDisplayResolution(const char *resolution)
+   // switch display resolution
+   SysfsUtils::SetString("/sys/class/display/mode", mode.c_str());
+ 
+-  RESOLUTION_INFO res;
+-  aml_mode_to_resolution(mode.c_str(), &res);
+-  SetFramebufferResolution(res);
+-
+   return true;
+ }
+ 
+@@ -264,30 +251,3 @@ void CEGLNativeTypeAmlogic::DisableFreeScale()
+   SysfsUtils::SetInt("/sys/class/graphics/fb0/free_scale", 0);
+   SysfsUtils::SetInt("/sys/class/graphics/fb1/free_scale", 0);
+ }
+-
+-void CEGLNativeTypeAmlogic::SetFramebufferResolution(const RESOLUTION_INFO &res) const
+-{
+-  SetFramebufferResolution(res.iScreenWidth, res.iScreenHeight);
+-}
+-
+-void CEGLNativeTypeAmlogic::SetFramebufferResolution(int width, int height) const
+-{
+-  int fd0;
+-  std::string framebuffer = "/dev/" + m_framebuffer_name;
+-
+-  if ((fd0 = open(framebuffer.c_str(), O_RDWR)) >= 0)
+-  {
+-    struct fb_var_screeninfo vinfo;
+-    if (ioctl(fd0, FBIOGET_VSCREENINFO, &vinfo) == 0)
+-    {
+-      vinfo.xres = width;
+-      vinfo.yres = height;
+-      vinfo.xres_virtual = 1920;
+-      vinfo.yres_virtual = 2160;
+-      vinfo.bits_per_pixel = 32;
+-      vinfo.activate = FB_ACTIVATE_ALL;
+-      ioctl(fd0, FBIOPUT_VSCREENINFO, &vinfo);
+-    }
+-    close(fd0);
+-  }
+-}
+diff --git a/xbmc/windowing/egl/EGLNativeTypeAmlogic.h b/xbmc/windowing/egl/EGLNativeTypeAmlogic.h
+index 96aa6f7..f703d47 100644
+--- a/xbmc/windowing/egl/EGLNativeTypeAmlogic.h
++++ b/xbmc/windowing/egl/EGLNativeTypeAmlogic.h
+@@ -57,9 +57,5 @@ protected:
+   void EnableFreeScale(const RESOLUTION_INFO &res);
+   void DisableFreeScale();
+ 
+-private:
+-  void SetFramebufferResolution(const RESOLUTION_INFO &res) const;
+-  void SetFramebufferResolution(int width, int height) const;
+-
+   std::string m_framebuffer_name;
+ };
+-- 
+1.8.3.1
+
