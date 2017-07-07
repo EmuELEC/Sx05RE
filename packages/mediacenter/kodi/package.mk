@@ -31,6 +31,16 @@ PKG_LONGDESC="Kodi Media Center (which was formerly named Xbox Media Center or X
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
+case $PROJECT in
+  S805|S905|S912)
+    PKG_PATCH_DIRS="amlogic-sX05"
+    if [ "$TARGET_ARCH" = "arm" ]; then
+      CFLAGS="$CFLAGS -mthumb"
+      CXXFLAGS="$CXXFLAGS -mthumb"
+    fi
+    ;;
+esac
+
 PKG_CMAKE_SCRIPT="$PKG_BUILD/project/cmake/CMakeLists.txt"
 
   get_graphicdrivers
