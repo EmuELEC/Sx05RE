@@ -1,27 +1,30 @@
-From e9ded93d4768af6190505f5159b8b026a08b26d6 Mon Sep 17 00:00:00 2001
+From b9a7d68e2a5f9fb8bec7fdd240cc4ad03aab07fc Mon Sep 17 00:00:00 2001
 From: kszaq <kszaquitto@gmail.com>
 Date: Fri, 3 Mar 2017 22:15:38 +0100
 Subject: [PATCH] TEMP: S912: don't allow resolutions different than 1920x1080
  framebuffer size
 
 ---
- xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp | 48 +++--------------------------
+ xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp | 50 ++++-------------------------
  xbmc/windowing/egl/EGLNativeTypeAmlogic.h   |  4 ---
- 2 files changed, 4 insertions(+), 48 deletions(-)
+ 2 files changed, 7 insertions(+), 47 deletions(-)
 
 diff --git a/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp b/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
-index 421a2af..e2cf772 100644
+index da46507..f6676f0 100644
 --- a/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
 +++ b/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
-@@ -64,7 +64,6 @@ bool CEGLNativeTypeAmlogic::CheckCompatibility()
+@@ -65,9 +65,9 @@ bool CEGLNativeTypeAmlogic::CheckCompatibility()
  
  void CEGLNativeTypeAmlogic::Initialize()
  {
 -  aml_permissions();
    DisableFreeScale();
  }
++
  void CEGLNativeTypeAmlogic::Destroy()
-@@ -89,8 +88,6 @@ bool CEGLNativeTypeAmlogic::CreateNativeWindow()
+ {
+   return;
+@@ -90,8 +90,6 @@ bool CEGLNativeTypeAmlogic::CreateNativeWindow()
    nativeWindow->height = 1080;
    m_nativeWindow = nativeWindow;
  
@@ -30,7 +33,7 @@ index 421a2af..e2cf772 100644
    return true;
  #else
    return false;
-@@ -136,13 +133,6 @@ bool CEGLNativeTypeAmlogic::GetNativeResolution(RESOLUTION_INFO *res) const
+@@ -145,13 +143,6 @@ bool CEGLNativeTypeAmlogic::GetNativeResolution(RESOLUTION_INFO *res) const
  bool CEGLNativeTypeAmlogic::SetNativeResolution(const RESOLUTION_INFO &res)
  {
    bool result = false;
@@ -43,18 +46,27 @@ index 421a2af..e2cf772 100644
 -#endif
  
    // Don't set the same mode as current
-   std::string mode;
-@@ -176,7 +166,8 @@ bool CEGLNativeTypeAmlogic::ProbeResolutions(std::vector<RESOLUTION_INFO> &resol
+   RESOLUTION_INFO current_resolution;
+@@ -185,7 +176,9 @@ bool CEGLNativeTypeAmlogic::ProbeResolutions(std::vector<RESOLUTION_INFO> &resol
    for (std::vector<std::string>::const_iterator i = probe_str.begin(); i != probe_str.end(); ++i)
    {
      if(aml_mode_to_resolution(i->c_str(), &res))
 -      resolutions.push_back(res);
-+      if(res.iWidth == 1920 && res.iHeight == 1080)
++    if(res.iWidth == 1920 && res.iHeight == 1080)
++    {
 +        resolutions.push_back(res);
+ 
+     switch ((int)res.fRefreshRate)
+     {
+@@ -198,6 +191,7 @@ bool CEGLNativeTypeAmlogic::ProbeResolutions(std::vector<RESOLUTION_INFO> &resol
+         resolutions.push_back(res);
+         break;
+     }
++    }
    }
    return resolutions.size() > 0;
  
-@@ -187,8 +178,8 @@ bool CEGLNativeTypeAmlogic::GetPreferredResolution(RESOLUTION_INFO *res) const
+@@ -208,8 +202,8 @@ bool CEGLNativeTypeAmlogic::GetPreferredResolution(RESOLUTION_INFO *res) const
    // check display/mode, it gets defaulted at boot
    if (!GetNativeResolution(res))
    {
@@ -65,18 +77,16 @@ index 421a2af..e2cf772 100644
    }
  
    return true;
-@@ -207,10 +198,6 @@ bool CEGLNativeTypeAmlogic::SetDisplayResolution(const char *resolution)
-   // switch display resolution
+@@ -238,8 +232,6 @@ bool CEGLNativeTypeAmlogic::SetDisplayResolution(const RESOLUTION_INFO &res)
+ 
    SysfsUtils::SetString("/sys/class/display/mode", mode.c_str());
  
--  RESOLUTION_INFO res;
--  aml_mode_to_resolution(mode.c_str(), &res);
 -  SetFramebufferResolution(res);
 -
    return true;
  }
  
-@@ -264,30 +251,3 @@ void CEGLNativeTypeAmlogic::DisableFreeScale()
+@@ -293,30 +285,3 @@ void CEGLNativeTypeAmlogic::DisableFreeScale()
    SysfsUtils::SetInt("/sys/class/graphics/fb0/free_scale", 0);
    SysfsUtils::SetInt("/sys/class/graphics/fb1/free_scale", 0);
  }
@@ -108,7 +118,7 @@ index 421a2af..e2cf772 100644
 -  }
 -}
 diff --git a/xbmc/windowing/egl/EGLNativeTypeAmlogic.h b/xbmc/windowing/egl/EGLNativeTypeAmlogic.h
-index 96aa6f7..f703d47 100644
+index b7c053b..a1b9920 100644
 --- a/xbmc/windowing/egl/EGLNativeTypeAmlogic.h
 +++ b/xbmc/windowing/egl/EGLNativeTypeAmlogic.h
 @@ -57,9 +57,5 @@ protected:
@@ -121,6 +131,3 @@ index 96aa6f7..f703d47 100644
 -
    std::string m_framebuffer_name;
  };
--- 
-1.8.3.1
-

@@ -14,11 +14,11 @@ Change-Id: I352c9540d0c34d3ec0ba0f470dae9d4e0786c001
  1 file changed, 53 insertions(+)
 
 diff --git a/drivers/amlogic/mailbox/scpi_protocol.c b/drivers/amlogic/mailbox/scpi_protocol.c
-index ec787d2..f3aa3e0 100644
+index 517b2d2..566dd46 100644
 --- a/drivers/amlogic/mailbox/scpi_protocol.c
 +++ b/drivers/amlogic/mailbox/scpi_protocol.c
-@@ -85,6 +85,12 @@ static int high_priority_cmds[] = {
- 	SCPI_CMD_SENSOR_CFG_BOUNDS,
+@@ -86,6 +86,12 @@ static int high_priority_cmds[] = {
+ 	SCPI_CMD_WAKEUP_REASON_GET,
  };
  
 +#if defined(CONFIG_ARCH_MESON64_ODROIDC2)
@@ -30,7 +30,7 @@ index ec787d2..f3aa3e0 100644
  static struct scpi_opp *scpi_opps[MAX_DVFS_DOMAINS];
  
  static int scpi_linux_errmap[SCPI_ERR_MAX] = {
-@@ -236,6 +242,9 @@ struct scpi_opp *scpi_dvfs_get_opps(u8 domain)
+@@ -237,6 +243,9 @@ struct scpi_opp *scpi_dvfs_get_opps(u8 domain)
  	struct scpi_opp *opps;
  	size_t opps_sz;
  	int count, ret;
@@ -40,7 +40,7 @@ index ec787d2..f3aa3e0 100644
  
  	if (domain >= MAX_DVFS_DOMAINS)
  		return ERR_PTR(-EINVAL);
-@@ -254,6 +263,27 @@ struct scpi_opp *scpi_dvfs_get_opps(u8 domain)
+@@ -255,6 +264,27 @@ struct scpi_opp *scpi_dvfs_get_opps(u8 domain)
  		return ERR_PTR(-ENOMEM);
  
  	count = DVFS_OPP_COUNT(buf.header);
@@ -68,10 +68,11 @@ index ec787d2..f3aa3e0 100644
  	opps_sz = count * sizeof(*(opps->opp));
  
  	opps->count = count;
-@@ -422,3 +452,25 @@ int scpi_send_usr_data(u32 client_id, u32 *val, u32 size)
+@@ -506,3 +536,26 @@ int scpi_get_wakeup_reason(u32 *wakeup_reason)
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(scpi_send_usr_data);
- 
+ EXPORT_SYMBOL_GPL(scpi_get_wakeup_reason);
++
 +#if defined(CONFIG_ARCH_MESON64_ODROIDC2)
 +static int __init get_max_freq(char *str)
 +{
