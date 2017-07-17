@@ -23,6 +23,17 @@
 [ -z "$UPDATE_DIR" ] && UPDATE_DIR="/storage/.update"
 UPDATE_DTB_IMG="$UPDATE_DIR/dtb.img"
 UPDATE_DTB=`ls -1 "$UPDATE_DIR"/*.dtb 2>/dev/null | head -n 1`
+[ -z "$BOOT_PART" ] && BOOT_PART=$(df "$BOOT_ROOT" | tail -1 | awk {' print $1 '})
+if [ -z "$BOOT_DISK" ]; then
+  case $BOOT_PART in
+    /dev/sd[a-z][0-9]*)
+      BOOT_DISK=$(echo $BOOT_PART | sed -e "s,[0-9]*,,g")
+      ;;
+    /dev/mmcblk*)
+      BOOT_DISK=$(echo $BOOT_PART | sed -e "s,p[0-9]*,,g")
+      ;;
+  esac
+fi
 
 for arg in $(cat /proc/cmdline); do
   case $arg in
@@ -72,3 +83,21 @@ for arg in $(cat /proc/cmdline); do
       ;;
   esac
 done
+
+if [ -f $SYSTEM_ROOT/usr/share/bootloader/boot.ini ]; then
+  echo "*** updating Odroid-C2 boot.ini ..."
+  mount -o rw,remount $BOOT_ROOT
+  cp -p $SYSTEM_ROOT/usr/share/bootloader/boot.ini $BOOT_ROOT/boot.ini.update
+fi
+
+if [ -f $SYSTEM_ROOT/usr/share/bootloader/boot-logo.bmp.gz ]; then
+  echo "*** updating Odroid-C2 boot logo ..."
+  mount -o rw,remount $BOOT_ROOT
+  cp -p $SYSTEM_ROOT/usr/share/bootloader/boot-logo.bmp.gz $BOOT_ROOT
+fi
+
+if [ -f $SYSTEM_ROOT/usr/share/bootloader/u-boot -a ! -e /dev/system -a ! -e /dev/boot ]; then
+  echo "*** updating u-boot for Odroid-C2 on: $BOOT_DISK ..."
+  dd if=$SYSTEM_ROOT/usr/share/bootloader/u-boot of=$BOOT_DISK conv=fsync bs=1 count=112
+  dd if=$SYSTEM_ROOT/usr/share/bootloader/u-boot of=$BOOT_DISK conv=fsync bs=512 skip=1 seek=1
+fi
