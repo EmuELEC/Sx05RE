@@ -24,13 +24,10 @@
 UPDATE_DTB_IMG="$UPDATE_DIR/dtb.img"
 UPDATE_DTB=`ls -1 "$UPDATE_DIR"/*.dtb 2>/dev/null | head -n 1`
 
-# Indicate that we are not modifying bootloader
-echo "Bootloader has NOT been modified."
-echo "Updating device tree and partition labels..."
-
 for arg in $(cat /proc/cmdline); do
   case $arg in
     boot=*)
+      echo "*** updating BOOT partition label ..."
       boot="${arg#*=}"
       case $boot in
         /dev/mmc*)
@@ -48,7 +45,7 @@ for arg in $(cat /proc/cmdline); do
       fi
 
       if [ -f "$UPDATE_DTB_SOURCE" ] ; then
-        echo "Updating device tree from $UPDATE_DTB_SOURCE..."
+        echo "*** updating device tree from $UPDATE_DTB_SOURCE ..."
         case $boot in
           /dev/system)
             dd if=/dev/zero of=/dev/dtb bs=256k count=1
@@ -62,6 +59,7 @@ for arg in $(cat /proc/cmdline); do
       fi
       ;;
     disk=*)
+      echo "*** updating DISK partition label ..."
       disk="${arg#*=}"
       case $disk in
         /dev/mmc*)

@@ -24,6 +24,7 @@
 for arg in $(cat /proc/cmdline); do
   case $arg in
     boot=*)
+      echo "*** updating BOOT partition label ..."
       boot="${arg#*=}"
       case $boot in
         /dev/mmc*)
@@ -35,6 +36,7 @@ for arg in $(cat /proc/cmdline); do
       esac
       ;;
     disk=*)
+      echo "*** updating DISK partition label ..."
       disk="${arg#*=}"
       case $disk in
         /dev/mmc*)
