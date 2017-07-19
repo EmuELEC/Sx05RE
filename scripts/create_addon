@@ -132,7 +132,7 @@ pack_addon() {
     fi
     cd $ADDON_BUILD
     echo "*** compressing Addon $PKG_ADDON_ID ... ***"
-    zip -rq $PKG_ADDON_ID-$ADDONVER.zip $PKG_ADDON_ID;
+    zip -rq9 $PKG_ADDON_ID-$ADDONVER.zip $PKG_ADDON_ID;
     cd - &>/dev/null
 
     mkdir -p $ADDON_INSTALL_DIR
