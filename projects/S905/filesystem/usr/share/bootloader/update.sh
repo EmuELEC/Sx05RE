@@ -59,8 +59,8 @@ for arg in $(cat /proc/cmdline); do
         echo "*** updating device tree from $UPDATE_DTB_SOURCE ..."
         case $boot in
           /dev/system)
-            dd if=/dev/zero of=/dev/dtb bs=256k count=1
-            dd if=$UPDATE_DTB_SOURCE of=/dev/dtb bs=256k
+            dd if=/dev/zero of=/dev/dtb bs=256k count=1 status=none
+            dd if=$UPDATE_DTB_SOURCE of=/dev/dtb bs=256k status=none
             ;;
           /dev/mmc*|LABEL=*)
             mount -o rw,remount $BOOT_ROOT
@@ -98,6 +98,6 @@ fi
 
 if [ -f $SYSTEM_ROOT/usr/share/bootloader/u-boot -a ! -e /dev/system -a ! -e /dev/boot ]; then
   echo "*** updating u-boot for Odroid-C2 on: $BOOT_DISK ..."
-  dd if=$SYSTEM_ROOT/usr/share/bootloader/u-boot of=$BOOT_DISK conv=fsync bs=1 count=112
-  dd if=$SYSTEM_ROOT/usr/share/bootloader/u-boot of=$BOOT_DISK conv=fsync bs=512 skip=1 seek=1
+  dd if=$SYSTEM_ROOT/usr/share/bootloader/u-boot of=$BOOT_DISK conv=fsync bs=1 count=112 status=none
+  dd if=$SYSTEM_ROOT/usr/share/bootloader/u-boot of=$BOOT_DISK conv=fsync bs=512 skip=1 seek=1 status=none
 fi
