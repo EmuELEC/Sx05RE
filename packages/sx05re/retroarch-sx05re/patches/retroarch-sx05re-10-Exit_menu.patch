@@ -1,0 +1,32 @@
+--- ./command.c	2017-02-04 00:35:26.098777272 -0600
++++ ./command.c	2017-02-04 00:38:14.727455808 -0600
+@@ -17,6 +17,7 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <ctype.h>
++#include <fcntl.h>
+ 
+ #ifdef _WIN32
+ #include <direct.h>
+@@ -1876,9 +1877,7 @@
+          break;
+       case CMD_EVENT_LOAD_CORE:
+          command_event(CMD_EVENT_LOAD_CORE_PERSIST, NULL);
+-#ifndef HAVE_DYNAMIC
+-         command_event(CMD_EVENT_QUIT, NULL);
+-#endif
++
+          break;
+       case CMD_EVENT_LOAD_STATE:
+          {
+@@ -1797,6 +1797,10 @@
+          }
+          break;
+       case CMD_EVENT_QUIT:
++      remove("/var/lock/start.retro");
++      system("touch /var/lock/start.games");
++      system("systemctl start emustation.service");
++      system("systemctl stop retroarch.service");
+          return retroarch_main_quit();
+       case CMD_EVENT_CHEEVOS_HARDCORE_MODE_TOGGLE:
+ #ifdef HAVE_CHEEVOS

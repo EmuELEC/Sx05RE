@@ -23,14 +23,32 @@
 [ -z "$UPDATE_DIR" ] && UPDATE_DIR="/storage/.update"
 UPDATE_DTB_IMG="$UPDATE_DIR/dtb.img"
 UPDATE_DTB=`ls -1 "$UPDATE_DIR"/*.dtb 2>/dev/null | head -n 1`
+<<<<<<< HEAD
 
 # Indicate that we are not modifying bootloader
 echo "Bootloader has NOT been modified."
 echo "Updating device tree and partition labels..."
+=======
+[ -z "$BOOT_PART" ] && BOOT_PART=$(df "$BOOT_ROOT" | tail -1 | awk {' print $1 '})
+if [ -z "$BOOT_DISK" ]; then
+  case $BOOT_PART in
+    /dev/sd[a-z][0-9]*)
+      BOOT_DISK=$(echo $BOOT_PART | sed -e "s,[0-9]*,,g")
+      ;;
+    /dev/mmcblk*)
+      BOOT_DISK=$(echo $BOOT_PART | sed -e "s,p[0-9]*,,g")
+      ;;
+  esac
+fi
+>>>>>>> 958259d04032b252943cfa62a9c090ea7a42250a
 
 for arg in $(cat /proc/cmdline); do
   case $arg in
     boot=*)
+<<<<<<< HEAD
+=======
+      echo "*** updating BOOT partition label ..."
+>>>>>>> 958259d04032b252943cfa62a9c090ea7a42250a
       boot="${arg#*=}"
       case $boot in
         /dev/mmc*)
@@ -48,11 +66,19 @@ for arg in $(cat /proc/cmdline); do
       fi
 
       if [ -f "$UPDATE_DTB_SOURCE" ] ; then
+<<<<<<< HEAD
         echo "Updating device tree from $UPDATE_DTB_SOURCE..."
         case $boot in
           /dev/system)
             dd if=/dev/zero of=/dev/dtb bs=256k count=1
             dd if=$UPDATE_DTB_SOURCE of=/dev/dtb bs=256k
+=======
+        echo "*** updating device tree from $UPDATE_DTB_SOURCE ..."
+        case $boot in
+          /dev/system)
+            dd if=/dev/zero of=/dev/dtb bs=256k count=1 status=none
+            dd if=$UPDATE_DTB_SOURCE of=/dev/dtb bs=256k status=none
+>>>>>>> 958259d04032b252943cfa62a9c090ea7a42250a
             ;;
           /dev/mmc*|LABEL=*)
             mount -o rw,remount $BOOT_ROOT
@@ -62,6 +88,10 @@ for arg in $(cat /proc/cmdline); do
       fi
       ;;
     disk=*)
+<<<<<<< HEAD
+=======
+      echo "*** updating DISK partition label ..."
+>>>>>>> 958259d04032b252943cfa62a9c090ea7a42250a
       disk="${arg#*=}"
       case $disk in
         /dev/mmc*)
@@ -74,3 +104,24 @@ for arg in $(cat /proc/cmdline); do
       ;;
   esac
 done
+<<<<<<< HEAD
+=======
+
+if [ -f $SYSTEM_ROOT/usr/share/bootloader/boot.ini ]; then
+  echo "*** updating Odroid-C2 boot.ini ..."
+  mount -o rw,remount $BOOT_ROOT
+  cp -p $SYSTEM_ROOT/usr/share/bootloader/boot.ini $BOOT_ROOT/boot.ini.update
+fi
+
+if [ -f $SYSTEM_ROOT/usr/share/bootloader/boot-logo.bmp.gz ]; then
+  echo "*** updating Odroid-C2 boot logo ..."
+  mount -o rw,remount $BOOT_ROOT
+  cp -p $SYSTEM_ROOT/usr/share/bootloader/boot-logo.bmp.gz $BOOT_ROOT
+fi
+
+if [ -f $SYSTEM_ROOT/usr/share/bootloader/u-boot -a ! -e /dev/system -a ! -e /dev/boot ]; then
+  echo "*** updating u-boot for Odroid-C2 on: $BOOT_DISK ..."
+  dd if=$SYSTEM_ROOT/usr/share/bootloader/u-boot of=$BOOT_DISK conv=fsync bs=1 count=112 status=none
+  dd if=$SYSTEM_ROOT/usr/share/bootloader/u-boot of=$BOOT_DISK conv=fsync bs=512 skip=1 seek=1 status=none
+fi
+>>>>>>> 958259d04032b252943cfa62a9c090ea7a42250a

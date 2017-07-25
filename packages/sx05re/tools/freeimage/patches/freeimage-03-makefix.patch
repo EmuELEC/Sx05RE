@@ -1,0 +1,10 @@
+--- /Makefile.gnu	2017-02-20 21:53:06.228962235 -0600
++++ /Makefile.gnu	2017-02-20 21:54:32.685204170 -0600
+@@ -27,6 +27,7 @@
+ # LibJXR
+ CXXFLAGS += -D__ANSI__
+ CXXFLAGS += $(INCLUDE)
++CXXFLAGS += -std=c++98
+ 
+ ifeq ($(shell sh -c 'uname -m 2>/dev/null || echo not'),x86_64)
+ 	CFLAGS += -fPIC

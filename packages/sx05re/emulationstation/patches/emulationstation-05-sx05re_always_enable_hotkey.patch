@@ -1,0 +1,13 @@
+diff U3 a/es-core/src/guis/GuiInputConfig.cpp b/es-core/src/guis/GuiInputConfig.cpp
+--- a/es-core/src/guis/GuiInputConfig.cpp	2017-07-09 02:21:08.037027843 -0500
++++ b/es-core/src/guis/GuiInputConfig.cpp	2017-07-09 02:28:40.851002561 -0500
+@@ -222,6 +222,9 @@
+ 	buttons.push_back(std::make_shared<ButtonComponent>(mWindow, "OK", "ok", [this, okFunction] {
+ 		// check if the hotkey enable button is set. if not prompt the user to use select or nothing.
+ 		Input input;
++                //Sx05RE does not use hotkey, but always set to select, just in case
++                    mTargetConfig->getInputByName("Select", &input);
++	            mTargetConfig->mapInput("HotKeyEnable", input);
+ 		if (!mTargetConfig->getInputByName("HotKeyEnable", &input)) {
+ 			mWindow->pushGui(new GuiMsgBox(mWindow,
+ 				"YOU DIDN'T CHOOSE A HOTKEY ENABLE BUTTON. THIS IS REQUIRED FOR EXITING GAMES WITH A CONTROLLER. DO YOU WANT TO USE THE SELECT BUTTON DEFAULT ? PLEASE ANSWER YES TO USE SELECT OR NO TO NOT SET A HOTKEY ENABLE BUTTON.",

@@ -58,6 +58,14 @@ case "$LINUX" in
     PKG_SOURCE_DIR="xbian-sources-kernel-${PKG_COMMIT}*"
     PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET imx6-status-led imx6-soc-fan irqbalanced"
     ;;
+<<<<<<< HEAD
+=======
+  default-rpi)
+    PKG_VERSION="4.9.36"
+    PKG_URL="http://www.kernel.org/pub/linux/kernel/v4.x/$PKG_NAME-$PKG_VERSION.tar.xz"
+    PKG_PATCH_DIRS="default-rpi"
+    ;;
+>>>>>>> 958259d04032b252943cfa62a9c090ea7a42250a
   custom)
     PKG_VERSION="$KERNEL_VERSION"
     PKG_URL="$KERNEL_URL"
@@ -65,7 +73,7 @@ case "$LINUX" in
     PKG_PATCH_DIRS="$KERNEL_PATCH_DIRS"
     ;;
   *)
-    PKG_VERSION="4.9.29"
+    PKG_VERSION="4.11.8"
     PKG_URL="http://www.kernel.org/pub/linux/kernel/v4.x/$PKG_NAME-$PKG_VERSION.tar.xz"
     PKG_PATCH_DIRS="default"
     ;;
@@ -84,7 +92,7 @@ else
 fi
 
 if [ "$TARGET_ARCH" = "x86_64" ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET intel-ucode kernel-firmware"
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET intel-ucode:host kernel-firmware"
 fi
 
 if [ "$BUILD_ANDROID_BOOTIMG" = "yes" ]; then
@@ -161,10 +169,9 @@ pre_make_target() {
     mkdir -p $PKG_BUILD/external-firmware
       cp -a $(get_build_dir kernel-firmware)/{amdgpu,amd-ucode,i915,radeon,rtl_nic} $PKG_BUILD/external-firmware
 
-    mkdir -p $PKG_BUILD/external-firmware/intel-ucode
-      cp -a $(get_build_dir intel-ucode)/microcode.bin $PKG_BUILD/external-firmware/intel-ucode
+    cp -a $(get_build_dir intel-ucode)/intel-ucode $PKG_BUILD/external-firmware
 
-    FW_LIST="$(find $PKG_BUILD/external-firmware \( -type f -o -type l \) \( -iname '*.bin' -o -iname '*.fw' \) | sed 's|.*external-firmware/||' | sort | xargs)"
+    FW_LIST="$(find $PKG_BUILD/external-firmware \( -type f -o -type l \) \( -iname '*.bin' -o -iname '*.fw' -o -path '*/intel-ucode/*' \) | sed 's|.*external-firmware/||' | sort | xargs)"
     sed -i "s|CONFIG_EXTRA_FIRMWARE=.*|CONFIG_EXTRA_FIRMWARE=\"${FW_LIST}\"|" $PKG_BUILD/.config
   fi
 

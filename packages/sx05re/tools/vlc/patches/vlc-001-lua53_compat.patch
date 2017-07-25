@@ -1,0 +1,11 @@
+diff -Naur a/modules/lua/vlc.h b/modules/lua/vlc.h
+--- a/modules/lua/vlc.h	2015-02-02 21:42:29.000000000 +0200
++++ b/modules/lua/vlc.h	2016-08-14 00:35:21.942121144 +0300
+@@ -38,6 +38,7 @@
+ #include <vlc_stream.h>
+ #include <vlc_demux.h>
+ 
++#define LUA_COMPAT_APIINTCASTS
+ #define LUA_COMPAT_MODULE
+ #include <lua.h>        /* Low level lua C API */
+ #include <lauxlib.h>    /* Higher level C API */

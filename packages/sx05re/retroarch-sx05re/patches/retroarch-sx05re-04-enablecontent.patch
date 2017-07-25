@@ -1,0 +1,118 @@
+--- a/menu/menu_displaylist.c	2017-06-21 20:53:42.807091235 -0500
++++ b/menu/menu_displaylist.c	2017-06-21 20:57:07.804047068 -0500
+@@ -6042,18 +6042,11 @@
+                   MENU_ENUM_LABEL_NETPLAY,
+                   PARSE_ACTION, false);
+ #endif
+-#if defined(HAVE_NETWORKING)
+-#ifdef HAVE_LAKKA
+-            menu_displaylist_parse_settings_enum(menu, info,
+-                  MENU_ENUM_LABEL_UPDATE_LAKKA,
+-                  PARSE_ACTION, false);
+-#else
+-            if (settings->bools.menu_show_online_updater)
++
+                menu_displaylist_parse_settings_enum(menu, info,
+                      MENU_ENUM_LABEL_ONLINE_UPDATER,
+                      PARSE_ACTION, false);
+-#endif
+-#endif
++
+             menu_displaylist_parse_settings_enum(menu, info,
+                   MENU_ENUM_LABEL_SETTINGS, PARSE_ACTION, false);
+             menu_displaylist_parse_settings_enum(menu, info,
+@@ -6073,14 +6066,7 @@
+             menu_displaylist_parse_settings_enum(menu, info,
+                   MENU_ENUM_LABEL_QUIT_RETROARCH,
+                   PARSE_ACTION, false);
+-#if defined(HAVE_LAKKA)
+-            menu_displaylist_parse_settings_enum(menu, info,
+-                  MENU_ENUM_LABEL_REBOOT,
+-                  PARSE_ACTION, false);
+-            menu_displaylist_parse_settings_enum(menu, info,
+-                  MENU_ENUM_LABEL_SHUTDOWN,
+-                  PARSE_ACTION, false);
+-#endif
++
+             info->need_push    = true;
+          }
+          break;
+--- a/menu/drivers/xmb.c	2017-06-21 20:53:42.803091216 -0500
++++ b/menu/drivers/xmb.c	2017-06-21 20:57:17.580091858 -0500
+@@ -4065,21 +4065,10 @@
+ 
+             entry.enum_idx      = MENU_ENUM_LABEL_ADD_CONTENT_LIST;
+             menu_displaylist_ctl(DISPLAYLIST_SETTING_ENUM, &entry);
+-#if defined(HAVE_NETWORKING)
+-#ifdef HAVE_LAKKA
+-            entry.enum_idx      = MENU_ENUM_LABEL_UPDATE_LAKKA;
+-            menu_displaylist_ctl(DISPLAYLIST_SETTING_ENUM, &entry);
+-#else
+-            {
+-               settings_t *settings      = config_get_ptr();
+-               if (settings->bools.menu_show_online_updater)
+-               {
++
+                   entry.enum_idx      = MENU_ENUM_LABEL_ONLINE_UPDATER;
+                   menu_displaylist_ctl(DISPLAYLIST_SETTING_ENUM, &entry);
+-               }
+-            }
+-#endif
+-#endif
++
+             entry.enum_idx      = MENU_ENUM_LABEL_INFORMATION_LIST;
+             menu_displaylist_ctl(DISPLAYLIST_SETTING_ENUM, &entry);
+ #ifndef HAVE_DYNAMIC
+--- a/menu/menu_setting.c	2017-03-12 17:52:42.000000000 -0600
++++ b/menu/menu_setting.c	2017-03-13 19:05:16.526319525 -0600
+@@ -2334,15 +2334,6 @@
+                &subgroup_info,
+                parent_group);
+ 
+-#ifdef HAVE_LAKKA
+-         CONFIG_ACTION(
+-               list, list_info,
+-               MENU_ENUM_LABEL_UPDATE_LAKKA,
+-               MENU_ENUM_LABEL_VALUE_UPDATE_LAKKA,
+-               &group_info,
+-               &subgroup_info,
+-               parent_group);
+-#else
+          CONFIG_ACTION(
+                list, list_info,
+                MENU_ENUM_LABEL_ONLINE_UPDATER,
+@@ -2350,7 +2341,7 @@
+                &group_info,
+                &subgroup_info,
+                parent_group);
+-#endif
++
+ 
+ #endif
+ 
+@@ -2460,25 +2451,7 @@
+          menu_settings_list_current_add_cmd(list, list_info, CMD_EVENT_QUIT);
+ #endif
+ 
+-#if defined(HAVE_LAKKA)
+-         CONFIG_ACTION(
+-               list, list_info,
+-               MENU_ENUM_LABEL_REBOOT,
+-               MENU_ENUM_LABEL_VALUE_REBOOT,
+-               &group_info,
+-               &subgroup_info,
+-               parent_group);
+-         menu_settings_list_current_add_cmd(list, list_info, CMD_EVENT_REBOOT);
+ 
+-         CONFIG_ACTION(
+-               list, list_info,
+-               MENU_ENUM_LABEL_SHUTDOWN,
+-               MENU_ENUM_LABEL_VALUE_SHUTDOWN,
+-               &group_info,
+-               &subgroup_info,
+-               parent_group);
+-         menu_settings_list_current_add_cmd(list, list_info, CMD_EVENT_SHUTDOWN);
+-#endif
+ 
+          CONFIG_ACTION(
+                list, list_info,

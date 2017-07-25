@@ -1,0 +1,22 @@
+[Unit]
+Description=EmulationStation emulator frontend
+ConditionPathExists=/var/lock/start.games
+
+[Service]
+#Environment=DISPLAY=:0.0
+#Environment=SDL_AUDIODRIVER=alsa
+#Environment=SDL_VIDEODRIVER=mali
+Environment=SDL_MOUSE_RELATIVE=0
+Environment=FB_MULTI_BUFFER=2
+Environment=HOME=/storage
+ExecStartPre=-/usr/bin/remotecfg /storage/.config/amremote/remote-games.conf
+ExecStartPre=/usr/bin/emustation-config
+ExecStart=/usr/bin/emulationstation
+KillMode=process
+TimeoutStopSec=3
+Restart=on-failure
+RestartSec=2
+StartLimitInterval=0
+
+[Install]
+WantedBy=kodi.target

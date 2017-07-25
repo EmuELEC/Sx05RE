@@ -67,8 +67,13 @@ install_to_nand() {
 
     if [ -f $IMAGE_DTB ] ; then
       echo -n "Writing device tree image..."
+<<<<<<< HEAD
       dd if=/dev/zero of=/dev/dtb bs=256k count=1
       dd if="$IMAGE_DTB" of=/dev/dtb bs=256k
+=======
+      dd if=/dev/zero of=/dev/dtb bs=256k count=1 status=none
+      dd if="$IMAGE_DTB" of=/dev/dtb bs=256k status=none
+>>>>>>> 958259d04032b252943cfa62a9c090ea7a42250a
       echo "done."
     fi
 

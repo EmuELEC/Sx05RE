@@ -329,7 +329,7 @@ dashes="==========================="
     linux_config_dir="$PROJECT_DIR/$PROJECT/linux"
   fi
 
-  if [ ! -f $linux_config_dir/linux.$TARGET_ARCH.conf ] &&
+  if [ ! -e $linux_config_dir/linux.$TARGET_ARCH.conf ] &&
      ! ls $linux_config_dir/*/linux.$TARGET_ARCH.conf &>/dev/null; then
     check_arch="$check_arch\n $dashes$dashes$dashes"
     check_arch="$check_arch\n ERROR: Architecture not found, use a valid Architecture"
@@ -338,6 +338,7 @@ dashes="==========================="
     check_arch="$check_arch\n\n Valid Architectures for your project: $PROJECT"
 
     for arch in $linux_config_dir/*.conf $linux_config_dir/*/linux.$TARGET_ARCH.conf; do
+      [[ ${arch} =~ .*\*.* ]] && continue #ignore unexpanded wildcard
       check_arch="$check_arch\n - $(basename $arch | cut -f2 -d".")"
     done
     echo -e $check_arch

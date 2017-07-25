@@ -17,7 +17,11 @@
 ################################################################################
 
 PKG_NAME="kodi"
+<<<<<<< HEAD
 PKG_VERSION="0362b76"
+=======
+PKG_VERSION="b22184d"
+>>>>>>> 958259d04032b252943cfa62a9c090ea7a42250a
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.kodi.tv"
