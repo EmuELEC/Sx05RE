@@ -196,3 +196,114 @@
   SYSTEM_SIZE=512
 # Default system partition offset, in sectors, eg. 2048
   SYSTEM_PART_START=8192
+
+LAKKA_MIRROR="http://sources.lakka.tv"
+
+LIBRETRO_CORES="atari800 beetle-pce beetle-lynx beetle-pcfx beetle-saturn beetle-supergrafx beetle-vb bluemsx fbalpha fceumm fuse-libretro gambatte genesis-plus-gx gpsp handy mame2003 mgba mupen64plus nestopia parallel-n64 pcsx_rearmed picodrive prosystem px68k sameboy scummvm snes9x snes9x2002 snes9x2005 snes9x2010 stella vbam vecx vice"
+
+LIBRETRO_EXTRA_CORES="2048 4do 81 beetle-ngp beetle-wswan cap32 crocods desmume dinothawr dolphin dosbox easyrpg gw-libretro hatari lutro melonds mrboom o2em openlara nxengine puae ppsspp prboom pocketcdg tyrquake uae4arm xrick virtualjaguar yabause uzebox"
+
+
+RA_PLAYLIST_NAMES=""\
+"Atari - 2600.lpl;"\
+"Atari - 5200.lpl;"\
+"Atari - 7800.lpl;"\
+"Atari - Jaguar.lpl;"\
+"Atari - Lynx.lpl;"\
+"Atari - ST.lpl;"\
+"Bandai - WonderSwan Color.lpl;"\
+"Bandai - WonderSwan.lpl;"\
+"Cave Story.lpl;"\
+"Coleco - ColecoVision.lpl;"\
+"Dinothawr.lpl;"\
+"DOOM.lpl;"\
+"DOS.lpl;"\
+"FB Alpha - Arcade Games.lpl;"\
+"GCE - Vectrex.lpl;"\
+"Lutro.lpl;"\
+"Magnavox - Odyssey2.lpl;"\
+"MAME.lpl;"\
+"Microsoft - MSX2.lpl;"\
+"Microsoft - MSX.lpl;"\
+"NEC - PC Engine SuperGrafx.lpl;"\
+"NEC - PC Engine - TurboGrafx 16.lpl;"\
+"Nintendo - Famicom Disk System.lpl;"\
+"Nintendo - Game Boy Advance (e-Cards).lpl;"\
+"Nintendo - Game Boy Advance.lpl;"\
+"Nintendo - Game Boy Color.lpl;"\
+"Nintendo - Game Boy.lpl;"\
+"Nintendo - Nintendo 64.lpl;"\
+"Nintendo - Nintendo DS.lpl;"\
+"Nintendo - Nintendo DS Decrypted.lpl;"\
+"Nintendo - Nintendo DS (Download Play) (BETA).lpl;"\
+"Nintendo - Nintendo DSi Decrypted.lpl;"\
+"Nintendo - Nintendo DSi (DLC).lpl;"\
+"Nintendo - Nintendo Entertainment System.lpl;"\
+"Nintendo - Satellaview.lpl;"\
+"Nintendo - Super Nintendo Entertainment System.lpl;"\
+"Nintendo - Virtual Boy.lpl;"\
+"Quake1.lpl;"\
+"ScummVM.lpl;"\
+"Sega - 32X.lpl;"\
+"Sega - Game Gear.lpl;"\
+"Sega - Master System - Mark III.lpl;"\
+"Sega - Mega Drive - Genesis.lpl;"\
+"Sega - PICO.lpl;"\
+"Sega - SG-1000.lpl;"\
+"Sinclair - ZX Spectrum +3.lpl;"\
+"SNK - Neo Geo Pocket Color.lpl;"\
+"SNK - Neo Geo Pocket.lpl;"\
+"Sony - PlayStation Portable.lpl;"\
+"Sony - PlayStation.lpl"
+
+  RA_PLAYLIST_CORES=""\
+"/tmp/cores/stella_libretro.so;"\
+"DETECT;"\
+"/tmp/cores/prosystem_libretro.so;"\
+"/tmp/cores/virtualjaguar_libretro.so;"\
+"/tmp/cores/handy_libretro.so;"\
+"/tmp/cores/hatari_libretro.so;"\
+"/tmp/cores/mednafen_wswan_libretro.so;"\
+"/tmp/cores/mednafen_wswan_libretro.so;"\
+"/tmp/cores/nxengine_libretro.so;"\
+"/tmp/cores/bluemsx_libretro.so;"\
+"/tmp/cores/dinothawr_libretro.so;"\
+"/tmp/cores/prboom_libretro.so;"\
+"/tmp/cores/dosbox_libretro.so;"\
+"/tmp/cores/fbalpha_libretro.so;"\
+"/tmp/cores/vecx_libretro.so;"\
+"/tmp/cores/lutro_libretro.so;"\
+"/tmp/cores/o2em_libretro.so;"\
+"/tmp/cores/mame_libretro.so;"\
+"/tmp/cores/bluemsx_libretro.so;"\
+"/tmp/cores/bluemsx_libretro.so;"\
+"/tmp/cores/mednafen_supergrafx_libretro.so;"\
+"/tmp/cores/mednafen_pce_fast_libretro.so;"\
+"/tmp/cores/nestopia_libretro.so;"\
+"/tmp/cores/mgba_libretro.so;"\
+"/tmp/cores/mgba_libretro.so;"\
+"/tmp/cores/gambatte_libretro.so;"\
+"/tmp/cores/gambatte_libretro.so;"\
+"/tmp/cores/parallel_n64_libretro.so;"\
+"/tmp/cores/desmume_libretro.so;"\
+"/tmp/cores/desmume_libretro.so;"\
+"/tmp/cores/desmume_libretro.so;"\
+"/tmp/cores/desmume_libretro.so;"\
+"/tmp/cores/desmume_libretro.so;"\
+"/tmp/cores/nestopia_libretro.so;"\
+"/tmp/cores/snes9x2010_libretro.so;"\
+"/tmp/cores/snes9x2010_libretro.so;"\
+"/tmp/cores/mednafen_vb_libretro.so;"\
+"/tmp/cores/tyrquake_libretro.so;"\
+"/tmp/cores/scummvm_libretro.so;"\
+"/tmp/cores/picodrive_libretro.so;"\
+"/tmp/cores/genesis_plus_gx_libretro.so;"\
+"/tmp/cores/genesis_plus_gx_libretro.so;"\
+"/tmp/cores/genesis_plus_gx_libretro.so;"\
+"/tmp/cores/picodrive_libretro.so;"\
+"/tmp/cores/genesis_plus_gx_libretro.so;"\
+"/tmp/cores/fuse_libretro.so;"\
+"/tmp/cores/mednafen_ngp_libretro.so;"\
+"/tmp/cores/mednafen_ngp_libretro.so;"\
+"/tmp/cores/ppsspp_libretro.so;"\
+"/tmp/cores/pcsx_rearmed_libretro.so" 

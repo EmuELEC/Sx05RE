@@ -19,7 +19,7 @@
 ################################################################################
 
 PKG_NAME="psp1"
-PKG_VERSION="5fafaba"
+PKG_VERSION="edf1cb7"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
@@ -39,7 +39,7 @@ pre_configure_target() {
 }
 
 make_target() {
-  cd $ROOT/$PKG_BUILD/libretro
+  cd $PKG_BUILD/libretro
   if [ "$OPENGLES" == "gpu-viv-bin-mx6q" ]; then
     CFLAGS="$CFLAGS -DLINUX -DEGL_API_FB"
     CXXFLAGS="$CXXFLAGS -DLINUX -DEGL_API_FB"

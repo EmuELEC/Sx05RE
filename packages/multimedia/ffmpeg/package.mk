@@ -62,10 +62,7 @@ fi
 case "$TARGET_ARCH" in
   arm)
     CFLAGS="$CFLAGS -mthumb"
-<<<<<<< HEAD
-=======
     CFLAGS=$(echo "$CFLAGS" | sed 's/-Os/-O3/g')
->>>>>>> 958259d04032b252943cfa62a9c090ea7a42250a
     ;;
 esac
 

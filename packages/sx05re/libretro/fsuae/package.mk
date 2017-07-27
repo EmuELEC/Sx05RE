@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="fsuae"
-PKG_VERSION="18c9817"
+PKG_VERSION="7990f7a"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
@@ -37,7 +37,7 @@ case $PROJECT in
 esac
 
 pre_configure_target() {
-  cd $ROOT/$BUILD/$PKG_NAME-$PKG_VERSION
+  cd /$BUILD/$PKG_NAME-$PKG_VERSION
   rm -rf .$TARGET_NAME
   export ac_cv_func_realloc_0_nonnull=yes
   strip_lto

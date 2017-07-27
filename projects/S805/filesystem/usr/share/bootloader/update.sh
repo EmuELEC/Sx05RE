@@ -24,10 +24,7 @@
 for arg in $(cat /proc/cmdline); do
   case $arg in
     boot=*)
-<<<<<<< HEAD
-=======
       echo "*** updating BOOT partition label ..."
->>>>>>> 958259d04032b252943cfa62a9c090ea7a42250a
       boot="${arg#*=}"
       case $boot in
         /dev/mmc*)
@@ -39,10 +36,7 @@ for arg in $(cat /proc/cmdline); do
       esac
       ;;
     disk=*)
-<<<<<<< HEAD
-=======
       echo "*** updating DISK partition label ..."
->>>>>>> 958259d04032b252943cfa62a9c090ea7a42250a
       disk="${arg#*=}"
       case $disk in
         /dev/mmc*)

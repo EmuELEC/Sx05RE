@@ -19,7 +19,7 @@
 ################################################################################
 
 PKG_NAME="libretro-database"
-PKG_VERSION="942a251"
+PKG_VERSION="8030c7e"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
@@ -34,11 +34,10 @@ PKG_LONGDESC="Repository containing cheatcode files, content data files, etc."
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-make_target() {
-  :
+configure_target() {
+  cd $PKG_BUILD
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL/usr/share/libretro-database
-  cp -r * $INSTALL/usr/share/libretro-database
+  make install INSTALLDIR="$INSTALL/usr/share/libretro-database"
 }
