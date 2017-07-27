@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="emulationstation-theme-ComicBook"
-PKG_VERSION="598410b"
+PKG_VERSION="9c14a1f"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
