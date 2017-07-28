@@ -31,8 +31,7 @@ PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mame2010 mame2014 vba-next libretro-beet
 # These packages are experimental, they do not compile or have other problems, any help getting these to work is highly appreciated!.
 
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET attract" 
-#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET jum52"
-#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET hurrican"
+
 
 
 make_target() {
