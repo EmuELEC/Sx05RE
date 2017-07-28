@@ -374,6 +374,9 @@ post_install() {
   enable_service kodi.service
   enable_service kodi-lirc-suspend.service
 
+#sx05RE
+  enable_service gui-switch.service
+
   case $PROJECT in
     S805|S905|S912)
       enable_service kodi-aml-hdmimonitor.service

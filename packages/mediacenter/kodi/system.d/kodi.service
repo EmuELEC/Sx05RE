@@ -1,8 +1,9 @@
 [Unit]
 Description=Kodi Media Center
-After=network-online.target graphical.target
-Requires=graphical.target
+After=network-online.target graphical.target gui-switch.service
+Requires=graphical.target gui-switch.service
 Wants=network-online.target
+ConditionPathExists=/var/lock/start.kodi
 
 [Service]
 Environment=__GL_YIELD=USLEEP
