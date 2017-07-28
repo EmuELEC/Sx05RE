@@ -164,7 +164,7 @@ configure_target() {
 
 makeinstall_target() {
   # deploy to SYSROOT
-  cd ${ROOT}/${BUILD}/${PKG_NAME}-${PKG_VERSION}
+  cd ${BUILD}/${PKG_NAME}-${PKG_VERSION}
   make install DESTDIR=${SYSROOT_PREFIX}/usr/
 
   #restore strip value
