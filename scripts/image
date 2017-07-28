@@ -278,6 +278,14 @@ if [ "$BUILD_ANDROID_BOOTIMG" = "yes" ]; then
       $ANDROID_BOOTIMG_SECOND $ANDROID_BOOTIMG_OPTIONS --output arch/$TARGET_KERNEL_ARCH/boot/boot.img
   if [ -f $DTB_BLOB_OUTPUT ]; then
     cp -f $DTB_BLOB_OUTPUT $TARGET_IMG/$IMAGE_NAME.dtb
+
+# **** SX05RE **** if we have a DTB and it was specified in the command line copy it
+if [ -n "$DEVICEDTB" ]; then 
+    echo "Using DTB for $DEVICEDTB..."
+    cp -f $ROOT/distributions/$DISTRONAME/devices/$DEVICEDTB/dtb.img $TARGET_IMG/$IMAGE_NAME.dtb
+fi 
+# **** SX05RE ****
+
   fi
   echo "...done"
   popd > /dev/null
