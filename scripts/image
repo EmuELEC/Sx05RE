@@ -246,6 +246,11 @@ for MOD in `find $INSTALL/usr/lib/modules/ -type f -name "*.ko"`; do
   $STRIP --strip-debug $MOD
 done
 
+# delete PCI firmware for non-PCI targets
+if [ "$ARCH" = "arm" -o "$ARCH" = "aarch64" ]; then
+  find $INSTALL/usr/lib/firmware -iname "*pci*" -exec rm {} +;
+fi
+
 # make target dir
 mkdir -p $TARGET_IMG
 rm -rf $TARGET_IMG/$IMAGE_NAME.kernel
