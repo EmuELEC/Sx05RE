@@ -1,0 +1,72 @@
+From 4fe2e38551310576aad143cba517b88cecaec2b6 Mon Sep 17 00:00:00 2001
+From: kszaq <kszaquitto@gmail.com>
+Date: Sat, 29 Jul 2017 22:05:40 +0200
+Subject: [PATCH] amcodec: remove dependency on sw_decoder
+
+---
+ amcodec/codec/codec_ctrl.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
+
+diff --git a/amcodec/codec/codec_ctrl.c b/amcodec/codec/codec_ctrl.c
+index c4a03f3..01a9088 100755
+--- a/amcodec/codec/codec_ctrl.c
++++ b/amcodec/codec/codec_ctrl.c
+@@ -307,7 +307,6 @@ static inline int codec_video_es_init(codec_para_t *pcodec)
+       handle = codec_h_open(CODEC_VIDEO_ES_HEVC_DEVICE, flags);
+     } else if (pcodec->video_type == VFORMAT_SWCODEC) {
+         printf("OPEN es swcodec\n");
+-		codec_sw_decoder_init(pcodec);
+     } else {
+         CODEC_PRINT("OPEN es DEVICE\n");
+         handle = codec_h_open(CODEC_VIDEO_ES_DEVICE, flags);
+@@ -813,7 +812,7 @@ int codec_write_swcodec(codec_para_t *pcodec, AVPacket *avpkt)
+ {
+     int ret;
+ 
+-	ret = codec_sw_decoder_write(pcodec, avpkt);
++	ret = 0;
+ 
+     if(CODEC_ERROR_NONE == ret)
+         return avpkt->size;
+@@ -852,8 +851,7 @@ int codec_close(codec_para_t *pcodec)
+ 	CODEC_PRINT("[%s %d]\n", __FUNCTION__, __LINE__);
+ 	
+     if (pcodec->video_type == VFORMAT_SWCODEC) {
+-        codec_sw_decoder_release(pcodec);
+-        return 0;
++        return -1;
+     }
+ 
+     if (pcodec->has_audio) {
+@@ -979,8 +977,6 @@ int codec_checkin_video_ratio(float ratio)
+ {
+     CODEC_PRINT("[%s:%d]ratio:%f\n",__FUNCTION__,__LINE__, ratio);
+ 
+-	codec_sw_decoder_set_ratio(ratio);
+-
+     return -1;
+ }
+ 
+@@ -1815,8 +1811,7 @@ int codec_get_vpts(codec_para_t *pcodec)
+     }
+ 	
+ 	if (pcodec->video_type == VFORMAT_SWCODEC) {
+-		codec_sw_decoder_getvpts(pcodec, &vpts);
+-        return 0;
++        return -1;
+ 	}
+ 
+     ret = codec_h_ioctl(pcodec->handle, AMSTREAM_IOC_GET, AMSTREAM_GET_VPTS, (unsigned long)&vpts);
+@@ -1848,8 +1843,7 @@ int codec_get_pcrscr(codec_para_t *pcodec)
+     }
+ 	
+ 	if (pcodec->video_type == VFORMAT_SWCODEC) {
+-		codec_sw_decoder_getpcr(pcodec, (unsigned long)&pcrscr);
+-        return 0;
++        return -1;
+ 	}
+ 
+     ret = codec_h_ioctl(pcodec->handle, AMSTREAM_IOC_GET, AMSTREAM_GET_PCRSCR, (unsigned long)&pcrscr);
+-- 
+2.7.4
+
