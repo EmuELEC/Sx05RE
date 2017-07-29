@@ -1,5 +1,6 @@
+#!/bin/sh
 ################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
+#      This file is part of LibreELEC - https://www.libreelec.tv
 #      Copyright (C) 2017-present Team LibreELEC
 #
 #  LibreELEC is free software: you can redistribute it and/or modify
@@ -16,24 +17,10 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-import alsaaudio as alsa
-import xbmcaddon
-import xbmcgui
+# Remove those sample files that we manage
+for sample in $(find /storage/.config -name '*.sample' 2>/dev/null); do
+  [ -f /usr/config/${sample:16} ] && rm -f ${sample}
+done
 
-
-dialog  = xbmcgui.Dialog()
-strings  = xbmcaddon.Addon().getLocalizedString
-while True:
-   pcms = alsa.pcms()[1:]
-   if len(pcms) == 0:
-      dialog.ok(xbmcaddon.Addon().getAddonInfo('name'), strings(30210))
-      break
-   pcmx = dialog.select(strings(30112), pcms)
-   if pcmx == -1:
-      break
-   pcm = pcms[pcmx]
-   xbmcaddon.Addon().setSetting('ls_o', pcm)
-   break
-del dialog
-
-
+# Copy config files, but don't overwrite - this should replace our sample files
+false | cp -iRp /usr/config/* /storage/.config/ &>/dev/null
