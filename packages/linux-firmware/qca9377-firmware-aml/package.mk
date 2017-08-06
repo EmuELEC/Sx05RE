@@ -18,7 +18,7 @@
 ################################################################################
 
 PKG_NAME="qca9377-firmware-aml"
-PKG_VERSION="1.0.0-3"
+PKG_VERSION="1.0.0-4"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="Free-to-use"
