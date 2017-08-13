@@ -1,0 +1,28 @@
+From 88e84afcc9375adb5d2403f097499f2d4768e209 Mon Sep 17 00:00:00 2001
+From: kszaq <kszaquitto@gmail.com>
+Date: Mon, 6 Jun 2016 06:34:55 +0200
+Subject: [PATCH] Prevent AOCEC adapter from stopping without warning
+
+If file descriptor is invalid, wait for it to be valid and don't stop
+libcec with no message. Make it wait for valid file descriptor.
+---
+ src/libcec/adapter/AOCEC/AOCECAdapterCommunication.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/libcec/adapter/AOCEC/AOCECAdapterCommunication.cpp b/src/libcec/adapter/AOCEC/AOCECAdapterCommunication.cpp
+index 3248b35..8460ffb 100644
+--- a/src/libcec/adapter/AOCEC/AOCECAdapterCommunication.cpp
++++ b/src/libcec/adapter/AOCEC/AOCECAdapterCommunication.cpp
+@@ -265,7 +265,8 @@ void *CAOCECAdapterCommunication::Process(void)
+   {
+     if (m_fd == INVALID_SOCKET_VALUE)
+     {
+-      break;
++      Sleep(250);
++      continue;
+     }
+ 
+     FD_ZERO(&rfds);
+-- 
+2.7.4
+
