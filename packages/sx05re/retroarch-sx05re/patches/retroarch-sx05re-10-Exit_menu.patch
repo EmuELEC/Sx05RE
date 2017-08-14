@@ -1,14 +1,14 @@
---- ./command.c	2017-02-04 00:35:26.098777272 -0600
-+++ ./command.c	2017-02-04 00:38:14.727455808 -0600
+--- ./command.c	2017-07-26 23:59:01.195225618 -0500
++++ ./command.c	2017-08-14 01:58:07.722644341 -0500
 @@ -17,6 +17,7 @@
  #include <stdio.h>
  #include <string.h>
  #include <ctype.h>
 +#include <fcntl.h>
  
- #ifdef _WIN32
- #include <direct.h>
-@@ -1876,9 +1877,7 @@
+ #include <compat/strl.h>
+ #include <compat/posix_string.h>
+@@ -1695,9 +1696,7 @@
           break;
        case CMD_EVENT_LOAD_CORE:
           command_event(CMD_EVENT_LOAD_CORE_PERSIST, NULL);
@@ -18,15 +18,44 @@
 +
           break;
        case CMD_EVENT_LOAD_STATE:
-          {
-@@ -1797,6 +1797,10 @@
+          /* Immutable - disallow savestate load when
+@@ -1809,7 +1808,28 @@
           }
           break;
        case CMD_EVENT_QUIT:
++{
++    /* Exit Back to Kodi if the option exists on the cfg file*/
++      settings_t *settings      = config_get_ptr();
++      if(settings->bools.sx05re_exit_to_kodi)
++      {
++      remove("/var/lock/start.retro");
++      system("touch /var/lock/start.kodi");
++      system("systemctl start kodi.service");
++      system("systemctl stop retroarch.service");
++      }
++       else
++      {
++      /* Exit back to ES */
 +      remove("/var/lock/start.retro");
 +      system("touch /var/lock/start.games");
 +      system("systemctl start emustation.service");
 +      system("systemctl stop retroarch.service");
++      }
++
++
           return retroarch_main_quit();
++}
        case CMD_EVENT_CHEEVOS_HARDCORE_MODE_TOGGLE:
  #ifdef HAVE_CHEEVOS
+          cheevos_toggle_hardcore_mode();
+--- ./configuration.h	2017-08-14 02:20:37.546187576 -0500
++++ ./configuration.h	2017-08-14 02:20:46.390236188 -0500
+@@ -47,6 +47,8 @@
+    {
+       bool placeholder;
+ 
++      /* sx05re */
++      bool sx05re_exit_to_kodi;
+       /* Video */
+       bool video_fullscreen;
+       bool video_windowed_fullscreen;
