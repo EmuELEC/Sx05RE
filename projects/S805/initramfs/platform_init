@@ -32,8 +32,16 @@ for arg in $(cat /proc/cmdline); do
     bootfromusb*)
       bootfromusb=1
       ;;
+    hdmimode=*)
+      hdmimode="${arg#*=}"
+      ;;
   esac
 done
+
+# Enable HDMI output if cable is connected and not already enabled by u-boot
+if [ "$(cat /sys/class/amhdmitx/amhdmitx0/hpd_state)" != "0" ] && [ "$display_mode" != "$hdmimode" ]; then
+  display_mode="$hdmimode"
+fi
 
 echo $display_mode > /sys/class/display/mode
 
