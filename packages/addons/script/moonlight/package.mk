@@ -18,8 +18,8 @@
 
 PKG_NAME="moonlight"
 PKG_VERSION="391de3f"
-PKG_VERSION_NUMBER="2.4.2"
-PKG_REV="106c"
+PKG_VERSION_NUMBER="2.2.2"
+PKG_REV="105"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/dead/script.moonlight"
@@ -81,5 +81,5 @@ addon() {
     cp -P $(get_build_dir moonlight-embedded)/moonlight.conf $ADDON_BUILD/$PKG_ADDON_ID/etc
 
   mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/share/moonlight
-    cp -PR $(get_build_dir moonlight-embedded)/gamecontrollerdb.txt $ADDON_BUILD/$PKG_ADDON_ID/share/moonlight
+    cp -PR $(get_build_dir moonlight-embedded)/mappings $ADDON_BUILD/$PKG_ADDON_ID/share/moonlight
 }

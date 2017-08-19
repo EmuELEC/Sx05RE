@@ -16,6 +16,9 @@ for arg in $(cat /proc/cmdline); do
     disk=*)
       disk=${arg#*=}
       ;;
+    hdmimode=*)
+      hdmimode=${arg#*=}
+      ;;
   esac
 done
 
@@ -28,6 +31,12 @@ if [ -z "$BOOT_IMAGE" -o -z "$boot" -o -z "$disk" ]; then
     cmdline="$cmdline BOOT_IMAGE=/dev/boot boot=/dev/system disk=/dev/data"
   fi
   echo "$cmdline" > /proc/cmdline
+fi
+
+# Enable HDMI output if cable is connected and not already enabled by u-boot
+if [ "$(cat /sys/class/amhdmitx/amhdmitx0/hpd_state)" != "0" ] && [ "$display_mode" != "$hdmimode" ]; then
+  echo "$hdmimode" > /sys/class/display/mode
+  display_mode="$hdmimode"
 fi
 
 # Set framebuffer geometry to match the resolution

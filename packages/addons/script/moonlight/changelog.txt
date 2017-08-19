@@ -1,10 +1,3 @@
-106c
-- fix addon after bumping to 2.4.2
-
-106
-- update Moonlight to 2.4.2
-- update moonlight-common-c to latest
-
 105
 - update moonlight-embedded to support GFE 3.2
 

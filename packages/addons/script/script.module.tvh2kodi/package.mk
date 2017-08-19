@@ -1,6 +1,6 @@
 ################################################################################
 #      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016 Team LibreELEC
+#      Copyright (C) 2017 Team LibreELEC
 #
 #  LibreELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -16,19 +16,20 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="moonlight-common-c"
-PKG_VERSION="1d058cb"
+PKG_NAME="script.module.tvh2kodi"
+PKG_VERSION="003c06c"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv3"
-PKG_SITE="https://github.com/irtimmer/moonlight-common-c"
-PKG_URL="https://github.com/irtimmer/moonlight-common-c/archive/$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_SITE="https://github.com/edit4ever/script.module.tvh2kodi"
+PKG_URL="https://github.com/edit4ever/script.module.tvh2kodi/archive/$PKG_VERSION.tar.gz"
+PKG_DEPENDS_TARGET="xmlstarlet:host"
 PKG_SECTION=""
-PKG_SHORTDESC="Shared C code for the implementation of Nvidia's GameStream protocol"
-PKG_LONGDESC="Shared C code for the implementation of Nvidia's GameStream protocol"
-
-PKG_IS_ADDON="no"
+PKG_SHORTDESC="Tvh2Kodi provides access to basic Tvheadend server settings from the Kodi interface."
+PKG_LONGDESC="Tvh2Kodi provides access to basic Tvheadend server settings from the Kodi interface."
 PKG_AUTORECONF="no"
+
+PKG_IS_ADDON="yes"
 
 make_target() {
   :
@@ -36,4 +37,10 @@ make_target() {
 
 makeinstall_target() {
   :
+}
+
+addon() {
+  mkdir -p $ADDON_BUILD/$PKG_ADDON_ID
+  cp -PR $PKG_BUILD/* $ADDON_BUILD/$PKG_ADDON_ID
+  cp $PKG_DIR/changelog.txt $ADDON_BUILD/$PKG_ADDON_ID
 }

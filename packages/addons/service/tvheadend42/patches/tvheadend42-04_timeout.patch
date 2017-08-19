@@ -1,0 +1,12 @@
+--- a/src/input/mpegts/linuxdvb/linuxdvb_frontend.c	2017-02-26 08:48:23.338853000 +0100
++++ b/src/input/mpegts/linuxdvb/linuxdvb_frontend.c	2017-02-26 08:48:35.516939000 +0100
+@@ -1235,7 +1235,7 @@
+ 
+   /* Read */
+   while (tvheadend_is_running()) {
+-    nfds = tvhpoll_wait(efd, ev, 1, 150);
++    nfds = tvhpoll_wait(efd, ev, 1, 800);
+     if (nfds == 0) { /* timeout */
+       if (nodata == 0) {
+         tvhwarn(LS_LINUXDVB, "%s - poll TIMEOUT", name);
+
