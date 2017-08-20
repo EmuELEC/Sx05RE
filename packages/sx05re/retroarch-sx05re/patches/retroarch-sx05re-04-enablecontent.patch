@@ -1,118 +1,60 @@
---- a/menu/menu_displaylist.c	2017-06-21 20:53:42.807091235 -0500
-+++ b/menu/menu_displaylist.c	2017-06-21 20:57:07.804047068 -0500
-@@ -6042,18 +6042,11 @@
-                   MENU_ENUM_LABEL_NETPLAY,
-                   PARSE_ACTION, false);
- #endif
--#if defined(HAVE_NETWORKING)
--#ifdef HAVE_LAKKA
--            menu_displaylist_parse_settings_enum(menu, info,
--                  MENU_ENUM_LABEL_UPDATE_LAKKA,
--                  PARSE_ACTION, false);
--#else
--            if (settings->bools.menu_show_online_updater)
-+
-                menu_displaylist_parse_settings_enum(menu, info,
-                      MENU_ENUM_LABEL_ONLINE_UPDATER,
-                      PARSE_ACTION, false);
--#endif
--#endif
-+
-             menu_displaylist_parse_settings_enum(menu, info,
-                   MENU_ENUM_LABEL_SETTINGS, PARSE_ACTION, false);
-             menu_displaylist_parse_settings_enum(menu, info,
-@@ -6073,14 +6066,7 @@
-             menu_displaylist_parse_settings_enum(menu, info,
+--- a/menu/menu_displaylist.c	2017-08-18 06:30:31.000000000 -0500
++++ b/menu/menu_displaylist.c	2017-08-20 01:54:59.625855817 -0500
+@@ -3200,11 +3200,11 @@
+       menu_displaylist_info_t *info)
+ {
+ #ifdef HAVE_LAKKA
+-   menu_entries_append_enum(info->list,
++  /* menu_entries_append_enum(info->list,
+          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_UPDATE_LAKKA),
+          msg_hash_to_str(MENU_ENUM_LABEL_UPDATE_LAKKA),
+          MENU_ENUM_LABEL_UPDATE_LAKKA,
+-         MENU_SETTING_ACTION, 0, 0);
++         MENU_SETTING_ACTION, 0, 0); */
+    menu_entries_append_enum(info->list,
+          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_THUMBNAILS_UPDATER_LIST),
+          msg_hash_to_str(MENU_ENUM_LABEL_THUMBNAILS_UPDATER_LIST),
+@@ -5120,7 +5120,7 @@
+       case DISPLAYLIST_MENU_VIEWS_SETTINGS_LIST:
+          menu_entries_ctl(MENU_ENTRIES_CTL_CLEAR, info->list);
+ 
+-#if defined(HAVE_NETWORKING) && !defined(HAVE_LAKKA)
++#if defined(HAVE_NETWORKING)
+          menu_displaylist_parse_settings_enum(menu, info,
+                MENU_ENUM_LABEL_MENU_SHOW_ONLINE_UPDATER,
+                PARSE_ONLY_BOOL, false);
+@@ -6265,12 +6265,12 @@
                    MENU_ENUM_LABEL_QUIT_RETROARCH,
                    PARSE_ACTION, false);
--#if defined(HAVE_LAKKA)
+ #if defined(HAVE_LAKKA)
 -            menu_displaylist_parse_settings_enum(menu, info,
--                  MENU_ENUM_LABEL_REBOOT,
++/*            menu_displaylist_parse_settings_enum(menu, info,
+                   MENU_ENUM_LABEL_REBOOT,
+                   PARSE_ACTION, false);
+             menu_displaylist_parse_settings_enum(menu, info,
+                   MENU_ENUM_LABEL_SHUTDOWN,
 -                  PARSE_ACTION, false);
--            menu_displaylist_parse_settings_enum(menu, info,
--                  MENU_ENUM_LABEL_SHUTDOWN,
--                  PARSE_ACTION, false);
--#endif
-+
++                  PARSE_ACTION, false); */
+ #endif
              info->need_push    = true;
           }
-          break;
---- a/menu/drivers/xmb.c	2017-06-21 20:53:42.803091216 -0500
-+++ b/menu/drivers/xmb.c	2017-06-21 20:57:17.580091858 -0500
-@@ -4065,21 +4065,10 @@
- 
-             entry.enum_idx      = MENU_ENUM_LABEL_ADD_CONTENT_LIST;
-             menu_displaylist_ctl(DISPLAYLIST_SETTING_ENUM, &entry);
--#if defined(HAVE_NETWORKING)
--#ifdef HAVE_LAKKA
--            entry.enum_idx      = MENU_ENUM_LABEL_UPDATE_LAKKA;
--            menu_displaylist_ctl(DISPLAYLIST_SETTING_ENUM, &entry);
--#else
--            {
--               settings_t *settings      = config_get_ptr();
--               if (settings->bools.menu_show_online_updater)
--               {
-+
-                   entry.enum_idx      = MENU_ENUM_LABEL_ONLINE_UPDATER;
-                   menu_displaylist_ctl(DISPLAYLIST_SETTING_ENUM, &entry);
--               }
--            }
--#endif
--#endif
-+
-             entry.enum_idx      = MENU_ENUM_LABEL_INFORMATION_LIST;
-             menu_displaylist_ctl(DISPLAYLIST_SETTING_ENUM, &entry);
- #ifndef HAVE_DYNAMIC
 --- a/menu/menu_setting.c	2017-03-12 17:52:42.000000000 -0600
 +++ b/menu/menu_setting.c	2017-03-13 19:05:16.526319525 -0600
-@@ -2334,15 +2334,6 @@
-                &subgroup_info,
-                parent_group);
+@@ -2459,7 +2459,7 @@
+ #endif
  
--#ifdef HAVE_LAKKA
+ #if defined(HAVE_LAKKA)
 -         CONFIG_ACTION(
--               list, list_info,
--               MENU_ENUM_LABEL_UPDATE_LAKKA,
--               MENU_ENUM_LABEL_VALUE_UPDATE_LAKKA,
--               &group_info,
--               &subgroup_info,
--               parent_group);
--#else
-          CONFIG_ACTION(
++    /*     CONFIG_ACTION(
                 list, list_info,
-                MENU_ENUM_LABEL_ONLINE_UPDATER,
-@@ -2350,7 +2341,7 @@
+                MENU_ENUM_LABEL_REBOOT,
+                MENU_ENUM_LABEL_VALUE_REBOOT,
+@@ -2475,7 +2475,7 @@
                 &group_info,
                 &subgroup_info,
                 parent_group);
--#endif
-+
- 
- #endif
- 
-@@ -2460,25 +2451,7 @@
-          menu_settings_list_current_add_cmd(list, list_info, CMD_EVENT_QUIT);
- #endif
- 
--#if defined(HAVE_LAKKA)
--         CONFIG_ACTION(
--               list, list_info,
--               MENU_ENUM_LABEL_REBOOT,
--               MENU_ENUM_LABEL_VALUE_REBOOT,
--               &group_info,
--               &subgroup_info,
--               parent_group);
--         menu_settings_list_current_add_cmd(list, list_info, CMD_EVENT_REBOOT);
- 
--         CONFIG_ACTION(
--               list, list_info,
--               MENU_ENUM_LABEL_SHUTDOWN,
--               MENU_ENUM_LABEL_VALUE_SHUTDOWN,
--               &group_info,
--               &subgroup_info,
--               parent_group);
 -         menu_settings_list_current_add_cmd(list, list_info, CMD_EVENT_SHUTDOWN);
--#endif
++         menu_settings_list_current_add_cmd(list, list_info, CMD_EVENT_SHUTDOWN);*/
+ #endif
  
           CONFIG_ACTION(
-                list, list_info,

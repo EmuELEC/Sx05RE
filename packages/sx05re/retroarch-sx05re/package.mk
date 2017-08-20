@@ -15,11 +15,11 @@
 #  You should have received a copy of the GNU General Public License
 #  along with OpenELEC.tv; see the file COPYING.  If not, write to
 #  the Free Software Foundation, 51 Franklin Street, Suite 500, Boston, MA 02110, USA.
-#  http://www.gnu.org/copyleft/gpl.html
+#  http://www.gnu.org/copyleft/gpl.html ffa9dde
 ################################################################################
 
 PKG_NAME="retroarch-sx05re"
-PKG_VERSION="ffa9dde"
+PKG_VERSION="6940019"
 PKG_REV="5"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv3"
