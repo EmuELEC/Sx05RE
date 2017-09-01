@@ -13,7 +13,3 @@ PKG_SHORTDESC="Utilities for the exFAT file system"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="yes"
-
-pre_configure_target() {
-  sed -i 's/fuse label mkfs/label mkfs/' ../Makefile.am
-}
