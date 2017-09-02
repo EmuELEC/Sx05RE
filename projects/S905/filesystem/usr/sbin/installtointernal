@@ -35,13 +35,13 @@ install_to_nand() {
     mount -o rw,remount /flash
     if [ -e /dev/dtb ] ; then
       echo -n "Backing up device tree..."
-      dd if=/dev/dtb of="/flash/dtb$BACKUP_DATE.img" bs=256k conv=fsync status=none
+      dd if=/dev/dtb of="/flash/dtb$BACKUP_DATE.img" bs=256k conv=fsync 2> /dev/null
       echo "done."
     fi
 
     if [ -e /dev/recovery ] ; then
       echo -n "Backing up recovery partition..."
-      dd if=/dev/recovery of="/flash/recovery$BACKUP_DATE.img" bs=64k conv=fsync status=none
+      dd if=/dev/recovery of="/flash/recovery$BACKUP_DATE.img" bs=64k conv=fsync 2> /dev/null
       echo "done."
     fi
 
@@ -51,7 +51,7 @@ install_to_nand() {
     echo "done."
 
     echo -n "Writing kernel image..."
-    dd if="$IMAGE_KERNEL" of=/dev/boot bs=64k status=none
+    dd if="$IMAGE_KERNEL" of=/dev/boot bs=64k 2> /dev/null
     echo "done."
 
     echo -n "Copying SYSTEM files..."
@@ -67,8 +67,8 @@ install_to_nand() {
 
     if [ -f $IMAGE_DTB ] ; then
       echo -n "Writing device tree image..."
-      dd if=/dev/zero of=/dev/dtb bs=256k count=1 status=none
-      dd if="$IMAGE_DTB" of=/dev/dtb bs=256k status=none
+      dd if=/dev/zero of=/dev/dtb bs=256k count=1 2> /dev/null
+      dd if="$IMAGE_DTB" of=/dev/dtb bs=256k 2> /dev/null
       echo "done."
     fi
 
