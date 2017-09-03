@@ -20,7 +20,7 @@ if [ "$TARGET_KERNEL_ARCH" = "arm64" -a "$TARGET_ARCH" = "arm" ]; then
 fi
 
 make_target() {
-  make KDIR=$(kernel_path)
+  LDFLAGS="" make KDIR=$(kernel_path)
 }
 
 makeinstall_target() {
