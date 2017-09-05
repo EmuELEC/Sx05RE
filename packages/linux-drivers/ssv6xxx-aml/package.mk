@@ -39,6 +39,10 @@ if [ "$TARGET_KERNEL_ARCH" = "arm64" -a "$TARGET_ARCH" = "arm" ]; then
   TARGET_PREFIX=aarch64-linux-gnu-
 fi
 
+pre_configure_target() {
+  sed -i 's,hw_cap_p2p = on,hw_cap_p2p = off,g' ssv6051/firmware/ssv6051-wifi.cfg
+}
+
 make_target() {
   if [ "$TARGET_KERNEL_ARCH" = "arm64" ]; then
     PLATFORM="aml-s905"
