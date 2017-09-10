@@ -1,0 +1,25 @@
+From 24f13b78abccc7deafda0e903a97d79dd56d9bf1 Mon Sep 17 00:00:00 2001
+From: kszaq <kszaquitto@gmail.com>
+Date: Sun, 10 Sep 2017 21:49:26 +0200
+Subject: [PATCH] fbdev_window: use 3 buffers by default
+
+---
+ hybris/egl/platforms/fbdev/fbdev_window.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/egl/platforms/fbdev/fbdev_window.cpp b/egl/platforms/fbdev/fbdev_window.cpp
+index 56e976a..f92b8a8 100644
+--- a/egl/platforms/fbdev/fbdev_window.cpp
++++ b/egl/platforms/fbdev/fbdev_window.cpp
+@@ -28,7 +28,7 @@ extern "C" {
+ #include <sync/sync.h>
+ };
+ 
+-#define FRAMEBUFFER_PARTITIONS 2
++#define FRAMEBUFFER_PARTITIONS 3
+ 
+ static pthread_cond_t _cond = PTHREAD_COND_INITIALIZER;
+ static pthread_mutex_t _mutex = PTHREAD_MUTEX_INITIALIZER;
+-- 
+2.7.4
+
