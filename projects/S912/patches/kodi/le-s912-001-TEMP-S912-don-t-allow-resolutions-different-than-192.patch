@@ -13,40 +13,6 @@ diff --git a/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp b/xbmc/windowing/egl/EG
 index da46507..f6676f0 100644
 --- a/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
 +++ b/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
-@@ -65,9 +65,9 @@ bool CEGLNativeTypeAmlogic::CheckCompatibility()
- 
- void CEGLNativeTypeAmlogic::Initialize()
- {
--  aml_permissions();
-   DisableFreeScale();
- }
-+
- void CEGLNativeTypeAmlogic::Destroy()
- {
-   return;
-@@ -90,8 +90,6 @@ bool CEGLNativeTypeAmlogic::CreateNativeWindow()
-   nativeWindow->height = 1080;
-   m_nativeWindow = nativeWindow;
- 
--  SetFramebufferResolution(nativeWindow->width, nativeWindow->height);
--
-   return true;
- #else
-   return false;
-@@ -145,13 +143,6 @@ bool CEGLNativeTypeAmlogic::GetNativeResolution(RESOLUTION_INFO *res) const
- bool CEGLNativeTypeAmlogic::SetNativeResolution(const RESOLUTION_INFO &res)
- {
-   bool result = false;
--#if defined(_FBDEV_WINDOW_H_)
--  if (m_nativeWindow)
--  {
--    ((fbdev_window *)m_nativeWindow)->width = res.iScreenWidth;
--    ((fbdev_window *)m_nativeWindow)->height = res.iScreenHeight;
--  }
--#endif
- 
-   // Don't set the same mode as current
-   RESOLUTION_INFO current_resolution;
 @@ -185,7 +176,9 @@ bool CEGLNativeTypeAmlogic::ProbeResolutions(std::vector<RESOLUTION_INFO> &resol
    for (std::vector<std::string>::const_iterator i = probe_str.begin(); i != probe_str.end(); ++i)
    {
@@ -77,57 +43,3 @@ index da46507..f6676f0 100644
    }
  
    return true;
-@@ -238,8 +232,6 @@ bool CEGLNativeTypeAmlogic::SetDisplayResolution(const RESOLUTION_INFO &res)
- 
-   SysfsUtils::SetString("/sys/class/display/mode", mode.c_str());
- 
--  SetFramebufferResolution(res);
--
-   return true;
- }
- 
-@@ -293,30 +285,3 @@ void CEGLNativeTypeAmlogic::DisableFreeScale()
-   SysfsUtils::SetInt("/sys/class/graphics/fb0/free_scale", 0);
-   SysfsUtils::SetInt("/sys/class/graphics/fb1/free_scale", 0);
- }
--
--void CEGLNativeTypeAmlogic::SetFramebufferResolution(const RESOLUTION_INFO &res) const
--{
--  SetFramebufferResolution(res.iScreenWidth, res.iScreenHeight);
--}
--
--void CEGLNativeTypeAmlogic::SetFramebufferResolution(int width, int height) const
--{
--  int fd0;
--  std::string framebuffer = "/dev/" + m_framebuffer_name;
--
--  if ((fd0 = open(framebuffer.c_str(), O_RDWR)) >= 0)
--  {
--    struct fb_var_screeninfo vinfo;
--    if (ioctl(fd0, FBIOGET_VSCREENINFO, &vinfo) == 0)
--    {
--      vinfo.xres = width;
--      vinfo.yres = height;
--      vinfo.xres_virtual = 1920;
--      vinfo.yres_virtual = 2160;
--      vinfo.bits_per_pixel = 32;
--      vinfo.activate = FB_ACTIVATE_ALL;
--      ioctl(fd0, FBIOPUT_VSCREENINFO, &vinfo);
--    }
--    close(fd0);
--  }
--}
-diff --git a/xbmc/windowing/egl/EGLNativeTypeAmlogic.h b/xbmc/windowing/egl/EGLNativeTypeAmlogic.h
-index b7c053b..a1b9920 100644
---- a/xbmc/windowing/egl/EGLNativeTypeAmlogic.h
-+++ b/xbmc/windowing/egl/EGLNativeTypeAmlogic.h
-@@ -57,9 +57,5 @@ protected:
-   void EnableFreeScale(const RESOLUTION_INFO &res);
-   void DisableFreeScale();
- 
--private:
--  void SetFramebufferResolution(const RESOLUTION_INFO &res) const;
--  void SetFramebufferResolution(int width, int height) const;
--
-   std::string m_framebuffer_name;
- };
