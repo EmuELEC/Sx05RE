@@ -18,53 +18,26 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="picodrive"
-PKG_VERSION="cbc93b6"
+PKG_NAME="chaigame"
+PKG_VERSION="982aff1"
 PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="MAME"
-PKG_SITE="https://github.com/libretro/picodrive"
-PKG_URL="https://github.com/libretro/picodrive/archive/$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain $PKG_NAME:host"
+PKG_LICENSE="MIT"
+PKG_SITE="https://github.com/RobLoach/ChaiGame"
+PKG_URL="https://github.com/RobLoach/ChaiGame/archive/$PKG_VERSION.tar.gz"
+PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="Libretro implementation of PicoDrive. (Sega Megadrive/Genesis/Sega Master System/Sega GameGear/Sega CD/32X)"
-PKG_LONGDESC="This is yet another Megadrive / Genesis / Sega CD / Mega CD / 32X / SMS emulator, which was written having ARM-based handheld devices in mind (such as smartphones and handheld consoles like GP2X and Pandora), but also runs on non-ARM little-endian hardware too."
+PKG_SHORTDESC="ChaiGame: 2D Game Framework"
+PKG_LONGDESC="Framework to create 2D games with ChaiScript."
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-pre_configure_target() {
-  strip_gold
-}
-
-configure_host() {
-  :
-}
-
-make_host() {
-  if [ "$ARCH" == "arm" ]; then
-    make -C ../cpu/cyclone CONFIG_FILE=../cyclone_config.h
-  fi
-}
-
-makeinstall_host() {
-  :
-}
-
 configure_target() {
-  :
-}
-
-make_target() {
-  if [ "$ARCH" == "arm" ]; then
-    make -C .. -f Makefile.libretro platform=armv6
-  else
-    make -C .. -f Makefile.libretro
-  fi
+  cd $ROOT/$PKG_BUILD
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL/usr/lib/libretro
-  cp ../picodrive_libretro.so $INSTALL/usr/lib/libretro/
+  make install INSTALLDIR="$INSTALL/usr/lib/libretro"
 }
