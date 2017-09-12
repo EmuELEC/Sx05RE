@@ -18,27 +18,26 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="beetle-vb"
-PKG_VERSION="6087ece"
+PKG_NAME="chaigame"
+PKG_VERSION="982aff1"
 PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="GPLv2"
-PKG_SITE="https://github.com/libretro/beetle-vb-libretro"
-PKG_URL="https://github.com/libretro/beetle-vb-libretro/archive/$PKG_VERSION.tar.gz"
+PKG_LICENSE="MIT"
+PKG_SITE="https://github.com/RobLoach/ChaiGame"
+PKG_URL="https://github.com/RobLoach/ChaiGame/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="libretro implementation of Mednafen VB. (VirtualBoy)"
-PKG_LONGDESC="libretro implementation of Mednafen VB. (VirtualBoy)"
+PKG_SHORTDESC="ChaiGame: 2D Game Framework"
+PKG_LONGDESC="Framework to create 2D games with ChaiScript."
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-post_unpack() {
-  mv $BUILD/beetle-vb-libretro-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
+configure_target() {
+  cd $PKG_BUILD
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL/usr/lib/libretro
-  cp mednafen_vb_libretro.so $INSTALL/usr/lib/libretro/
+  make install INSTALLDIR="$INSTALL/usr/lib/libretro"
 }

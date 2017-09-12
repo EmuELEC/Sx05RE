@@ -19,7 +19,7 @@
 ################################################################################
 
 PKG_NAME="genesis-plus-gx"
-PKG_VERSION="abc3d20"
+PKG_VERSION="346d3b9"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="Non-commercial"
@@ -39,6 +39,9 @@ post_unpack() {
 }
 
 make_target() {
+  if [ "$ARCH" == "arm" ]; then
+    CFLAGS="$CFLAGS -DALIGN_LONG"
+  fi
   make -f Makefile.libretro
 }
 
