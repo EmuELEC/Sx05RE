@@ -1,0 +1,11 @@
+--- a/drivers/hid/hid-input.c	2017-09-06 17:33:11.829785988 +0200
++++ b/drivers/hid/hid-input.c	2017-09-06 17:34:00.116549302 +0200
+@@ -695,6 +695,7 @@ static void hidinput_configure_usage(str
+ 		break;
+ 
+ 	case HID_UP_CONSUMER:	/* USB HUT v1.12, pages 75-84 */
++		set_bit(EV_REP, input->evbit);
+ 		switch (usage->hid & HID_USAGE) {
+ 		case 0x000: goto ignore;
+ 		case 0x030: map_key_clear(KEY_POWER);		break;
+

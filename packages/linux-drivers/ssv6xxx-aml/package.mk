@@ -1,6 +1,7 @@
 ################################################################################
 #      This file is part of LibreELEC - https://LibreELEC.tv
 #      Copyright (C) 2016 Team LibreELEC
+#      Copyright (C) 2016 kszaq
 #
 #  LibreELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -16,21 +17,18 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="gpu-aml-t8xx"
+PKG_NAME="ssv6xxx-aml"
 PKG_REV="1"
 PKG_ARCH="arm aarch64"
 PKG_LICENSE="GPL"
-PKG_SITE="http://openlinux.amlogic.com:8000/download/ARM/gpu/"
-PKG_VERSION="2f5e174"
-PKG_URL="https://github.com/khadas/android_hardware_arm_gpu/archive/$PKG_VERSION.tar.gz"
-#PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
-PKG_SOURCE_DIR="android_hardware_arm_gpu-$PKG_VERSION*"
+PKG_VERSION="1041e7d"
+PKG_URL="http://kszaq.libreelec.tv/sources/ssv6xxx-$PKG_VERSION.tar.gz"
+PKG_SOURCE_DIR="ssv6xxx-${PKG_VERSION}*"
 PKG_DEPENDS_TARGET="toolchain linux"
 PKG_NEED_UNPACK="$LINUX_DEPENDS"
-PKG_PRIORITY="optional"
 PKG_SECTION="driver"
-PKG_SHORTDESC="gpu-aml: Linux drivers for Mali GPUs found in Amlogic Meson SoCs"
-PKG_LONGDESC="gpu-aml: Linux drivers for Mali GPUs found in Amlogic Meson SoCs"
+PKG_SHORTDESC="ssv6xxx-aml"
+PKG_LONGDESC="ssv6xxx-aml"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
@@ -41,14 +39,30 @@ if [ "$TARGET_KERNEL_ARCH" = "arm64" -a "$TARGET_ARCH" = "arm" ]; then
   TARGET_PREFIX=aarch64-linux-gnu-
 fi
 
+pre_configure_target() {
+  sed -i 's,hw_cap_p2p = on,hw_cap_p2p = off,g' ssv6051/firmware/ssv6051-wifi.cfg
+}
+
 make_target() {
-  LDFLAGS="" make -C $(kernel_path) M=$PKG_BUILD/t83x/kernel/drivers/gpu/arm/midgard \
-  EXTRA_CFLAGS="-DCONFIG_MALI_PLATFORM_DEVICETREE -DCONFIG_MALI_MIDGARD_DVFS -DCONFIG_MALI_BACKEND=gpu" \
-    CONFIG_MALI_MIDGARD=m CONFIG_MALI_PLATFORM_DEVICETREE=y CONFIG_MALI_MIDGARD_DVFS=y CONFIG_MALI_BACKEND=gpu modules
+  if [ "$TARGET_KERNEL_ARCH" = "arm64" ]; then
+    PLATFORM="aml-s905"
+  else
+    PLATFORM="aml-s805"
+  fi
+
+  cd $PKG_BUILD/ssv6051
+    ./ver_info.pl include/ssv_version.h
+    cp Makefile.android Makefile
+    sed -i 's,PLATFORMS =,PLATFORMS = '"$PLATFORM"',g' Makefile
+    LDFLAGS="" SSV_ARCH="$TARGET_KERNEL_ARCH" SSV_CROSS="$TARGET_PREFIX" SSV_KERNEL_PATH="$(kernel_path)" make module
 }
 
 makeinstall_target() {
-  LDFLAGS="" make -C $(kernel_path) M=$PKG_BUILD/t83x/kernel/drivers/gpu/arm/midgard \
-    INSTALL_MOD_PATH=$INSTALL/usr INSTALL_MOD_STRIP=1 DEPMOD=: \
-  modules_install
+  # kernel module
+  mkdir -p $INSTALL/usr/lib/modules/$(get_module_dir)/$PKG_NAME
+    cp $PKG_BUILD/ssv6051/ssv6051.ko $INSTALL/usr/lib/modules/$(get_module_dir)/$PKG_NAME/
+
+  # firmware
+  mkdir -p $INSTALL/usr/lib/firmware/ssv6051
+    cp $PKG_BUILD/ssv6051/firmware/* $INSTALL/usr/lib/firmware/ssv6051/
 }

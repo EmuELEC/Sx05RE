@@ -174,7 +174,7 @@ $SCRIPTS/install network
 [ "$UDEVIL" = "yes" ] && $SCRIPTS/install udevil
 
 # NTFS 3G support
-[ "$EXFAT" = "yes" ] && $SCRIPTS/install fuse-exfat
+[ "$EXFAT" = "yes" ] && $SCRIPTS/install exfat-utilities
 
 # NTFS 3G support
 [ "$NTFS3G" = "yes" ] && $SCRIPTS/install ntfs-3g_ntfsprogs
