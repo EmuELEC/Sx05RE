@@ -1,0 +1,25 @@
+From eb1b07745d4d7901f4850c8327aca586988ad21e Mon Sep 17 00:00:00 2001
+From: kszaq <kszaquitto@gmail.com>
+Date: Thu, 14 Sep 2017 21:21:18 +0200
+Subject: [PATCH 3/4] bcmdhd: match only Broadcom SDIO devices
+
+---
+ bcmdhd_1_201_59_x/bcmsdh_sdmmc_linux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/bcmdhd_1_201_59_x/bcmsdh_sdmmc_linux.c b/bcmdhd_1_201_59_x/bcmsdh_sdmmc_linux.c
+index 007eae8..478f91d 100644
+--- a/bcmdhd_1_201_59_x/bcmsdh_sdmmc_linux.c
++++ b/bcmdhd_1_201_59_x/bcmsdh_sdmmc_linux.c
+@@ -223,7 +223,7 @@ static const struct sdio_device_id bcmsdh_sdmmc_ids[] = {
+ 	{ SDIO_DEVICE(SDIO_VENDOR_ID_BROADCOM, SDIO_DEVICE_ID_BROADCOM_4334) },
+ 	{ SDIO_DEVICE(SDIO_VENDOR_ID_BROADCOM, SDIO_DEVICE_ID_BROADCOM_4324) },
+ 	{ SDIO_DEVICE(SDIO_VENDOR_ID_BROADCOM, SDIO_DEVICE_ID_BROADCOM_43239) },
+-	{ SDIO_DEVICE_CLASS(SDIO_CLASS_NONE)		},
++	{ SDIO_DEVICE(SDIO_VENDOR_ID_BROADCOM, SDIO_ANY_ID) },
+ 	{ /* end: all zeroes */				},
+ };
+ 
+-- 
+2.7.4
+
