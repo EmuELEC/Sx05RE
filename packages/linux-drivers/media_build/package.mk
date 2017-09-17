@@ -85,7 +85,9 @@ make_target() {
       cp -a "$DVB_TV_AML_DIR" "linux/drivers/media/dvb_tv"
       echo "obj-y += dvb_tv/" >> "linux/drivers/media/Makefile"
     fi 
-    echo "obj-y += amlogic/dvb_tv/" >> "linux/drivers/media/Makefile"
+    if [ "$PROJECT" = "S905" ]; then
+      echo "obj-y += amlogic/dvb_tv/" >> "linux/drivers/media/Makefile"
+    fi
   fi
 
   make VER=$KERNEL_VER SRCDIR=$(kernel_path)
