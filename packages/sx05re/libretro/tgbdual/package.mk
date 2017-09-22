@@ -18,27 +18,27 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="beetle-ngp"
-PKG_VERSION="cbd8657"
+PKG_NAME="tgbdual"
+PKG_VERSION="541be1b"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
-PKG_SITE="https://github.com/libretro/beetle-ngp-libretro"
-PKG_URL="https://github.com/libretro/beetle-ngp-libretro/archive/$PKG_VERSION.tar.gz"
+PKG_SITE="https://github.com/libretro/tgbdual-libretro"
+PKG_URL="https://github.com/libretro/tgbdual-libretro/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="libretro implementation of Mednafen Neo Geo Pocket."
-PKG_LONGDESC="libretro implementation of Mednafen Neo Geo Pocket."
+PKG_SHORTDESC="libretro port of TGB Dual"
+PKG_LONGDESC="TGB Dual is an open source (GPLv2) GB/GBC emulator with game link cable support."
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 post_unpack() {
-  mv $BUILD/beetle-ngp-libretro-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
+  mv $BUILD/tgbdual-libretro-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
 }
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp mednafen_ngp_libretro.so $INSTALL/usr/lib/libretro/
+  cp tgbdual_libretro.so $INSTALL/usr/lib/libretro/
 }
