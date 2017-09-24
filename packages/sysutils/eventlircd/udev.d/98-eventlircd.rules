@@ -222,9 +222,9 @@ ATTRS{name}=="Amazon Fire TV Remote", \
   ENV{eventlircd_evmap}="aftvsremote.evmap"
 
 # Xiaomi Mi Box remote
-ATTRS{name}=="Xiaomi Mi Box Remote", \
+ATTRS{name}=="Xiaomi Remote", \
   ENV{eventlircd_enable}="true", \
-  ENV{eventlircd_evmap}="xiaomibt.evmap"
+  ENV{eventlircd_evmap}="xiaomibtremote.evmap"
 
 LABEL="end-bluetooth"
 

@@ -1,7 +1,6 @@
 ################################################################################
 #      This file is part of LibreELEC - https://LibreELEC.tv
 #      Copyright (C) 2016 Team LibreELEC
-#      Copyright (C) 2016 kszaq
 #
 #  LibreELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -17,19 +16,19 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="mt7603u-aml"
+PKG_NAME="RTL8189FS-aml"
+PKG_VERSION="ab83abd"
 PKG_REV="1"
 PKG_ARCH="arm aarch64"
 PKG_LICENSE="GPL"
-PKG_SITE="http://openlinux.amlogic.com:8000/download/ARM/wifi/"
-PKG_VERSION="0c53dfb"
-PKG_URL="https://github.com/tomatotech/mmallow_hardware_wifi_mtk_drivers_mt7603/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="mmallow_hardware_wifi_mtk_drivers_mt7603-$PKG_VERSION*"
+# amlogic: PKG_SITE="http://openlinux.amlogic.com:8000/download/ARM/wifi/"
+PKG_SITE="https://github.com/khadas/android_hardware_wifi_realtek_drivers_8189ftv"
+PKG_URL="$PKG_SITE/archive/$PKG_VERSION.tar.gz"
+PKG_SOURCE_DIR="android_hardware_wifi_realtek_drivers_8189ftv-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain linux"
 PKG_NEED_UNPACK="$LINUX_DEPENDS"
+PKG_PRIORITY="optional"
 PKG_SECTION="driver"
-PKG_SHORTDESC="mt7603u-aml"
-PKG_LONGDESC="mt7603u-aml"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
@@ -40,15 +39,20 @@ if [ "$TARGET_KERNEL_ARCH" = "arm64" -a "$TARGET_ARCH" = "arm" ]; then
   TARGET_PREFIX=aarch64-linux-gnu-
 fi
 
+post_unpack() {
+  sed -i 's/-DCONFIG_CONCURRENT_MODE//g; s/^CONFIG_POWER_SAVING.*$/CONFIG_POWER_SAVING = n/g; s/^CONFIG_RTW_DEBUG.*/CONFIG_RTW_DEBUG = n/g' $PKG_BUILD/*/Makefile
+  sed -i 's/^#define CONFIG_DEBUG.*//g' $PKG_BUILD/*/include/autoconf.h
+}
+
 make_target() {
-  LDFLAGS="" make LINUX_SRC=$(kernel_path) ARCH=$TARGET_KERNEL_ARCH CROSS_COMPILE=$TARGET_PREFIX RT28xx_DIR=$PKG_BUILD -f $PKG_BUILD/Makefile
+  LDFLAGS="" make -C $(kernel_path) M=$PKG_BUILD/rtl8189FS \
+       ARCH=$TARGET_KERNEL_ARCH \
+       KSRC=$(kernel_path) \
+       CROSS_COMPILE=$TARGET_PREFIX \
+       USER_EXTRA_CFLAGS="-fgnu89-inline"
 }
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/modules/$(get_module_dir)/$PKG_NAME
-  cp $PKG_BUILD/os/linux/mtprealloc.ko $INSTALL/usr/lib/modules/$(get_module_dir)/$PKG_NAME
-  cp $PKG_BUILD/os/linux/mt7603usta.ko $INSTALL/usr/lib/modules/$(get_module_dir)/$PKG_NAME
-
-  mkdir -p $INSTALL/usr/lib/firmware
-  cp $PKG_BUILD/conf/MT7603USTA.dat $INSTALL/usr/lib/firmware
+    cp $PKG_BUILD/rtl8189FS/*.ko $INSTALL/usr/lib/modules/$(get_module_dir)/$PKG_NAME
 }

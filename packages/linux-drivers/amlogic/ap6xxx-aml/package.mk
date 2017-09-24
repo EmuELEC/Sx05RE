@@ -1,7 +1,6 @@
 ################################################################################
 #      This file is part of LibreELEC - https://LibreELEC.tv
 #      Copyright (C) 2016 Team LibreELEC
-#      Copyright (C) 2016 kszaq
 #
 #  LibreELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -17,19 +16,18 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="mt7601u-aml"
-PKG_REV="1"
+PKG_NAME="ap6xxx-aml"
 PKG_ARCH="arm aarch64"
 PKG_LICENSE="GPL"
-PKG_SITE="http://openlinux.amlogic.com:8000/download/ARM/wifi/"
-PKG_VERSION="4e61a61"
-PKG_URL="https://github.com/tomatotech/mmallow_hardware_wifi_mtk_drivers_mt7601/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="mmallow_hardware_wifi_mtk_drivers_mt7601-$PKG_VERSION*"
+PKG_SITE=""
+PKG_VERSION="99b3459"
+PKG_URL="https://github.com/khadas/android_hardware_wifi_broadcom_drivers_ap6xxx/archive/$PKG_VERSION.tar.gz"
+PKG_SOURCE_DIR="android_hardware_wifi_broadcom_drivers_ap6xxx-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain linux"
 PKG_NEED_UNPACK="$LINUX_DEPENDS"
 PKG_SECTION="driver"
-PKG_SHORTDESC="mt7601u-aml"
-PKG_LONGDESC="mt7601u-aml"
+PKG_SHORTDESC="ap6xxx-aml: Linux drivers for AP6xxx WLAN chips used in some devices based on Amlogic SoCs"
+PKG_LONGDESC="ap6xxx-aml: Linux drivers for AP6xxx WLAN chips used in some devices based on Amlogic SoCs"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
@@ -41,14 +39,12 @@ if [ "$TARGET_KERNEL_ARCH" = "arm64" -a "$TARGET_ARCH" = "arm" ]; then
 fi
 
 make_target() {
-  LDFLAGS="" make -C $(kernel_path) M=$PKG_BUILD ARCH=$TARGET_KERNEL_ARCH CROSS_COMPILE=$TARGET_PREFIX
+  LDFLAGS="" make -C $(kernel_path) M=$PKG_BUILD/bcmdhd_1_201_59_x \
+    ARCH=$TARGET_KERNEL_ARCH \
+    CROSS_COMPILE=$TARGET_PREFIX
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL/usr/lib/modules/$(get_module_dir)/$PKG_NAME
-  cp $PKG_BUILD/mtprealloc.ko $INSTALL/usr/lib/modules/$(get_module_dir)/$PKG_NAME
-  cp $PKG_BUILD/mt7601usta.ko $INSTALL/usr/lib/modules/$(get_module_dir)/$PKG_NAME
-
-  mkdir -p $INSTALL/usr/lib/firmware
-  cp $PKG_BUILD/RT2870STA_7601.dat $INSTALL/usr/lib/firmware
+  mkdir -p $INSTALL/usr/lib/modules/$(get_module_dir)/ap6xxx-aml
+  cp $PKG_BUILD/bcmdhd_1_201_59_x/dhd.ko $INSTALL/usr/lib/modules/$(get_module_dir)/ap6xxx-aml
 }

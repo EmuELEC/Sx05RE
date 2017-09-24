@@ -1,18 +1,3 @@
-From dee146cbbb8428b073fba85390577590fc365d86 Mon Sep 17 00:00:00 2001
-From: Joy Cho <joy.cho@hardkernel.com>
-Date: Wed, 31 Aug 2016 16:27:48 +0900
-Subject: [PATCH] ODROID-C2: Add setup routine to set max. cpu frequency of
- dvfs table
-
-- set "max_freq" in boot.ini
-- in MHz unit
-ex) setenv max_freq "1656"
-
-Change-Id: I352c9540d0c34d3ec0ba0f470dae9d4e0786c001
----
- drivers/amlogic/mailbox/scpi_protocol.c | 53 +++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
-
 diff --git a/drivers/amlogic/mailbox/scpi_protocol.c b/drivers/amlogic/mailbox/scpi_protocol.c
 index 517b2d2..566dd46 100644
 --- a/drivers/amlogic/mailbox/scpi_protocol.c
@@ -55,14 +40,14 @@ index 517b2d2..566dd46 100644
 +				max_index++;
 +		}
 +		count = max_index + 1;
-+	}
-+	/* if no param "max_freq_dvfs or wrong "max_freq_dvfs"
-+	 * from boot.ini, consider stable max value */
-+	if ((max_freq_dvfs == 0) || (count > DVFS_COUNT_MAX))
-+		count = DVFS_COUNT_1536; /* default max : 1.536GHz */
++		/* if no param "max_freq_dvfs or wrong "max_freq_dvfs"
++		 * from boot.ini, consider stable max value */
++		if ((max_freq_dvfs == 0) || (count > DVFS_COUNT_MAX))
++			count = DVFS_COUNT_1536; /* default max : 1.536GHz */
 +
-+	pr_info("dvfs [%s] - new count %d, max_freq %ld\n", __func__,
-+		count, max_freq_dvfs);
++		pr_info("dvfs [%s] - new count %d, max_freq %ld\n", __func__,
++			count, max_freq_dvfs);
++	}
 +#endif
 +
  	opps_sz = count * sizeof(*(opps->opp));
