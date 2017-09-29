@@ -1,10 +1,9 @@
 #!/bin/sh
 
+display_mode=$(cat /sys/class/display/mode)
+
 for arg in $(cat /proc/cmdline); do
   case ${arg} in
-    hdmimode=*)
-      hdmimode=${arg#*=}
-      ;;
     bootfrom*)
       bootfromext=1
       ;;
@@ -17,13 +16,14 @@ for arg in $(cat /proc/cmdline); do
     disk=*)
       disk=${arg#*=}
       ;;
+    hdmimode=*)
+      hdmimode=${arg#*=}
+      ;;
   esac
 done
 
-if [ ! "$hdmimode" = "1080p60hz" ]; then
-  hdmimode="1080p60hz"
-  echo "$hdmimode" > /sys/class/display/mode
-fi
+# Force 1080p60hz HDMI mode for S912
+hdmimode="1080p60hz"
 
 # Add information where to run LibreELEC from
 if [ -z "$BOOT_IMAGE" -o -z "$boot" -o -z "$disk" ]; then
@@ -36,6 +36,12 @@ if [ -z "$BOOT_IMAGE" -o -z "$boot" -o -z "$disk" ]; then
   echo "$cmdline" > /proc/cmdline
 fi
 
+# Enable HDMI output if cable is connected and not already enabled by u-boot
+if [ "$(cat /sys/class/amhdmitx/amhdmitx0/hpd_state)" != "0" ] && [ "$display_mode" != "$hdmimode" ]; then
+  echo "$hdmimode" > /sys/class/display/mode
+  display_mode="$hdmimode"
+fi
+
 # Set framebuffer geometry to match the resolution
 case $hdmimode in
   480*)            X=720  Y=480  ;;
@@ -46,7 +52,6 @@ esac
 
 fbset -fb /dev/fb0 -g $X $Y 1920 2160 32
 fbset -fb /dev/fb1 -g 32 32 32 32 32
-# echo $hdmimode > /sys/class/display/mode
 echo 0 > /sys/class/graphics/fb0/free_scale
 echo 0 > /sys/class/graphics/fb1/free_scale
 echo 1 > /sys/class/video/disable_video
@@ -61,6 +66,10 @@ case $hdmimode in
     echo 0x10001 > /sys/class/graphics/fb0/free_scale
   ;;
 esac
+
+# Include deinterlacer into default VFM map
+echo rm default > /sys/class/vfm/map
+echo add default decoder ppmgr deinterlace amvideo > /sys/class/vfm/map
 
 # Enable framebuffer device
 echo 0 > /sys/class/graphics/fb0/blank
