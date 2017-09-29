@@ -39,12 +39,12 @@ if [ "$TARGET_KERNEL_ARCH" = "arm64" -a "$TARGET_ARCH" = "arm" ]; then
 fi
 
 make_target() {
-  LDFLAGS="" make -C $(kernel_path) M=$PKG_BUILD/bcmdhd_1_201_59_x \
+  LDFLAGS="" make -C $(kernel_path) M=$PKG_BUILD/bcmdhd.1.363.59.144.x.cn \
     ARCH=$TARGET_KERNEL_ARCH \
     CROSS_COMPILE=$TARGET_PREFIX
 }
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/modules/$(get_module_dir)/ap6xxx-aml
-  cp $PKG_BUILD/bcmdhd_1_201_59_x/dhd.ko $INSTALL/usr/lib/modules/$(get_module_dir)/ap6xxx-aml
+  cp $PKG_BUILD/bcmdhd.1.363.59.144.x.cn/dhd.ko $INSTALL/usr/lib/modules/$(get_module_dir)/ap6xxx-aml
 }
