@@ -42,6 +42,7 @@ fi
 
 post_unpack() {
   sed -i 's,-Wall,,g; s,-Werror,,g' $PKG_BUILD/Kbuild
+  sed -i 's,CDEFINES :=,CDEFINES := -Wno-misleading-indentation -Wno-unused-variable -Wno-unused-function,g' $PKG_BUILD/Kbuild
 }
 
 make_target() {
