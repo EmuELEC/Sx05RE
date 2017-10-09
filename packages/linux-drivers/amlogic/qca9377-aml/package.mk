@@ -40,6 +40,11 @@ if [ "$TARGET_KERNEL_ARCH" = "arm64" -a "$TARGET_ARCH" = "arm" ]; then
   TARGET_PREFIX=aarch64-linux-gnu-
 fi
 
+post_unpack() {
+  sed -i 's,-Wall,,g; s,-Werror,,g' $PKG_BUILD/Kbuild
+  sed -i 's,CDEFINES :=,CDEFINES := -Wno-misleading-indentation -Wno-unused-variable -Wno-unused-function,g' $PKG_BUILD/Kbuild
+}
+
 make_target() {
   KERNEL_SRC="$(kernel_path)" ARCH=$TARGET_KERNEL_ARCH CROSS_COMPILE=$TARGET_PREFIX \
     LDFLAGS="" CFLAGS="" CONFIG_CLD_HL_SDIO_CORE=y make

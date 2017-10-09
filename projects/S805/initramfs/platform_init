@@ -91,6 +91,3 @@ for part in /sys/block/*/queue/add_random; do
 done
 
 echo 1 > /sys/devices/system/cpu/cpufreq/ondemand/io_is_busy
-
-# Use hotplug governor for m201d board
-[ $(cat /proc/device-tree/amlogic-dt-id) = "m8b_m201C_512M" ] && echo hotplug > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
