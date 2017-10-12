@@ -19,7 +19,7 @@
 ################################################################################
 
 PKG_NAME="reicast"
-PKG_VERSION="0e5c146"
+PKG_VERSION="1f71ce7"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
@@ -36,6 +36,14 @@ PKG_AUTORECONF="no"
 
 post_unpack() { 
   mv $BUILD/reicast-emulator-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
+}
+
+make_target() {
+  if [ "$ARCH" == "arm" ]; then
+    make platform=rpi FORCE_GLES=1
+  else
+    make AS=${AS} CC_AS=${AS}
+  fi
 }
 
 makeinstall_target() {
