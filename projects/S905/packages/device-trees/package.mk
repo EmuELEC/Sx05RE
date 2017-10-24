@@ -38,13 +38,14 @@ make_target() {
 
   mkdir -p $TARGET_IMG
 
+  DTB_LIST=""
+
   # Complete device trees
   for f in $PKG_DIR/sources/*.dts; do
     if [ -e $f ]; then
       DTB_NAME="$(basename $f .dts).dtb"
       cp -f $f arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/
-      LDFLAGS="" make $DTB_NAME
-      mv arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/$DTB_NAME $TARGET_IMG
+      DTB_LIST="$DTB_LIST $DTB_NAME"
     fi
   done
 
@@ -53,17 +54,26 @@ make_target() {
     if [ -e $f ]; then
       DTB_NAME="$(basename $f .patch).dtb"
       DTS_NAME="$(basename $f .patch).dts"
+      rm -rf arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/$DTS_NAME
       patch -d arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/ -o $DTS_NAME --merge < $f
-      LDFLAGS="" make $DTB_NAME
-      mv arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/$DTB_NAME $TARGET_IMG
+      DTB_LIST="$DTB_LIST $DTB_NAME"
     fi
   done
 
   # Kernel-tree trees
   for f in ${EXTRA_TREES[@]}; do
-    LDFLAGS="" make $f
-    mv arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/$f $TARGET_IMG
+    DTB_LIST="$DTB_LIST $f"
   done
+
+  # Add "le-dtb-id"
+  for f in $DTB_LIST; do
+    LE_DT_ID="${f/.dtb/}"
+    sed -i "/amlogic-dt-id/i le-dt-id=\"$LE_DT_ID\";" arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/${f/dtb/dts}
+  done
+
+  # Compile device trees
+  LDFLAGS="" make $DTB_LIST
+  mv arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/*.dtb $TARGET_IMG
 
   popd > /dev/null
 }
