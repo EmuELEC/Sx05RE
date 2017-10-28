@@ -73,11 +73,12 @@ make_target() {
 
   # Compile device trees
   LDFLAGS="" make $DTB_LIST
-  mv arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/*.dtb $TARGET_IMG
+  mv arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/*.dtb $PKG_BUILD
 
   popd > /dev/null
 }
 
 makeinstall_target() {
-  : # nop
+  mkdir -p $INSTALL/usr/share/bootloader
+  cp -PR $PKG_BUILD/*.dtb $INSTALL/usr/share/bootloader
 }
