@@ -16,7 +16,7 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="device-trees"
+PKG_NAME="aml-s9xx-device-trees"
 PKG_VERSION="0.1"
 PKG_REV="1"
 PKG_LICENSE="OSS"
