@@ -16,30 +16,32 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="x264"
-PKG_VERSION="snapshot-20170524-2245-stable"
+PKG_NAME="slice"
+PKG_VERSION="0"
+PKG_REV="102"
+PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="http://www.videolan.org/developers/x264.html"
-PKG_URL="ftp://ftp.videolan.org/pub/videolan/x264/snapshots/$PKG_NAME-$PKG_VERSION.tar.bz2"
+PKG_SITE=""
+PKG_URL=""
 PKG_DEPENDS_TARGET="toolchain"
-PKG_LONGDESC="x264"
+PKG_SECTION="service"
+PKG_SHORTDESC="Controls the LED lights on the Slice box using Kodi actions"
+PKG_LONGDESC="Controls the LED lights on the Slice box using Kodi actions"
+PKG_AUTORECONF="no"
 
-pre_configure_target() {
-  cd $PKG_BUILD
-  rm -rf .$TARGET_NAME
+PKG_IS_ADDON="yes"
+PKG_ADDON_NAME="Slice"
+PKG_ADDON_PROJECTS="Slice Slice3"
+PKG_ADDON_TYPE="xbmc.service"
+
+make_target() {
+  :
 }
 
-configure_target() {
-  ./configure \
-    --prefix="/usr" \
-    --extra-cflags="$CFLAGS" \
-    --extra-ldflags="$LDFLAGS" \
-    --disable-cli \
-    --enable-static \
-    --enable-strip \
-    --disable-asm \
-    --enable-pic \
-    --host="$TARGET_NAME" \
-    --cross-prefix="$TARGET_PREFIX" \
-    --sysroot="$SYSROOT_PREFIX"
+makeinstall_target() {
+  :
+}
+
+addon() {
+  :
 }
