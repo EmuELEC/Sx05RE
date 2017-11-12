@@ -39,6 +39,12 @@ else
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET bkeymaps"
 fi
 
+case $PROJECT in
+  S805|S905|S912)
+    PKG_PATCH_DIRS="amlogic-sX05"
+    ;;
+esac
+
 post_makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libreelec
     cp $PKG_DIR/scripts/* $INSTALL/usr/lib/libreelec

@@ -1,0 +1,34 @@
+diff --git a/src/defaults.py b/src/defaults.py
+index e381999..7c2ab58 100644
+--- a/src/defaults.py
++++ b/src/defaults.py
+@@ -86,7 +86,7 @@ system = {
+     'KERNEL_CMD': '/proc/cmdline',
+     'SET_CLOCK_CMD': '/sbin/hwclock --systohc --utc',
+     'UPDATE_REQUEST_URL': 'https://update.libreelec.tv/updates.php',
+-    'UPDATE_DOWNLOAD_URL': 'http://%s.libreelec.tv/%s',
++    'UPDATE_DOWNLOAD_URL': 'https://sx05.eu/%s/%s',
+     'LOCAL_UPDATE_DIR': '/storage/.update/',
+     'GET_CPU_FLAG': "cat /proc/cpuinfo | grep -q 'flags.* lm ' && echo '1' || echo '0'",
+     'XBMC_RESET_FILE': '%s/reset_xbmc' % CONFIG_CACHE,
+diff --git a/src/resources/lib/modules/system.py b/src/resources/lib/modules/system.py
+index 2aa6859..4fd25fa 100644
+--- a/src/resources/lib/modules/system.py
++++ b/src/resources/lib/modules/system.py
+@@ -763,6 +763,16 @@ class system:
+                 )
+             self.oe.dbg_log('system::check_updates_v2', 'URL: %s' % url, 0)
+             update_json = self.oe.load_url(url)
++            url = '%s?i=%s&d=%s&pa=%s&v=%s&l=%s' % (
++                'https://sx05.eu/updates.php',
++                self.oe.SYSTEMID,
++                self.oe.DISTRIBUTION,
++                self.oe.ARCHITECTURE,
++                self.oe.VERSION,
++                self.cpu_lm_flag,
++                )
++            self.oe.dbg_log('system::check_updates_v2', 'URL: %s' % url, 0)
++            update_json = self.oe.load_url(url)
+             self.oe.dbg_log('system::check_updates_v2', 'RESULT: %s' % repr(update_json), 0)
+             if update_json != '':
+                 update_json = json.loads(update_json)
