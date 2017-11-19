@@ -14,15 +14,6 @@
     menu_entries_append_enum(info->list,
           msg_hash_to_str(MENU_ENUM_LABEL_VALUE_THUMBNAILS_UPDATER_LIST),
           msg_hash_to_str(MENU_ENUM_LABEL_THUMBNAILS_UPDATER_LIST),
-@@ -5120,7 +5120,7 @@
-       case DISPLAYLIST_MENU_VIEWS_SETTINGS_LIST:
-          menu_entries_ctl(MENU_ENTRIES_CTL_CLEAR, info->list);
- 
--#if defined(HAVE_NETWORKING) && !defined(HAVE_LAKKA)
-+#if defined(HAVE_NETWORKING)
-          menu_displaylist_parse_settings_enum(menu, info,
-                MENU_ENUM_LABEL_MENU_SHOW_ONLINE_UPDATER,
-                PARSE_ONLY_BOOL, false);
 @@ -6265,12 +6265,12 @@
                    MENU_ENUM_LABEL_QUIT_RETROARCH,
                    PARSE_ACTION, false);
