@@ -19,13 +19,13 @@
 ################################################################################
 
 PKG_NAME="citra"
-PKG_VERSION="1823304"
+PKG_VERSION="4b0ec7e"
 PKG_REV="1"
 PKG_ARCH="x86_64"
 PKG_LICENSE="GPLv2+"
 PKG_SITE="https://github.com/libretro/citra"
 PKG_URL="https://github.com/libretro/citra/archive/$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain boost"
+PKG_DEPENDS_TARGET="toolchain boost curl"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="A Nintendo 3DS Emulator"

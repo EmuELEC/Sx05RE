@@ -18,35 +18,32 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="hatari"
-PKG_VERSION="c19b710"
+PKG_NAME="mame2003-midway"
+PKG_VERSION="06f76b1"
 PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="GPLv2"
-PKG_SITE="https://github.com/libretro/hatari"
-PKG_URL="https://github.com/libretro/hatari/archive/$PKG_VERSION.tar.gz"
+PKG_LICENSE="MAME"
+PKG_SITE="https://github.com/libretro/mame2003_midway"
+PKG_URL="https://github.com/libretro/mame2003_midway/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="New rebasing of Hatari based on Mercurial upstream. Tries to be a shallow fork for easy upstreaming later on."
-PKG_LONGDESC="New rebasing of Hatari based on Mercurial upstream. Tries to be a shallow fork for easy upstreaming later on."
+PKG_SHORTDESC="MAME - Multiple Arcade Machine Emulator"
+PKG_LONGDESC="MAME - Multiple Arcade Machine Emulator"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
-PKG_USE_CMAKE="no"
 
-configure_target() {
-  :
+post_unpack() {
+  mv $BUILD/mame2003_midway-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
 }
 
 make_target() {
-  if [ "$ARCH" == "arm" ]; then
-    CFLAGS="$CFLAGS -DARM -marm"
-  fi
-  make -C .. -f Makefile.libretro
+  strip_lto
+  make ARCH="" CC="$CC" NATIVE_CC="$CC" LD="$CC" -j 1
 }
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp ../hatari_libretro.so $INSTALL/usr/lib/libretro/
+  cp mame2003_midway_libretro.so $INSTALL/usr/lib/libretro/
 }
