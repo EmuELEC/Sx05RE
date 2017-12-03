@@ -18,10 +18,10 @@
 ################################################################################
 
 PKG_NAME="libhybris"
-PKG_VERSION="a2e5d92"
+PKG_VERSION="54dd474"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/krnlyng/libhybris/"
+PKG_SITE="https://github.com/libhybris/libhybris/"
 PKG_URL="$PKG_SITE/archive/$PKG_VERSION.tar.gz"
 PKG_SOURCE_DIR="$PKG_NAME-$PKG_VERSION*/hybris"
 PKG_DEPENDS_TARGET="toolchain android-headers"
@@ -35,5 +35,4 @@ PKG_CONFIGURE_OPTS_TARGET="--enable-arch=$TARGET_ARCH \
                            --with-default-egl-platform=fbdev \
                            --with-android-headers=$BUILD/android-headers-23/23 \
                            --with-default-hybris-ld-library-path=/system/lib \
-                           --enable-mali-quirks \
-                           --enable-experimental"
+                           --enable-mali-quirks"
