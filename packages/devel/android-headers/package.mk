@@ -18,11 +18,11 @@
 ################################################################################
 
 PKG_NAME="android-headers"
-PKG_VERSION="23"
+PKG_VERSION="25"
 PKG_ARCH="any"
-PKG_LICENSE="GPL"
-PKG_SITE="http://archive.ubuntu.com/ubuntu/pool/main/a/android-headers"
-PKG_URL="$PKG_SITE/${PKG_NAME}_${PKG_VERSION}.orig.tar.gz"
+PKG_LICENSE="Apache"
+PKG_SITE="https://android.googlesource.com/"
+PKG_URL="https://kszaq.libreelec.tv/sources/${PKG_NAME}-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_SECTION="devel"
 PKG_SHORTDESC="android-headers: Android Platform Headers from AOSP releases"
