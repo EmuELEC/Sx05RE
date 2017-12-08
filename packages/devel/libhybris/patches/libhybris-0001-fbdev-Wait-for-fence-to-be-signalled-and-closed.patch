@@ -1,0 +1,237 @@
+From 3cff9f122c60e4def35368c06b53c7faab687b1a Mon Sep 17 00:00:00 2001
+From: kszaq <kszaquitto@gmail.com>
+Date: Fri, 8 Dec 2017 21:02:39 +0100
+Subject: [PATCH] fbdev: Wait for fence to be signalled and closed. Let
+ fbdev_window serve buffers in a round-robin fashion.
+
+---
+ hybris/egl/platforms/fbdev/fbdev_window.cpp | 108 ++++++----------------------
+ hybris/egl/platforms/fbdev/fbdev_window.h   |   7 +-
+ 2 files changed, 26 insertions(+), 89 deletions(-)
+
+diff --git a/egl/platforms/fbdev/fbdev_window.cpp b/egl/platforms/fbdev/fbdev_window.cpp
+index e655496..c29f456 100644
+--- a/egl/platforms/fbdev/fbdev_window.cpp
++++ b/egl/platforms/fbdev/fbdev_window.cpp
+@@ -24,6 +24,10 @@
+ #include <stdio.h>
+ #include <string.h>
+ 
++extern "C" {
++#include <sync/sync.h>
++};
++
+ #define FRAMEBUFFER_PARTITIONS 2
+ 
+ static pthread_cond_t _cond = PTHREAD_COND_INITIALIZER;
+@@ -74,6 +78,7 @@ FbDevNativeWindow::FbDevNativeWindow( alloc_device_t* alloc,
+     m_usage = GRALLOC_USAGE_HW_FB;
+     m_bufferCount = 0;
+     m_allocateBuffers = true;
++    m_nextBuffer = 0;
+ 
+ #if ANDROID_VERSION_MAJOR>=4 && ANDROID_VERSION_MINOR>=2 || ANDROID_VERSION_MAJOR>=5
+     if (m_fbDev->numFramebuffers>0)
+@@ -100,15 +105,14 @@ void FbDevNativeWindow::destroyBuffers()
+ {
+     TRACE("");
+ 
+-    std::list<FbDevNativeWindowBuffer*>::iterator it = m_bufList.begin();
++    std::vector<FbDevNativeWindowBuffer*>::iterator it = m_bufList.begin();
+     for (; it!=m_bufList.end(); ++it)
+     {
+         FbDevNativeWindowBuffer* fbnb = *it;
+         fbnb->common.decRef(&fbnb->common);
+     }
+     m_bufList.clear();
+-    m_freeBufs = 0;
+-    m_frontBuf = NULL;
++    m_nextBuffer = 0;
+ }
+ 
+ 
+@@ -148,7 +152,6 @@ int FbDevNativeWindow::setSwapInterval(int interval)
+ int FbDevNativeWindow::dequeueBuffer(BaseNativeWindowBuffer** buffer, int *fenceFd)
+ {
+     HYBRIS_TRACE_BEGIN("fbdev-platform", "dequeueBuffer", "");
+-    FbDevNativeWindowBuffer* fbnb=NULL;
+ 
+     pthread_mutex_lock(&_mutex);
+ 
+@@ -156,67 +159,15 @@ int FbDevNativeWindow::dequeueBuffer(BaseNativeWindowBuffer** buffer, int *fence
+         reallocateBuffers();
+ 
+     HYBRIS_TRACE_BEGIN("fbdev-platform", "dequeueBuffer-wait", "");
+-#if defined(DEBUG)
+-
+-    if (m_frontBuf)
+-        TRACE("Status: Has front buf %p", m_frontBuf);
+-
+-    std::list<FbDevNativeWindowBuffer*>::iterator cit = m_bufList.begin();
+-    for (; cit != m_bufList.end(); ++cit)
+-    {
+-        TRACE("Status: Buffer %p with busy %i\n", (*cit), (*cit)->busy);
+-    }
+-#endif
+-
+-    while (m_freeBufs==0)
+-    {
+-        pthread_cond_wait(&_cond, &_mutex);
+-    }
+ 
+-    while (1)
+-    {
+-        std::list<FbDevNativeWindowBuffer*>::iterator it = m_bufList.begin();
+-        for (; it != m_bufList.end(); ++it)
+-        {
+-            if (*it==m_frontBuf)
+-                continue;
+-            if ((*it)->busy==0)
+-            {
+-                TRACE("Found a free non-front buffer");
+-                break;
+-            }
+-        }
+-
+-        if (it == m_bufList.end())
+-        {
+-#if ANDROID_VERSION_MAJOR<=4 && ANDROID_VERSION_MINOR<2
+-            /*
+-             * This is acceptable in case you are on a stack that calls lock() before starting to render into buffer
+-             * When you are using fences (>= 2) you'll be waiting on the fence to signal instead. 
+-             * 
+-             * This optimization allows eglSwapBuffers to return and you can begin to utilize the GPU for rendering. 
+-             * The actual lock() probably first comes at glFlush/eglSwapBuffers
+-            */
+-            if (m_frontBuf && m_frontBuf->busy == 0)
+-            {
+-                TRACE("Used front buffer as buffer");
+-                fbnb = m_frontBuf;
+-                break;
+-            }
+-#endif
+-            // have to wait once again
+-            pthread_cond_wait(&_cond, &_mutex);
+-            continue;
+-        }
+-
+-        fbnb = *it;
+-        break;
+-    }
++    FbDevNativeWindowBuffer* fbnb = m_bufList.at(m_nextBuffer);
++    m_nextBuffer++;
++    if (m_nextBuffer >= m_bufList.size())
++        m_nextBuffer = 0;
+ 
+     HYBRIS_TRACE_END("fbdev-platform", "dequeueBuffer-wait", "");
+     assert(fbnb!=NULL);
+     fbnb->busy = 1;
+-    m_freeBufs--;
+ 
+     *buffer = fbnb;
+     *fenceFd = -1;
+@@ -261,6 +212,16 @@ int FbDevNativeWindow::queueBuffer(BaseNativeWindowBuffer* buffer, int fenceFd)
+ 
+     pthread_mutex_unlock(&_mutex);
+ 
++#if ANDROID_VERSION_MAJOR>=4 && ANDROID_VERSION_MINOR>=2 || ANDROID_VERSION_MAJOR>=5
++    HYBRIS_TRACE_BEGIN("fbdev-platform", "queueBuffer_waiting_for_fence", "-%p", fbnb);
++    if (fenceFd >= 0)
++    {
++        sync_wait(fenceFd, -1);
++        close(fenceFd);
++    }
++    HYBRIS_TRACE_END("fbdev-platform", "queueBuffer_waiting_for_fence", "-%p", fbnb);
++#endif
++   
+     HYBRIS_TRACE_BEGIN("fbdev-platform", "queueBuffer-post", "-%p", fbnb);
+ 
+     int rv = m_fbDev->post(m_fbDev, fbnb->handle);
+@@ -273,11 +234,6 @@ int FbDevNativeWindow::queueBuffer(BaseNativeWindowBuffer* buffer, int fenceFd)
+     pthread_mutex_lock(&_mutex);
+ 
+     fbnb->busy=0;
+-    m_frontBuf = fbnb;
+-
+-    m_freeBufs++;
+-
+-    TRACE("%lu %p %p",pthread_self(), m_frontBuf, fbnb);
+ 
+     pthread_cond_signal(&_cond);
+     pthread_mutex_unlock(&_mutex);
+@@ -321,8 +277,6 @@ int FbDevNativeWindow::cancelBuffer(BaseNativeWindowBuffer* buffer, int fenceFd)
+ 
+     fbnb->busy=0;
+ 
+-    m_freeBufs++;
+-
+     pthread_cond_signal(&_cond);
+     pthread_mutex_unlock(&_mutex);
+ 
+@@ -333,22 +287,7 @@ int FbDevNativeWindow::cancelBuffer(BaseNativeWindowBuffer* buffer, int fenceFd)
+ 
+ int FbDevNativeWindow::lockBuffer(BaseNativeWindowBuffer* buffer)
+ {
+-
+-    FbDevNativeWindowBuffer* fbnb = (FbDevNativeWindowBuffer*)buffer;
+-
+-    HYBRIS_TRACE_BEGIN("fbdev-platform", "lockBuffer", "-%p", fbnb);
+-
+-    pthread_mutex_lock(&_mutex);
+-
+-    // wait that the buffer we're locking is not front anymore
+-    while (m_frontBuf==fbnb)
+-    {
+-        TRACE("waiting %p %p", m_frontBuf, fbnb);
+-        pthread_cond_wait(&_cond, &_mutex);
+-    }
+-
+-    pthread_mutex_unlock(&_mutex);
+-    HYBRIS_TRACE_END("fbdev-platform", "lockBuffer", "-%p", fbnb);
++    TRACE("%lu STUB", pthread_self());
+     return NO_ERROR;
+ }
+ 
+@@ -518,11 +457,10 @@ void FbDevNativeWindow::reallocateBuffers()
+         if (fbnb->status)
+         {
+             fbnb->common.decRef(&fbnb->common);
+-            fprintf(stderr,"WARNING: %s: allocated only %d buffers out of %d\n", __PRETTY_FUNCTION__, m_freeBufs, m_bufferCount);
++            fprintf(stderr,"WARNING: %s: allocated only some buffers out of %d\n", __PRETTY_FUNCTION__, m_bufferCount);
+             break;
+         }
+ 
+-        m_freeBufs++;
+         m_bufList.push_back(fbnb);
+     }
+ 
+diff --git a/egl/platforms/fbdev/fbdev_window.h b/egl/platforms/fbdev/fbdev_window.h
+index ceefdbe..42164eb 100644
+--- a/egl/platforms/fbdev/fbdev_window.h
++++ b/egl/platforms/fbdev/fbdev_window.h
+@@ -21,7 +21,7 @@
+ #include <linux/fb.h>
+ #include <hardware/gralloc.h>
+ 
+-#include <list>
++#include <vector>
+ 
+ 
+ class FbDevNativeWindowBuffer : public BaseNativeWindowBuffer {
+@@ -82,11 +82,10 @@ private:
+     unsigned int m_usage;
+     unsigned int m_bufFormat;
+     unsigned int m_bufferCount;
+-    int m_freeBufs;
++    unsigned int m_nextBuffer;
+     bool m_allocateBuffers;
+ 
+-    std::list<FbDevNativeWindowBuffer*> m_bufList;
+-    FbDevNativeWindowBuffer* m_frontBuf;
++    std::vector<FbDevNativeWindowBuffer*> m_bufList;
+ };
+ 
+ #endif
+-- 
+2.7.4
+
