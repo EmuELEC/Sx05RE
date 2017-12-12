@@ -38,6 +38,12 @@
         UBOOT_CONFIGFILE="boot.ini"
         KERNEL_UBOOT_EXTRA_TARGET="odroidc2.dtb"
         ;;
+      LePotato)
+        UBOOT_VERSION="lepotato"
+        UBOOT_CONFIG="gxl_p212_v1_defconfig"
+        UBOOT_CONFIGFILE="boot.ini"
+        KERNEL_UBOOT_EXTRA_TARGET="gxl_p212_1g.dtb gxl_p212_2g.dtb"
+        ;;
       *)
         KERNEL_UBOOT_EXTRA_TARGET="gxbb_p200.dtb gxbb_p200_2G.dtb gxl_p212_1g.dtb gxl_p212_2g.dtb gxl_p230_2g.dtb"
         ;;
