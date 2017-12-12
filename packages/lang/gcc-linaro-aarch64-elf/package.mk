@@ -23,7 +23,7 @@ PKG_LICENSE="GPL"
 PKG_SITE=""
 PKG_URL="https://releases.linaro.org/components/toolchain/binaries/${PKG_VERSION}/aarch64-elf/gcc-linaro-${PKG_VERSION}-x86_64_aarch64-elf.tar.xz"
 PKG_SOURCE_DIR="gcc-linaro-${PKG_VERSION}-x86_64_aarch64-elf"
-PKG_DEPENDS_HOST="toolchain"
+PKG_DEPENDS_HOST="toolchain ccache:host"
 PKG_SECTION="lang"
 PKG_SHORTDESC=""
 PKG_LONGDESC=""
@@ -38,4 +38,23 @@ make_host() {
 makeinstall_host() {
   mkdir -p $TOOLCHAIN/lib/gcc-linaro-aarch64-elf/
     cp -a * $TOOLCHAIN/lib/gcc-linaro-aarch64-elf
+
+  # wrap gcc and g++ with ccache like in gcc package.mk
+  PKG_GCC_PREFIX="$TOOLCHAIN/lib/gcc-linaro-aarch64-elf/bin/aarch64-elf-"
+
+  cp "${PKG_GCC_PREFIX}gcc" "${PKG_GCC_PREFIX}gcc.real"
+cat > "${PKG_GCC_PREFIX}gcc" << EOF
+#!/bin/sh
+$TOOLCHAIN/bin/ccache ${PKG_GCC_PREFIX}gcc.real "\$@"
+EOF
+
+  chmod +x "${PKG_GCC_PREFIX}gcc"
+
+  cp "${PKG_GCC_PREFIX}g++" "${PKG_GCC_PREFIX}g++.real"
+cat > "${PKG_GCC_PREFIX}g++" << EOF
+#!/bin/sh
+$TOOLCHAIN/bin/ccache ${PKG_GCC_PREFIX}g++.real "\$@"
+EOF
+
+  chmod +x "${PKG_GCC_PREFIX}g++"
 }
