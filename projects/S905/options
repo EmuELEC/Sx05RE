@@ -31,7 +31,7 @@
     KERNEL_MAKE_EXTRACMD=""
 
   # Kernel and u-boot options
-    case $SYSTEM in
+    case $BOARD in
       C2)
         UBOOT_VERSION="hardkernel"
         UBOOT_CONFIG="odroidc2_defconfig"
