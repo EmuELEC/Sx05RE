@@ -23,6 +23,7 @@ fi
 
 MODE=`cat /sys/class/display/mode`;
 if [ "$MODE" = "720p50hz" ]; then
+echo 720p60hz > /sys/class/display/mode
 fbset -fb /dev/fb0 -g 1280 720 1280 1440 32
 fi
 
@@ -38,11 +39,13 @@ fi
 
 MODE=`cat /sys/class/display/mode`;
 if [ "$MODE" = "1080i50hz" ]; then
+echo 1080i60hz > /sys/class/display/mode
 fbset -fb /dev/fb0 -g 1920 1080 1920 2160 32
 fi
 
 MODE=`cat /sys/class/display/mode`;
 if [ "$MODE" = "1080p50hz" ]; then
+echo 1080p60hz > /sys/class/display/mode
 fbset -fb /dev/fb0 -g 1920 1080 1920 2160 32
 fi
 
@@ -70,6 +73,7 @@ fi
 # End of reading the video output mode and setting it for sx05re to avoid video flicking.
 # The codes can be simplified with "elseif" sentences.
 # The codes for 480I and 576I are adjusted to avoid overscan.
+# Forece 720p50hz to 720p60hz and 1080i/p60hz to 1080i/p60hz since 50hz would make video very choppy.
 
 #since the ROMS folder is not getting created at boot, we check if it exists, if it doesn't then we create it. 
 if [ ! -d "/storage/roms" ] || [ ! -d "/storage/roms2" ]; then
