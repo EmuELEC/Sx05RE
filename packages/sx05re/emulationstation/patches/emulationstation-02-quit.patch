@@ -1,12 +1,12 @@
 diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 --- a/es-app/src/guis/GuiMenu.cpp	Thu Jun 08 07:58:22 2017
 +++ b/es-app/src/guis/GuiMenu.cpp	Thu Jun 08 16:55:16 2017
-@@ -39,7 +39,30 @@
+@@ -40,7 +40,30 @@
  		addEntry("CONFIGURE INPUT", 0x777777FF, true, [this] { openConfigInput(); });
  
- 	if (!(ViewController::get()->isUIModeKid() && Settings::getInstance()->getBool("hideQuitMenuOnKidUI")))
+ 	if (!(UIModeController::getInstance()->isUIModeKid() && Settings::getInstance()->getBool("hideQuitMenuOnKidUI")))
 -		addEntry("QUIT", 0x777777FF, true, [this] {openQuitMenu(); });
-+		addEntry("QUIT", 0x777777FF, true, [this] {
++				addEntry("QUIT", 0x777777FF, true, [this] {
 +//openQuitMenu(); 
 +remove("/var/lock/start.games");
 +runSystemCommand("touch /var/lock/start.retro");
