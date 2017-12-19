@@ -61,13 +61,14 @@
        bool video_windowed_fullscreen;
 --- ./configuration.c	2017-08-18 06:30:31.000000000 -0500
 +++ ./configuration.c	2017-08-23 01:24:28.009570267 -0500
-@@ -1107,6 +1107,9 @@
+@@ -1115,6 +1115,10 @@
     unsigned count                      = 0;
     global_t   *global                  = global_get_ptr();
  
-+   /* sx05re */
-+   SETTING_BOOL("sx05re_exit_to_kodi",           &settings->bools.sx05re_exit_to_kodi, true, false, false);
-+   /* sx05re */
++  /* sx05re */
++  SETTING_BOOL("sx05re_exit_to_kodi",           &settings->bools.sx05re_exit_to_kodi, true, false, false);
++  /* sx05re */
++
+    SETTING_BOOL("automatically_add_content_to_playlist", &settings->bools.automatically_add_content_to_playlist, true, automatically_add_content_to_playlist, false);
     SETTING_BOOL("ui_companion_start_on_boot",    &settings->bools.ui_companion_start_on_boot, true, ui_companion_start_on_boot, false);
     SETTING_BOOL("ui_companion_enable",           &settings->bools.ui_companion_enable, true, ui_companion_enable, false);
-    SETTING_BOOL("video_gpu_record",              &settings->bools.video_gpu_record, true, gpu_record, false);

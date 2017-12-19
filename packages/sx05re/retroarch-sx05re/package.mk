@@ -19,7 +19,7 @@
 ################################################################################
 
 PKG_NAME="retroarch-sx05re"
-PKG_VERSION="ec123ef"
+PKG_VERSION="b724952"
 PKG_REV="5"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv3"
@@ -74,7 +74,6 @@ PKG_CONFIGURE_OPTS_TARGET="--disable-vg \
                            --disable-sdl \
                            $RETROARCH_GL \
                            $RETROARCH_NEON \
-                           --enable-fbo \
                            --enable-zlib \
                            --enable-freetype"
 
