@@ -31,6 +31,11 @@ elif [ "$UBOOT_VERSION" = "hardkernel" ]; then
   PKG_SITE="https://github.com/hardkernel/u-boot"
   PKG_URL="https://github.com/hardkernel/u-boot/archive/$PKG_VERSION.tar.gz"
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET gcc-linaro-aarch64-elf:host gcc-linaro-arm-eabi:host"
+elif [ "$UBOOT_VERSION" = "lepotato" ]; then
+  PKG_VERSION="a43076c"
+  PKG_SITE="https://github.com/BayLibre/u-boot"
+  PKG_URL="https://github.com/BayLibre/u-boot/archive/$PKG_VERSION.tar.gz"
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET gcc-linaro-aarch64-elf:host gcc-linaro-arm-eabi:host"
 else
   exit 0
 fi
@@ -70,7 +75,7 @@ make_target() {
   done
 
   for UBOOT_TARGET in $UBOOT_CONFIG; do
-    if [ "$UBOOT_VERSION" = "hardkernel" ]; then
+    if [ "$UBOOT_VERSION" = "hardkernel" -o "$UBOOT_VERSION" = "lepotato" ]; then
       export PATH=$TOOLCHAIN/lib/gcc-linaro-aarch64-elf/bin/:$TOOLCHAIN/lib/gcc-linaro-arm-eabi/bin/:$PATH
       CROSS_COMPILE=aarch64-elf- ARCH=arm CFLAGS="" LDFLAGS="" make mrproper
       CROSS_COMPILE=aarch64-elf- ARCH=arm CFLAGS="" LDFLAGS="" make $UBOOT_TARGET
@@ -136,6 +141,21 @@ makeinstall_target() {
       cp -PRv $PKG_BUILD/u-boot.bin $INSTALL/usr/share/bootloader/u-boot
       if [ -f $PROJECT_DIR/$PROJECT/bootloader/boot.ini ]; then
         cp -PRv $PROJECT_DIR/$PROJECT/bootloader/boot.ini $INSTALL/usr/share/bootloader
+      fi
+      if [ -f $PROJECT_DIR/$PROJECT/bootloader/C2/boot.ini ]; then
+        cp -PRv $PROJECT_DIR/$PROJECT/bootloader/C2/boot.ini $INSTALL/usr/share/bootloader
+      fi
+      if [ -f $PROJECT_DIR/$PROJECT/splash/boot-logo.bmp.gz ]; then
+        cp -PRv $PROJECT_DIR/$PROJECT/splash/boot-logo.bmp.gz $INSTALL/usr/share/bootloader
+      elif [ -f $DISTRO_DIR/$DISTRO/splash/boot-logo.bmp.gz ]; then
+        cp -PRv $DISTRO_DIR/$DISTRO/splash/boot-logo.bmp.gz $INSTALL/usr/share/bootloader
+      fi
+      ;;
+    lepotato)
+      mv -v $PKG_BUILD/fip/gxl/u-boot.bin.sd.bin $PKG_BUILD/u-boot.bin
+      cp -PRv $PKG_BUILD/u-boot.bin $INSTALL/usr/share/bootloader/u-boot
+      if [ -f $PROJECT_DIR/$PROJECT/bootloader/LePotato/boot.ini ]; then
+        cp -PRv $PROJECT_DIR/$PROJECT/bootloader/LePotato/boot.ini $INSTALL/usr/share/bootloader
       fi
       if [ -f $PROJECT_DIR/$PROJECT/splash/boot-logo.bmp.gz ]; then
         cp -PRv $PROJECT_DIR/$PROJECT/splash/boot-logo.bmp.gz $INSTALL/usr/share/bootloader

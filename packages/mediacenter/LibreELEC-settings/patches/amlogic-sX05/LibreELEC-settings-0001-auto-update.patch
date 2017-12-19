@@ -20,7 +20,7 @@ index 2aa6859..4fd25fa 100644
              self.oe.dbg_log('system::check_updates_v2', 'URL: %s' % url, 0)
              update_json = self.oe.load_url(url)
 +            url = '%s?i=%s&d=%s&pa=%s&v=%s&l=%s' % (
-+                'https://sx05.eu/updates.php',
++                'https://kszaq.libreelec.tv/updates.php',
 +                self.oe.SYSTEMID,
 +                self.oe.DISTRIBUTION,
 +                self.oe.ARCHITECTURE,

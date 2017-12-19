@@ -40,7 +40,16 @@ mkdir -p $RELEASE_DIR/3rdparty/bootloader
   case $UBOOT_VERSION in
     hardkernel)
       cp -PR $BUILD/$BOOTLOADER-*/u-boot.bin $RELEASE_DIR/3rdparty/bootloader/u-boot
-      cp -PR $PROJECT_DIR/$PROJECT/bootloader/boot.ini $RELEASE_DIR/3rdparty/bootloader
+      cp -PR $PROJECT_DIR/$PROJECT/bootloader/C2/boot.ini $RELEASE_DIR/3rdparty/bootloader
+      if [ -f $PROJECT_DIR/$PROJECT/splash/boot-logo.bmp.gz ]; then
+        cp -PR $PROJECT_DIR/$PROJECT/splash/boot-logo.bmp.gz $RELEASE_DIR/3rdparty/bootloader
+      elif [ -f $DISTRO_DIR/$DISTRO/splash/boot-logo.bmp.gz ]; then
+        cp -PR $DISTRO_DIR/$DISTRO/splash/boot-logo.bmp.gz $RELEASE_DIR/3rdparty/bootloader
+      fi
+      ;;
+    lepotato)
+      cp -PR $BUILD/$BOOTLOADER-*/u-boot.bin $RELEASE_DIR/3rdparty/bootloader/u-boot
+      cp -PR $PROJECT_DIR/$PROJECT/bootloader/LePotato/boot.ini $RELEASE_DIR/3rdparty/bootloader
       if [ -f $PROJECT_DIR/$PROJECT/splash/boot-logo.bmp.gz ]; then
         cp -PR $PROJECT_DIR/$PROJECT/splash/boot-logo.bmp.gz $RELEASE_DIR/3rdparty/bootloader
       elif [ -f $DISTRO_DIR/$DISTRO/splash/boot-logo.bmp.gz ]; then
