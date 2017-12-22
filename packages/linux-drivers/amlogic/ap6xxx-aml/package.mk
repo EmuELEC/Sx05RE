@@ -41,7 +41,8 @@ fi
 make_target() {
   LDFLAGS="" make -C $(kernel_path) M=$PKG_BUILD/bcmdhd.1.363.59.144.x.cn \
     ARCH=$TARGET_KERNEL_ARCH \
-    CROSS_COMPILE=$TARGET_PREFIX
+    CROSS_COMPILE=$TARGET_PREFIX \
+    CONFIG_BCMDHD_DISABLE_WOWLAN=y
 }
 
 makeinstall_target() {

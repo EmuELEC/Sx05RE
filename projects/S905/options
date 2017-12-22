@@ -40,7 +40,7 @@
         ;;
       LePotato)
         UBOOT_VERSION="lepotato"
-        UBOOT_CONFIG="gxl_p212_v1_defconfig"
+        UBOOT_CONFIG="libretech_cc_defconfig"
         UBOOT_CONFIGFILE="boot.ini"
         KERNEL_UBOOT_EXTRA_TARGET="gxl_p212_1g.dtb gxl_p212_2g.dtb"
         ;;
