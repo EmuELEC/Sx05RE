@@ -40,6 +40,9 @@ make_target() {
 
   DTB_LIST=""
 
+  # Clean up le-dt-id from kernel build
+  sed -i "/le-dt-id/d" arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/*
+
   # Complete device trees
   for f in $PKG_DIR/sources/*.dts; do
     if [ -e $f ]; then
