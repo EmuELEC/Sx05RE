@@ -1,0 +1,30 @@
+diff --git a/board/amlogic/configs/libretech_cc.h b/board/amlogic/configs/libretech_cc.h
+index b3ccfae..ff9d0ae 100644
+--- a/board/amlogic/configs/libretech_cc.h
++++ b/board/amlogic/configs/libretech_cc.h
+@@ -237,14 +237,8 @@
+ 
+ #define CONFIG_PREBOOT  \
+             "run bcb_cmd; "\
+-            "run factory_reset_poweroff_protect;"\
+-            "run upgrade_check;"\
+-            "run init_display;"\
+-            "run storeargs;"\
+-            "run upgrade_key;" \
+-            "run switch_bootmode;" \
+-            "cfgload;"
+-#define CONFIG_BOOTCOMMAND "run storeboot"
++            "run init_display;"
++#define CONFIG_BOOTCOMMAND "cfgload"
+ 
+ //#define CONFIG_ENV_IS_NOWHERE  1
+ #define CONFIG_ENV_SIZE   (64*1024)
+@@ -298,7 +292,7 @@
+ /* support for mtd */
+ //#define CONFIG_AML_MTD 1
+ /* support for nftl */
+-#define CONFIG_AML_NAND	1
++//#define CONFIG_AML_NAND	1
+ 
+ #if defined(CONFIG_AML_NAND) && defined(CONFIG_AML_MTD)
+ #error CONFIG_AML_NAND/CONFIG_AML_MTD can not support at the sametime;
