@@ -18,7 +18,7 @@
 ################################################################################
 
 PKG_NAME="brcmfmac_sdio-firmware-aml-all"
-PKG_VERSION="06094e2"
+PKG_VERSION="02b8502"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"

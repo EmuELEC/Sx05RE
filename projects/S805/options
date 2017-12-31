@@ -3,7 +3,7 @@
 ################################################################################
 
     if [ -z "$BOARD" ]; then
-      SYSTEM="MXQ"
+      BOARD="MXQ"
     fi
 
   # Setup controls which processor should be targeted for generated code.
