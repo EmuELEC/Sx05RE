@@ -92,11 +92,15 @@ install_to_nand() {
         ;;
     esac
 
-    echo "All done! Rebooting now..."
+    echo "All done!"
     echo "WARNING: If your internal memory layout is different from standard Amlogic, you have to perform this operation again!"
     echo "Your system will continue booting from SD/USB until you remove it."
+    echo ""
 
-    reboot
+    read -p "Would you like to reboot now [y/N]? " choice
+    case "$choice" in
+      [yY]*) reboot ;;
+    esac
 
   else
     echo "No LE image found on /flash! Exiting..."
