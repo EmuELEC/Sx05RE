@@ -1,4 +1,4 @@
-From b9edf37b14f64a8bed5586898e3503322a5b8bfc Mon Sep 17 00:00:00 2001
+From 7e2f3392c04f4765a6e4837c27693c46629b81bc Mon Sep 17 00:00:00 2001
 From: kszaq <kszaquitto@gmail.com>
 Date: Thu, 5 Oct 2017 22:04:11 +0200
 Subject: [PATCH 4/4] bcmdhd: if driver is not yet initialized, wait and retry
@@ -8,12 +8,12 @@ Subject: [PATCH 4/4] bcmdhd: if driver is not yet initialized, wait and retry
  1 file changed, 11 insertions(+), 3 deletions(-)
 
 diff --git a/bcmdhd.1.363.59.144.x.cn/dhd_linux.c b/bcmdhd.1.363.59.144.x.cn/dhd_linux.c
-index c64f851..1754fb7 100644
+index c04d185..a30f2e3 100644
 --- a/bcmdhd.1.363.59.144.x.cn/dhd_linux.c
 +++ b/bcmdhd.1.363.59.144.x.cn/dhd_linux.c
-@@ -6127,9 +6127,17 @@ dhd_open(struct net_device *net)
- 	int ifidx;
- 	int32 ret = 0;
+@@ -6167,9 +6167,17 @@ dhd_open(struct net_device *net)
+ 	wifi_adapter_info_t *adapter = NULL;
+ #endif
  
 -	if (!dhd_download_fw_on_driverload && !dhd_driver_init_done) {
 -		DHD_ERROR(("%s: WLAN driver is not initialized\n", __FUNCTION__));
