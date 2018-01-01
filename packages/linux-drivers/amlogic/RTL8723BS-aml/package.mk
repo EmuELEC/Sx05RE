@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="RTL8723BS-aml"
-PKG_VERSION="c3eef6c"
+PKG_VERSION="ee9d86a"
 PKG_REV="1"
 PKG_ARCH="arm aarch64"
 PKG_LICENSE="GPL"

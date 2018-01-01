@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="RTL8189ES-aml"
-PKG_VERSION="a7fc8d7"
+PKG_VERSION="f971e4b"
 PKG_REV="1"
 PKG_ARCH="arm aarch64"
 PKG_LICENSE="GPL"

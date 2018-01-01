@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="RTL8822BU-aml"
-PKG_VERSION="f743231"
+PKG_VERSION="9df3607"
 PKG_REV="1"
 PKG_ARCH="arm aarch64"
 PKG_LICENSE="GPL"

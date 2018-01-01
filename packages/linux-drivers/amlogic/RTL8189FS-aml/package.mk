@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="RTL8189FS-aml"
-PKG_VERSION="ab83abd"
+PKG_VERSION="538ba58"
 PKG_REV="1"
 PKG_ARCH="arm aarch64"
 PKG_LICENSE="GPL"
