@@ -71,7 +71,8 @@ make_target() {
   # Add "le-dtb-id"
   for f in $DTB_LIST; do
     LE_DT_ID="${f/.dtb/}"
-    sed -i "/amlogic-dt-id/i le-dt-id=\"$LE_DT_ID\";" arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/${f/dtb/dts}
+    SOURCE_FILE="arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/$LE_DT_ID.dts"
+    echo -e "/ {\n\tle-dt-id = \"$LE_DT_ID\";\n};" >> $SOURCE_FILE
   done
 
   # Compile device trees
