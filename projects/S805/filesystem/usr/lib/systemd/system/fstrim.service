@@ -1,0 +1,10 @@
+[Unit]
+Description=fstrim storage partition
+
+[Service]
+Type=simple
+ExecStart=-/usr/sbin/fstrim /storage
+ExecStartPost=-/usr/sbin/fstrim /flash
+
+[Install]
+WantedBy=basic.target
