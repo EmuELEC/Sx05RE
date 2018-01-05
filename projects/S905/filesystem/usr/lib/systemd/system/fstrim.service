@@ -3,7 +3,7 @@ Description=fstrim storage partition
 
 [Service]
 Type=simple
-ExecStart=-/usr/sbin/fstrim -a
+ExecStart=-/usr/sbin/fstrim -a -v
 
 [Install]
 WantedBy=basic.target
