@@ -41,9 +41,6 @@ make_target() {
 
   DTB_LIST=""
 
-  # Clean up le-dt-id from kernel build
-  sed -i "/le-dt-id/d" arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/*
-
   # Complete device trees
   for f in $PKG_BUILD/*.dts; do
     DTB_NAME="$(basename $f .dts).dtb"
@@ -51,26 +48,15 @@ make_target() {
     DTB_LIST="$DTB_LIST $DTB_NAME"
   done
 
-  # Patched device trees
-  for f in $PKG_DIR/sources/*.patch; do
-    if [ -e $f ]; then
-      DTB_NAME="$(basename $f .patch).dtb"
-      DTS_NAME="$(basename $f .patch).dts"
-      rm -rf arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/$DTS_NAME
-      patch -d arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/ -o $DTS_NAME --merge < $f
-      DTB_LIST="$DTB_LIST $DTB_NAME"
-    fi
-  done
-
   # Kernel-tree trees
   for f in ${EXTRA_TREES[@]}; do
     DTB_LIST="$DTB_LIST $f"
-  done
 
-  # Add "le-dtb-id"
-  for f in $DTB_LIST; do
     LE_DT_ID="${f/.dtb/}"
     SOURCE_FILE="arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/$LE_DT_ID.dts"
+    # Remove "le-dt-id" if exists
+    sed -i "/le-dt-id/d" $SOURCE_FILE
+    # Add "le-dtb-id"
     echo -e "/ {\n\tle-dt-id = \"$LE_DT_ID\";\n};" >> $SOURCE_FILE
   done
 
