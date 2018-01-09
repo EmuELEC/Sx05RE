@@ -54,7 +54,7 @@ for arg in $(cat /proc/cmdline); do
       else
         echo "*** remember to update your device tree! ***"
       fi
-      
+
       if [ -f "$UPDATE_DTB_IMG" ] ; then
         UPDATE_DTB_SOURCE="$UPDATE_DTB_IMG"
       elif [ -f "$UPDATE_DTB" ] ; then

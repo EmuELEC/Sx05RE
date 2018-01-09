@@ -23,7 +23,7 @@ diff -Naur util-linux-2.27/configure.ac util-linux-2.27.patch/configure.ac
  UL_REQUIRES_BUILD([blkid], [libblkid])
  AM_CONDITIONAL([BUILD_BLKID], [test "x$build_blkid" = xyes])
  
-@@ -1242,21 +1250,26 @@
+@@ -1242,21 +1250,30 @@
  UL_REQUIRES_HAVE([hwclock], [io, linuxdummy], [ioperm iopl function or Linux])
  AM_CONDITIONAL([BUILD_HWCLOCK], [test "x$build_hwclock" = xyes])
  
@@ -40,7 +40,12 @@ diff -Naur util-linux-2.27/configure.ac util-linux-2.27.patch/configure.ac
  AM_CONDITIONAL([BUILD_ISOSIZE], [test "x$build_isosize" = xyes])
  
 -
- UL_BUILD_INIT([fstrim], [check])
+-UL_BUILD_INIT([fstrim], [check])
++AC_ARG_ENABLE([fstrim],
++  AS_HELP_STRING([--disable-fstrim], [do not build fstrim(8)]),
++  [], [UL_DEFAULT_ENABLE([fstrim], [check])]
++)
++UL_BUILD_INIT([fstrim])
  UL_REQUIRES_LINUX([fstrim])
  UL_REQUIRES_BUILD([fstrim], [libmount])
  AM_CONDITIONAL([BUILD_FSTRIM], [test "x$build_fstrim" = xyes])
