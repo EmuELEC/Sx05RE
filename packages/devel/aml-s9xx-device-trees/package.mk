@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="aml-s9xx-device-trees"
-PKG_VERSION="097d287"
+PKG_VERSION="e1205e9"
 PKG_LICENSE="OSS"
 PKG_URL="https://github.com/kszaq/s905-device-trees/archive/$PKG_VERSION.tar.gz"
 PKG_SOURCE_DIR="s905-device-trees-$PKG_VERSION*"
