@@ -22,9 +22,6 @@ for arg in $(cat /proc/cmdline); do
   esac
 done
 
-# Force 1080p60hz HDMI mode for S912
-hdmimode="1080p60hz"
-
 # Add information where to run LibreELEC from
 if [ -z "$BOOT_IMAGE" -o -z "$boot" -o -z "$disk" ]; then
   cmdline=$(cat /proc/cmdline)
@@ -43,7 +40,7 @@ if [ "$(cat /sys/class/amhdmitx/amhdmitx0/hpd_state)" != "0" ] && [ "$display_mo
 fi
 
 # Set framebuffer geometry to match the resolution
-case $hdmimode in
+case $display_mode in
   480*)            X=720  Y=480  ;;
   576*)            X=720  Y=576  ;;
   720p*)           X=1280 Y=720  ;;
@@ -57,7 +54,7 @@ echo 0 > /sys/class/graphics/fb1/free_scale
 echo 1 > /sys/class/video/disable_video
 
 # Enable scaling for 4K output
-case $hdmimode in
+case $display_mode in
   4k*|smpte*|2160*)
     echo 0 0 1919 1079 > /sys/class/graphics/fb0/free_scale_axis
     echo 0 0 3839 2159 > /sys/class/graphics/fb0/window_axis
