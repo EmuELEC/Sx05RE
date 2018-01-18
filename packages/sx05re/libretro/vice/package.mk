@@ -19,7 +19,7 @@
 ################################################################################
 
 PKG_NAME="vice"
-PKG_VERSION="8b4c034"
+PKG_VERSION="928f2c9"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
@@ -43,8 +43,8 @@ make_target() {
   if [ "$ARCH" == "arm" ]; then
     CFLAGS="$CFLAGS -DARM -DALIGN_DWORD -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -marm"
   fi
-  make -f Makefile.libretro EMUTYPE=x64
-  #make -f Makefile.libretro EMUTYPE=x128
+  make EMUTYPE=x64
+  make EMUTYPE=x128
 }
 
 makeinstall_target() {
