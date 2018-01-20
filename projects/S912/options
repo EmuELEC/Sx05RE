@@ -101,7 +101,7 @@
   # Space separated list is supported,
   # e.g. ADDITIONAL_DRIVERS="DRIVER1 DRIVER2"
     ADDITIONAL_DRIVERS="RTL8192CU RTL8192DU RTL8192EU RTL8812AU gpu-aml-t8xx media_build \
-                        ap6xxx-aml mt7601u-aml mt7603u-aml qca9377-aml RTL8188EU-aml RTL8189ES-aml RTL8189FS-aml RTL8723BS-aml RTL8723DS-aml RTL8822BU-aml ssv6xxx-aml"
+                        ap6xxx-aml mt7601u-aml mt7603u-aml qca9377-aml RTL8188EU-aml RTL8189ES-aml RTL8189FS-aml RTL8723BS-aml RTL8723DS-aml RTL8822BU-aml ssv6xxx-aml fd628-aml"
 
   # additional Firmware to use (dvb-firmware, misc-firmware, wlan-firmware)
   # Space separated list is supported,

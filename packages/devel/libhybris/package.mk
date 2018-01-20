@@ -18,7 +18,7 @@
 ################################################################################
 
 PKG_NAME="libhybris"
-PKG_VERSION="54dd474"
+PKG_VERSION="070c3ab"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/libhybris/libhybris/"
