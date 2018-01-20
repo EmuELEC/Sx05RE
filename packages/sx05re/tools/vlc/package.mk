@@ -19,7 +19,7 @@
 #https://nightlies.videolan.org/build/source/vlc-3.0.0-20170220-0237-git.tar.xz
 PKG_NAME="vlc"
 PKG_VERSION="3.0.0"
-PKG_REV="20170220-0237-git"
+PKG_REV="20171023-0237-git"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.videolan.org"
