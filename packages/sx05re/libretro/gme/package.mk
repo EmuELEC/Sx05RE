@@ -18,23 +18,28 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="snes9x2005"
-PKG_VERSION="e2ad3df"
+PKG_NAME="gme"
+PKG_VERSION="0876813"
 PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="Non-commercial"
-PKG_SITE="https://github.com/libretro/snes9x2005"
-PKG_GIT_URL="$PKG_SITE"
+PKG_LICENSE="GPLv3"
+PKG_SITE="https://github.com/libretro/libretro-gme"
+PKG_URL="https://github.com/libretro/libretro-gme/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="Snes9x 2005."
-PKG_LONGDESC="Snes9x 2005. Port of SNES9x 1.43 for libretro (was previously called CAT SFC)."
+PKG_SHORTDESC="Port of blargg's Game_Music_Emu library."
+PKG_LONGDESC="Port of blargg's Game_Music_Emu library."
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
+post_unpack() {
+  mv $BUILD/libretro-gme-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
+}
+
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp snes9x2005_libretro.so $INSTALL/usr/lib/libretro/
+  cp gme_libretro.so $INSTALL/usr/lib/libretro/
 }
+
