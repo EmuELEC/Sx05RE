@@ -1,0 +1,12 @@
+diff -Naurp kodi-17.0-beta7-b9fe8e9/xbmc/XBApplicationEx.h kodi-17.0-beta7-b9fe8e9-patch/xbmc/XBApplicationEx.h
+--- kodi-17.0-beta7-b9fe8e9/xbmc/XBApplicationEx.h	2016-12-05 20:49:43.000000000 +0200
++++ kodi-17.0-beta7-b9fe8e9-patch/xbmc/XBApplicationEx.h	2016-12-05 20:47:53.000000000 +0200
+@@ -31,6 +31,8 @@ enum {
+   EXITCODE_POWERDOWN = 64,
+   EXITCODE_RESTARTAPP= 65,
+   EXITCODE_REBOOT    = 66,
++  EXITCODE_GAMES     = 67,
++  EXITCODE_SWITCH    = 68,
+ };
+ 
+ class CXBApplicationEx : public IWindowManagerCallback
