@@ -10,7 +10,7 @@ git clone https://github.com/shantigilbert/LibreELEC.tv.git Sx05RE
 cd Sx05RE  
 make image PROJECT=S905 ARCH=arm DISTRO=Sx05RE  
 
-or if you have a 1GB device
+or if you have a 1GB device  
 make image PROJECT=S905_1GB ARCH=arm DISTRO=Sx05RE  
 
 
