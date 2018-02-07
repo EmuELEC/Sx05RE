@@ -10,9 +10,7 @@ git clone https://github.com/shantigilbert/LibreELEC.tv.git Sx05RE
 cd Sx05RE  
 make image PROJECT=S905 ARCH=arm DISTRO=Sx05RE  
 
-or if you have a 1GB device  
-make image PROJECT=S905_1GB ARCH=arm DISTRO=Sx05RE  
-
+I use Ubuntu 16.04.3 LTS
 
 Please note, this is mostly a personal project made for my S905 Box (Mini M8S) I can't guarantee that it will work for your box as I don't own any other boxes, don't expect changes to fit your personal needs, but I do appreciate any PRs, help on testing other boxes and fixing issues.  
 
