@@ -33,12 +33,12 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  
  	addChild(&mMenu);
  	addVersionInfo();
-@@ -465,7 +488,7 @@
+@@ -466,7 +466,7 @@
  {
  	mVersion.setFont(Font::get(FONT_SIZE_SMALL));
  	mVersion.setColor(0x5E5E5EFF);
--	mVersion.setText("EMULATIONSTATION V" + strToUpper(PROGRAM_VERSION_STRING));
-+	mVersion.setText("EMULATIONSTATION V" + strToUpper(PROGRAM_VERSION_STRING)+" SX05RE v1.7");
+-	mVersion.setText("EMULATIONSTATION V" + Utils::String::toUpper(PROGRAM_VERSION_STRING));
++	mVersion.setText("EMULATIONSTATION V" + Utils::String::toUpper(PROGRAM_VERSION_STRING)+" SX05RE v1.8.2");
  	mVersion.setHorizontalAlignment(ALIGN_CENTER);
  	addChild(&mVersion);
  }
