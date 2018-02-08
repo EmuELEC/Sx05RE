@@ -14,21 +14,22 @@
     menu_entries_append_enum(info->list,
           msg_hash_to_str(MENU_ENUM_LABEL_VALUE_THUMBNAILS_UPDATER_LIST),
           msg_hash_to_str(MENU_ENUM_LABEL_THUMBNAILS_UPDATER_LIST),
-@@ -6265,12 +6265,12 @@
-                   MENU_ENUM_LABEL_QUIT_RETROARCH,
-                   PARSE_ACTION, false);
+@@ -5123,13 +5123,13 @@
+                PARSE_ONLY_BOOL, false);
+ 
  #if defined(HAVE_LAKKA)
--            menu_displaylist_parse_settings_enum(menu, info,
-+/*            menu_displaylist_parse_settings_enum(menu, info,
-                   MENU_ENUM_LABEL_REBOOT,
-                   PARSE_ACTION, false);
-             menu_displaylist_parse_settings_enum(menu, info,
-                   MENU_ENUM_LABEL_SHUTDOWN,
--                  PARSE_ACTION, false);
-+                  PARSE_ACTION, false); */
+-         menu_displaylist_parse_settings_enum(menu, info,
++ /*        menu_displaylist_parse_settings_enum(menu, info,
+                MENU_ENUM_LABEL_MENU_SHOW_QUIT_RETROARCH,
+                PARSE_ONLY_BOOL, false);
+ 
+          menu_displaylist_parse_settings_enum(menu, info,
+                MENU_ENUM_LABEL_MENU_SHOW_REBOOT,
+-               PARSE_ONLY_BOOL, false);
++               PARSE_ONLY_BOOL, false);*/
  #endif
-             info->need_push    = true;
-          }
+ 
+          menu_displaylist_parse_settings_enum(menu, info,
 --- a/menu/menu_setting.c	2017-03-12 17:52:42.000000000 -0600
 +++ b/menu/menu_setting.c	2017-03-13 19:05:16.526319525 -0600
 @@ -2459,7 +2459,7 @@
