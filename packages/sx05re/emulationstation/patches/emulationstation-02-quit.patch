@@ -6,14 +6,14 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  
  	if (!(UIModeController::getInstance()->isUIModeKid() && Settings::getInstance()->getBool("hideQuitMenuOnKidUI")))
 -		addEntry("QUIT", 0x777777FF, true, [this] {openQuitMenu(); });
-+				addEntry("QUIT", 0x777777FF, true, [this] {
-+//openQuitMenu(); 
-+remove("/var/lock/start.games");
-+runSystemCommand("touch /var/lock/start.retro");
-+runSystemCommand("systemctl start retroarch.service");
-+SDL_Event ev;
-+ 						ev.type = SDL_QUIT;
-+ 						SDL_PushEvent(&ev);
++       addEntry("RETROARCH", 0x777777FF, true, [this] {
++                        //openQuitMenu(); 
++                        remove("/var/lock/start.games");
++                        runSystemCommand("touch /var/lock/start.retro");
++                        runSystemCommand("systemctl start retroarch.service");
++                        SDL_Event ev;
++ 			 ev.type = SDL_QUIT;
++ 			 SDL_PushEvent(&ev);
 + 	});
 + 
 +
