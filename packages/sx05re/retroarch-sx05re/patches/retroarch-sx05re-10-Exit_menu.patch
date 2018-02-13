@@ -35,13 +35,13 @@
 +      }
 +       else
 +      {
-+      /* Exit back to ES */
-+      remove("/var/lock/start.retro");
++      /* Exit back to ES - TODO: Check if start.retro file exists, if it does, then exit with the following code */ 
++     if( access( "/var/lock/start.retro", F_OK ) != -1 ) { remove("/var/lock/start.retro");
 +      system("touch /var/lock/start.games");
 +      system("systemctl start emustation.service");
-+      system("systemctl stop retroarch.service");
-+      }
-+
++      system("systemctl stop retroarch.service"); 
++      } }
++      /* if it doesn't exist then just exit */
 +
           return retroarch_main_quit();
 +}
