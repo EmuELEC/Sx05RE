@@ -116,9 +116,7 @@ rm -rf /storage/.local/share/reicast/data
 ln -s /storage/roms/bios /storage/.local/share/reicast/data
 fi
 
-#hacky way to get samba on boot
-/usr/lib/samba/samba-config
-systemctl start smbd
+
 
 # THESE CHANGES ARE UNSTESTED! I DONT KNOW IF YOUR DEVICE WILL EXPLODE UNCOMMENT UNDER YOUR OWN RISK!
 
@@ -139,5 +137,8 @@ touch  /var/lock/start.kodi
 
  #if you don't want EmulationStation to start first, comment the next 3 lines
  rm -rf /var/lock/start.kodi
- touch /var/lock/start.games
- systemctl start emustation
+ /usr/bin/pegasus-fe.sh &
+ #touch /var/lock/start.games
+ #systemctl start emustation
+
+

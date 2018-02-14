@@ -4,5 +4,5 @@
    <addon>xbmc.python</addon>
    <addon>xbmc.webinterface</addon>
    <addon optional="true">peripheral.joystick</addon>
-+  <addon>script.emulationstation.launcher</addon>
++  <addon>script.pegasus-fe.launcher</addon>
  </addons>

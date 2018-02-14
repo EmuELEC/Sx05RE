@@ -19,7 +19,7 @@
 ################################################################################
 
 PKG_NAME="pegasus-frontend"
-PKG_VERSION="daba453"
+PKG_VERSION="8c260cb"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
@@ -55,6 +55,17 @@ make_target() {
 $BUILD/qt-everywhere-5.9.1/qtbase/qmake/qmake INSTALLDIR=${INSTALL}/usr/bin INSTALL_BINDIR=${INSTALL}/usr/bin INSTALL_DATADIR=${INSTALL}/usr/bin INSTALL_ICONDIR=${INSTALL}/usr/bin INSTALL_DESKTOPDIR=${INSTALL}/usr/bin
 cd $PKG_BUILD
 make
+
+  mkdir -p $INSTALL/usr/bin
+    cp $PKG_DIR/scripts/* $INSTALL/usr/bin
+    chmod +x $INSTALL/usr/bin/*
+
+mkdir -p $INSTALL/usr/config/
+    cp -rf $PKG_DIR/config/* $INSTALL/usr/config/
+
+mkdir -p $INSTALL/usr/config/emulationstation
+    cp $PKG_DIR/config/emulationstation/* $INSTALL/usr/config/emulationstation
+  
 }
 
 

@@ -18,15 +18,15 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 # Thanks to magicseb  Reicast SA now WORKS :D
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mame2010 mame2014 vba-next libretro-beetle-pce-fast advancemame PPSSPPSDL emulationstation fbida reicastsa"
-
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mame2010 mame2014 vba-next libretro-beetle-pce-fast advancemame PPSSPPSDL fbida reicastsa"
+#emulationstation
  
 # You can build some less used Libretro cores by using $LIBRETRO_EXTRA_CORES but you might run into size problems.
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET $LIBRETRO_EXTRA_CORES"
 
 
 # Pegasus-FE works, but it is still in very early stage, if you enable make sure you have enough space on the partition.
-#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET pegasus-frontend"
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET pegasus-frontend"
 
 
 # These packages are experimental, they do not compile or have other problems, any help getting these to work is highly appreciated!.
