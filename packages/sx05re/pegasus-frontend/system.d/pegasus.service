@@ -1,0 +1,16 @@
+[Unit]
+Description=Pegasus emulator frontend
+ConditionPathExists=/var/lock/start.pegasus
+
+[Service]
+Environment=HOME=/storage
+ExecStartPre=/usr/bin/emustation-config
+ExecStart=/usr/bin/pegasus-fe
+KillMode=process
+TimeoutStopSec=3
+Restart=on-failure
+RestartSec=2
+StartLimitInterval=0
+
+[Install]
+WantedBy=kodi.target

@@ -117,6 +117,13 @@ ln -s /storage/roms/bios /storage/.local/share/reicast/data
 fi
 
 
+#hacky way to get samba on boot
+/usr/lib/samba/samba-config
+systemctl start smbd
+#cp /usr/share/services/sshd.conf /storage/.cache/services/
+systemctl start sshd
+
+
 
 # THESE CHANGES ARE UNSTESTED! I DONT KNOW IF YOUR DEVICE WILL EXPLODE UNCOMMENT UNDER YOUR OWN RISK!
 
@@ -135,10 +142,11 @@ fi
 #make sure the requirement to run kodi is met.
 touch  /var/lock/start.kodi
 
- #if you don't want EmulationStation to start first, comment the next 3 lines
+ #if you don't want Pegasus to start first, comment the next 3 lines
  rm -rf /var/lock/start.kodi
  /usr/bin/pegasus-fe.sh &
- #touch /var/lock/start.games
- #systemctl start emustation
+ #touch /var/lock/start.pegasus
+ #systemctl start pegasus
+
 
 

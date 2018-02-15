@@ -56,18 +56,13 @@ $BUILD/qt-everywhere-5.9.1/qtbase/qmake/qmake INSTALLDIR=${INSTALL}/usr/bin INST
 cd $PKG_BUILD
 make
 
-  mkdir -p $INSTALL/usr/bin
-    cp $PKG_DIR/scripts/* $INSTALL/usr/bin
-    chmod +x $INSTALL/usr/bin/*
-
-mkdir -p $INSTALL/usr/config/
-    cp -rf $PKG_DIR/config/* $INSTALL/usr/config/
-
-mkdir -p $INSTALL/usr/config/emulationstation
-    cp $PKG_DIR/config/emulationstation/* $INSTALL/usr/config/emulationstation
   
 }
 
+post_install() {  
+  enable_service pegasus.service
+
+}
 
 
 
