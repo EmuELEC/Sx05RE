@@ -18,28 +18,31 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="core-info"
-PKG_VERSION="195e566"
+PKG_NAME="common-shaders"
+PKG_VERSION="d161a1b"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/libretro/libretro-super"
-PKG_GIT_URL="$PKG_SITE"
+PKG_SITE="https://github.com/RetroPie/common-shaders"
+PKG_URL="https://github.com/RetroPie/common-shaders/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
-PKG_SECTION="libretro"
-PKG_SHORTDESC="Info files for libretro cores"
-PKG_LONGDESC="Super repo for other libretro projects. Fetches, builds and installs."
+PKG_SECTION="sx05re"
+PKG_SHORTDESC="Manually converted libretro/common-shaders for arm devices treebranch pi"
+PKG_LONGDESC="Manually converted libretro/common-shaders for arm devices treebranch pi"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
+
 make_target() {
-  :
+  : not
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL/usr/lib/libretro
-  cp dist/info/*.info $INSTALL/usr/lib/libretro/
+  #make install INSTALLDIR="$INSTALL/usr/share/common-shaders/pi"
+
+mkdir -p $INSTALL/usr/share/common-shaders/rpi
+    cp -rf $BUILD/$PKG_NAME-$PKG_VERSION/* $INSTALL/usr/share/common-shaders/rpi
 }
 
