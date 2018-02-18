@@ -18,7 +18,7 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 # Thanks to magicseb  Reicast SA now WORKS :D
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mame2010 mame2014 vba-next libretro-beetle-pce-fast advancemame PPSSPPSDL fbida reicastsa pegasus-frontend"
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mame2010 mame2014 vba-next libretro-beetle-pce-fast advancemame PPSSPPSDL reicastsa common-shaders pegasus-frontend"
  
 # You can build some less used Libretro cores by using $LIBRETRO_EXTRA_CORES but you might run into size problems.
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET $LIBRETRO_EXTRA_CORES"
@@ -26,7 +26,7 @@ PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mame2010 mame2014 vba-next libretro-beet
 
 # These packages are experimental, they do not compile or have other problems, any help getting these to work is highly appreciated!.
 
-#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET attract" 
+#PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET attract fbida" 
 
 
 
@@ -48,7 +48,6 @@ mkdir -p $INSTALL/usr/bin/
 
 mkdir -p $INSTALL/usr/share/kodi/addons/
     cp -rf $PKG_DIR/addon/* $INSTALL/usr/share/kodi/addons/
-
 
 ##this needs to be moved to filesystem, but put it here for easy testing. 
 #mkdir -p $INSTALL/usr/config/asound.conf
