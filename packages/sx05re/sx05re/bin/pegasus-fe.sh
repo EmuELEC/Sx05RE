@@ -1,7 +1,8 @@
 #!/bin/sh
 
     rm /var/lock/start.kodi
-    /usr/bin/emustation-config
-    /usr/bin/pegasus-fe
+    touch /var/lock/start.pegasus
+    systemctl start pegasus
+    systemctl stop kodi
 
 
