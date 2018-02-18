@@ -1,5 +1,5 @@
-**Sx05RE**
-An emulation (retro) fork for Sx05 devices, Most of the code is from [Kszaq's LE](https://github.com/kszaq/LibreELEC.tv) and [Lakka](https://github.com/libretro/Lakka-LibreELEC), I just combine them with some changes, add [Emulationstation](https://github.com/RetroPie/EmulationStation) and some standalone emulators ([Advancemame](https://github.com/amadvance/advancemame), [PPSSPP](https://github.com/hrydgard/ppsspp), Reicast and others). 
+**Sx05RE Pegasus Edition**
+An emulation (retro) fork for Sx05 devices, Most of the code is from [Kszaq's LE](https://github.com/kszaq/LibreELEC.tv) and [Lakka](https://github.com/libretro/Lakka-LibreELEC), I just combine them with some changes, add [Pegasus-fe](http://pegasus-frontend.org/) and some standalone emulators ([Advancemame](https://github.com/amadvance/advancemame), [PPSSPP](https://github.com/hrydgard/ppsspp), Reicast and others). 
 
 To build use:  
 
