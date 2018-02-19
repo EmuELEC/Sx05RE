@@ -1,0 +1,25 @@
+[Unit]
+Description=Pegasus emulator frontend
+ConditionPathExists=/var/lock/start.games
+
+[Service]
+Environment=HOME=/storage
+Environment=LD_LIBRARY_PATH=/usr/lib:/usr/lib/pulseaudio:/usr/local/qt5/lib
+Environment=PATH=/usr/bin:/usr/sbin:/usr/local/qt5/libexec
+Environment=QML2_IMPORT_PATH=/storage/plugins:/usr/local/qt5/qml
+Environment=QT_PLUGIN_PATH=/usr/local/qt5/plugins
+Environment=QT_QPA_EGLFS_DEPTH=32
+Environment=QT_QPA_EGLFS_PHYSICAL_HEIGHT=135
+Environment=QT_QPA_EGLFS_PHYSICAL_WIDTH=217
+Environment=QT_QPA_FONTDIR=/usr/local/qt5/lib/fonts
+Environment=QT_QPA_PLATFORM=eglfs
+ExecStartPre=/usr/bin/emustation-config
+ExecStart=/usr/bin/pegasus-fe
+KillMode=process
+TimeoutStopSec=3
+Restart=on-failure
+RestartSec=2
+StartLimitInterval=0
+
+[Install]
+WantedBy=kodi.target
