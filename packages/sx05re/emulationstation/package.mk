@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="emulationstation"
-PKG_VERSION="3adadc9"
+PKG_VERSION="0a945ba"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
@@ -47,6 +47,9 @@ post_makeinstall_target() {
   mkdir -p $INSTALL/usr/bin
     cp $PKG_DIR/scripts/* $INSTALL/usr/bin
     chmod +x $INSTALL/usr/bin/*
+
+  mkdir -p $INSTALL/usr/bin/resources
+    cp -rf $PKG_BUILD/resources/* $INSTALL/usr/bin/resources/
 
   mkdir -p $INSTALL/usr/config/emulationstation
     cp $PKG_DIR/config/* $INSTALL/usr/config/emulationstation
