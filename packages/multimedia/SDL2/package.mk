@@ -17,11 +17,11 @@
 ################################################################################
 
 PKG_NAME="SDL2"
-PKG_VERSION="b014335"
+PKG_VERSION="4829339"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/spurious/SDL-mirror.git"
-PKG_URL="https://github.com/spurious/SDL-mirror/archive/$PKG_VERSION.tar.gz"
+PKG_SITE="https://github.com/RetroPie/SDL-mirror.git"
+PKG_URL="https://github.com/RetroPie/SDL-mirror/archive/$PKG_VERSION.tar.gz"
 PKG_SOURCE_DIR="SDL-mirror*"
 PKG_DEPENDS_TARGET="toolchain yasm:host alsa-lib systemd dbus"
 PKG_SECTION="multimedia"
