@@ -30,13 +30,10 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 PKG_CMAKE_OPTS_TARGET="-DUSING_FBDEV=1 -DUSING_GLES2=1 -DUSE_FFMPEG=1 -DARMV7=1 -DSHARED_LIBZIP=1 -DARM_NEON=1"
-#-DNO_VULKAN"
-
-unpack() { 
- cp $PKG_DIR/zipconf.h $SYSROOT_PREFIX/usr/include/zipconf.h 
-}
+# -DNO_VULKAN=1"
 
 pre_configure_target() {
+cp $PKG_DIR/zipconf.h $SYSROOT_PREFIX/usr/include/zipconf.h 
 strip_lto
 }
 
