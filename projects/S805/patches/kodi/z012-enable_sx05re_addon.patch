@@ -1,0 +1,8 @@
+--- a/system/addon-manifest.xml	2017-03-07 12:32:28.000000000 -0600
++++ b/system/addon-manifest.xml	2017-03-12 01:46:34.937396735 -0600
+@@ -43,4 +43,5 @@
+   <addon>xbmc.python</addon>
+   <addon>xbmc.webinterface</addon>
+   <addon optional="true">peripheral.joystick</addon>
++  <addon>script.emulationstation.launcher</addon>
+ </addons>
