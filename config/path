@@ -28,6 +28,9 @@ if [ -n "$BUILD_SUFFIX" ]; then
   BUILD=$BUILD-$BUILD_SUFFIX
 fi
 
+# Uncomment this line to ignore version when building
+#BUILD=$ROOT/$BUILD_BASE.$DISTRONAME-${DEVICE:-$PROJECT}.$TARGET_ARCH
+
 TARGET_IMG=$ROOT/$TARGET
 TARGET_ADDONS="$TARGET_IMG/$ADDONS/$ADDON_PATH"
 ADDON_BUILD="$BUILD/$ADDONS/$1"
@@ -61,6 +64,8 @@ SED="sed -i"
   PKG_LICENSE="unknown"
   PKG_SITE=""
   PKG_URL=""
+  PKG_GIT_URL=""
+  PKG_GIT_BRANCH=""
   PKG_SOURCE_NAME=""
   PKG_SOURCE_DIR=""
   PKG_DEPENDS_TARGET=""
@@ -245,3 +250,4 @@ unset CONFIG_SITE
 # meh suse
 unset PYTHONSTARTUP
 unset PYTHONPATH
+
