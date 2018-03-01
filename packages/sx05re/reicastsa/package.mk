@@ -33,7 +33,7 @@ PKG_AUTORECONF="no"
 make_target() {
   cd shell/linux
   case $PROJECT in
-    S905)
+    S905|S805)
       make CC=$CC CXX=$CXX AS=$CC STRIP=$STRIP platform=odroid reicast.elf
       ;;
     Generic)
