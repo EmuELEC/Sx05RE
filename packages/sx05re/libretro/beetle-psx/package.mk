@@ -19,7 +19,7 @@
 ################################################################################
 
 PKG_NAME="beetle-psx"
-PKG_VERSION="7a7ae88"
+PKG_VERSION="a2b2b2b"
 PKG_REV="1"
 PKG_ARCH="x86_64 i386"
 PKG_LICENSE="GPLv2"
@@ -35,11 +35,7 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 make_target() {
-  if [ "$OPENGLES" == "mali-rockchip" -o  "$DEVICE" == "TinkerBoard" -o "$DEVICE" == "MiQi" ]; then
-  make HAVE_VULKAN=1
-  else
   make HAVE_OPENGL=1
- fi
 }
 
 makeinstall_target() {
