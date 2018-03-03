@@ -4,14 +4,14 @@
 ################################################################################
 
 PKG_NAME="advancemame"
-PKG_VERSION="7e2a569"
+PKG_VERSION="089d892"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MAME"
 PKG_SITE="https://github.com/amadvance/advancemame"
 PKG_URL="https://github.com/amadvance/advancemame/archive/$PKG_VERSION.tar.gz"
 PKG_SOURCE_DIR="advancemame-$PKG_VERSION*"
-PKG_DEPENDS_TARGET="toolchain freetype slang"
+PKG_DEPENDS_TARGET="toolchain freetype slang alsa"
 PKG_SECTION="sx05re/mod"
 PKG_SHORTDESC="A MAME and MESS port with an advanced video support for Arcade Monitors, TVs, and PC Monitors "
 PKG_LONGDESC="A MAME and MESS port with an advanced video support for Arcade Monitors, TVs, and PC Monitors "
@@ -24,11 +24,9 @@ make_target() {
 #CFLAGS="$CFLAGS -mfpu=neon-vfpv4 -march=armv7-a"
 ./autogen.sh
 #./configure --host=arm --enable-fb --enable-sdl2 --enable-freetype --prefix=$INSTALL/usr --with-freetype-prefix=$SYSROOT_PREFIX/usr/ --with-sdl2-prefix=$SYSROOT_PREFIX/usr/ --enable-slang
- if [ "$TARGET_ARCH" == "arm" ]; then
-./configure --host=arm --enable-fb --enable-freetype --prefix=$INSTALL/usr --with-freetype-prefix=$SYSROOT_PREFIX/usr/ --enable-slang
-else
-./configure --host=aarch64 --enable-fb --enable-freetype --prefix=$INSTALL/usr --with-freetype-prefix=$SYSROOT_PREFIX/usr/ --enable-slang
-fi
+
+./configure --host=arm --enable-alsa --enable-fb --enable-freetype --prefix=$INSTALL/usr --with-freetype-prefix=$SYSROOT_PREFIX/usr/ --enable-slang
+
  
 make 
 mkdir -p $INSTALL/usr/share/advance

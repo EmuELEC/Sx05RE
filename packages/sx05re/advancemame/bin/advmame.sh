@@ -13,6 +13,6 @@ fi
 ARG=$(echo basename $1 | sed 's/\.[^.]*$//')
 ARG="$(echo $1 | sed 's=.*/==;s/\.[^.]*$//')"         
 
-SDL_AUDIODRIVER=alsa /usr/bin/advmame $ARG
+SDL_AUDIODRIVER=alsa /usr/bin/advmame $ARG -quiet
 
 
