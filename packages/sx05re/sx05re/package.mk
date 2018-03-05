@@ -56,7 +56,7 @@ mkdir -p $INSTALL/usr/share/kodi/addons/
 
 
 ##this needs to be moved to filesystem, but put it here for easy testing. 
-#mkdir -p $INSTALL/usr/config/asound.conf
-#cp $PKG_DIR/asound.conf/asound.conf $INSTALL/usr/config/asound.conf/asound.conf
+mkdir -p $INSTALL/usr/config/asound.conf
+cp $PKG_DIR/asound.conf/asound.conf $INSTALL/usr/config/asound.conf/asound.conf
 
 }
