@@ -16,12 +16,12 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 PKG_NAME="qt-everywhere"
-PKG_VERSION="5.9.1"
+PKG_VERSION="5.9.4"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://qt-project.org"
 PKG_URL="http://download.qt.io/official_releases/qt/5.9/$PKG_VERSION/single/$PKG_NAME-opensource-src-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="pcre zlib zlib:host freetype libjpeg-turbo libpng tiff glib glib:host gst-plugins-base gst-libav gst-plugins-good"
+PKG_DEPENDS_TARGET="pcre2 zlib zlib:host freetype libjpeg-turbo libpng tiff glib glib:host gst-plugins-base gst-libav gst-plugins-good"
 PKG_SOURCE_DIR="$PKG_NAME-opensource-src-$PKG_VERSION"
 PKG_LONGDESC="A cross-platform application and UI framework"
 
@@ -88,8 +88,7 @@ PKG_CONFIGURE_OPTS_TARGET="-prefix /usr \
 			-no-feature-validator \
 			-no-feature-vnc \
 			-no-feature-widgets \
-			-no-feature-xml \
-			-skip qtxmlpatterns \
+                        -skip qtxmlpatterns \
                         -skip qtx11extras \
                         -skip qtwinextras \
                         -skip qtspeech \
@@ -153,13 +152,12 @@ configure_target() {
 
 
   # Undefines compiler options
-  BACKUP_STRIP=$STRIP
+  # BACKUP_STRIP=$STRIP
   #unset CC CXX AR OBJCOPY STRIP CFLAGS CXXFLAGS CPPFLAGS LDFLAGS LD RANLIB
   export QT_FORCE_PKGCONFIG=yes
   unset QMAKESPEC
 
- # unset CC CXX LD RANLIB AR AS CPPFLAGS CFLAGS LDFLAGS CXXFLAGS
-  ./configure  -extprefix ${INSTALL}/usr/local/qt5/ $PKG_CONFIGURE_OPTS_TARGET
+   ./configure  -extprefix ${INSTALL}/usr/local/qt5/ $PKG_CONFIGURE_OPTS_TARGET
 }
 
 makeinstall_target() {
@@ -168,8 +166,9 @@ makeinstall_target() {
   make install DESTDIR=${SYSROOT_PREFIX}/usr/
 
   #restore strip value
-  STRIP=$BACKUP_STRIP
-  debug_strip ${INSTALL}/usr/local/qt5/
+  #STRIP=$BACKUP_STRIP
+  #debug_strip ${INSTALL}/usr/local/qt5/
 }
+
 
 

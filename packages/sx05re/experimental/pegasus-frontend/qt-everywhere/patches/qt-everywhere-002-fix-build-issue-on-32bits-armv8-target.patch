@@ -72,16 +72,16 @@ diff --git a/src/corelib/tools/qsimd_p.h b/src/corelib/tools/qsimd_p.h
 index d5d887598e..92c93ea2e7 100644
 --- a/qtbase/src/corelib/tools/qsimd_p.h
 +++ b/qtbase/src/corelib/tools/qsimd_p.h
-@@ -324,7 +324,7 @@
+@@ -325,7 +325,7 @@
  #endif
  #endif
  // AArch64/ARM64
 -#if defined(Q_PROCESSOR_ARM_V8) && defined(__ARM_FEATURE_CRC32)
 +#if defined(__aarch64__) && defined(__ARM_FEATURE_CRC32)
+ #if defined(Q_PROCESSOR_ARM_64)
+ // only available on aarch64
  #define QT_FUNCTION_TARGET_STRING_CRC32      "+crc"
- #  include <arm_acle.h>
- #endif
-@@ -466,7 +466,7 @@ static const quint64 qCompilerCpuFeatures = 0
+@@ -470,7 +470,7 @@
  #if defined __ARM_NEON__
          | (Q_UINT64_C(1) << CpuFeatureNEON)
  #endif
@@ -90,6 +90,5 @@ index d5d887598e..92c93ea2e7 100644
          | (Q_UINT64_C(1) << CpuFeatureCRC32)
  #endif
  #if defined __mips_dsp
--- 
-2.12.1
+
 
