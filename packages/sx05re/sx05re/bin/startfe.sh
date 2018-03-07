@@ -1,0 +1,5 @@
+#!/bin/sh
+
+emulationstation.sh
+
+
