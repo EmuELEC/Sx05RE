@@ -1,0 +1,27 @@
+﻿--- a/skyscraper.pro	2018-03-06 15:11:16.150696339 -0600
++++ b/skyscraper.pro	2018-03-06 15:11:53.718072863 -0600
+@@ -6,19 +6,19 @@
+ QT += core network xml
+ QMAKE_CXXFLAGS += -std=c++11
+ 
+-unix:target.path=/usr/local/bin
++unix:target.path=.install_pkg/usr/bin
+ unix:target.files=Skyscraper
+ 
+-unix:examples.path=/usr/local/etc/skyscraper
++unix:examples.path=.install_pkg/etc/skyscraper
+ unix:examples.files=config.ini.example README.md artwork.xml artwork.xml.example1 artwork.xml.example2 artwork.xml.example3 artwork.xml.example4 mameMap.csv ARTWORK.md
+ 
+-unix:dbexamples.path=/usr/local/etc/skyscraper/dbs
++unix:dbexamples.path=.install_pkg/etc/skyscraper/dbs
+ unix:dbexamples.files=dbs/priorities.xml.example dbs/README.md
+ 
+-unix:impexamples.path=/usr/local/etc/skyscraper/import
++unix:impexamples.path=.install_pkg/etc/skyscraper/import
+ unix:impexamples.files=import/README.md import/definitions.dat.example1 import/definitions.dat.example2
+ 
+-unix:resexamples.path=/usr/local/etc/skyscraper/resources
++unix:resexamples.path=.install_pkg/etc/skyscraper/resources
+ unix:resexamples.files=resources/maskexample.png resources/frameexample.png resources/boxfront.png resources/boxside.png
+ 
+ INSTALLS += target examples dbexamples impexamples resexamples
