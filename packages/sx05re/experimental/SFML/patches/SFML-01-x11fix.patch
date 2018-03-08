@@ -9,3 +9,24 @@
  
  namespace sf
  {
+--- SFML-c43b599/src/SFML/Window/GlContext.cpp	2017-06-08 23:01:57.991814500 -0500
++++ SFML-c43b599/src/SFML/Window/GlContext.cpp	2017-06-08 23:02:20.416246349 -0500
+@@ -39,6 +39,7 @@
+ #include <cstdlib>
+ #include <cstring>
+ #include <cassert>
++#include <X11/Xutil.h>
+ 
+ #if !defined(SFML_OPENGL_ES)
+ 
+--- a/include/SFML/Window/WindowStyle.hpp	2018-03-08 01:17:36.609945426 -0600
++++ b/include/SFML/Window/WindowStyle.hpp	2018-03-08 01:16:29.611072358 -0600
+@@ -37,7 +37,7 @@
+     ////////////////////////////////////////////////////////////
+     enum
+     {
+-        None       = 0,      ///< No border / title bar (this flag and all others are mutually exclusive)
++        None2       = 0,      ///< No border / title bar (this flag and all others are mutually exclusive)
+         Titlebar   = 1 << 0, ///< Title bar + fixed border
+         Resize     = 1 << 1, ///< Title bar + resizable border + maximize button
+         Close      = 1 << 2, ///< Title bar + close button
