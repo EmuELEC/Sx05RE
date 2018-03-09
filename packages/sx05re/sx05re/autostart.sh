@@ -64,6 +64,13 @@ esac
 #since the ROMS folder is not getting created at boot, we check if it exists, if it doesn't then we create it. 
 if [ ! -d "/storage/roms" ] || [ ! -d "/storage/roms2" ]; then
   mkdir /storage/roms
+  
+all_roms="atari2600,atari5200,atari7800,atarilynx,c64,dreamcast,fba,fds,gamegear,gb,gba,gbc,mame,mame-advmame,mastersystem,megadrive,msx,n64,neogeo,nes,pc,pcengine,psp,psx,scummvm,sega32x,segacd,snes,videopac,zxspectrum" 
+
+for romfolder in $(echo $all_roms | tr "," " "); do
+  mkdir -p /storage/roms/$romfolder
+done
+  
 fi
 
 #name of the file we need to put in the roms folder in your USB or SDCARD 
