@@ -33,7 +33,7 @@ PKG_AUTORECONF="no"
  
 
 make_target() {
- make USE_GLES=1 VERBOSE=0 VER_MAJOR=1  TOOLCHAIN=$TOOLCHAIN/bin/armv8a-libreelec-linux-gnueabi PKG-CONFIG=$TOOLCHAIN/bin/x86_64-pc-linux-gnu-pkg-config
+ make CROSS=1 USE_GLES=1 EXTRA_CFLAGS="$CFLAGS -I$TOOLCHAIN/armv8a-libreelec-linux-gnueabi/sysroot/usr/include -L$TOOLCHAIN/armv8a-libreelec-linux-gnueabi/sysroot/usr/include" VER_MAJOR=1  TOOLCHAIN=$TOOLCHAIN/bin/armv8a-libreelec-linux-gnueabi
 }
 
 makeinstall_target() {
