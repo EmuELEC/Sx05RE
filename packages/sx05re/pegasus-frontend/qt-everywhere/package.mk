@@ -21,16 +21,16 @@ PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://qt-project.org"
 PKG_URL="http://download.qt.io/official_releases/qt/5.9/$PKG_VERSION/single/$PKG_NAME-opensource-src-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="pcre2 zlib zlib:host freetype libjpeg-turbo libpng tiff glib glib:host gst-plugins-base gst-libav gst-plugins-good"
+PKG_DEPENDS_TARGET="pcre2 zlib freetype libjpeg-turbo libpng tiff glib gst-plugins-base gst-libav gst-plugins-good"
 PKG_SOURCE_DIR="$PKG_NAME-opensource-src-$PKG_VERSION"
 PKG_LONGDESC="A cross-platform application and UI framework"
 
 PKG_CONFIGURE_OPTS_TARGET="-prefix /usr \
-                        -sysroot $SYSROOT_PREFIX \
-                        -hostprefix $ROOT/$BUILD \
-                        -device linux-libreelec-g++ \
-                        -device-option CROSS_COMPILE=${TARGET_PREFIX} \
-                        -fontconfig \
+            -sysroot $SYSROOT_PREFIX \
+            -hostprefix $ROOT/$BUILD \
+            -device linux-libreelec-g++ \
+            -device-option CROSS_COMPILE=${TARGET_PREFIX} \
+            -fontconfig \
 			-opensource \
 			-confirm-license \
 			-release \
@@ -88,36 +88,36 @@ PKG_CONFIGURE_OPTS_TARGET="-prefix /usr \
 			-no-feature-validator \
 			-no-feature-vnc \
 			-no-feature-widgets \
-                        -skip qtxmlpatterns \
-                        -skip qtx11extras \
-                        -skip qtwinextras \
-                        -skip qtspeech \
-                        -skip qtdatavis3d \
-                        -skip qtcharts \
-                        -skip qtandroidextras \
-                        -skip qt3d \
-                        -skip qtlocation \
-                        -skip qtmacextras \
-                        -skip qtdoc \
-                        -skip qtdatavis3d \
-                        -skip qtpurchasing \
-                        -skip qtnetworkauth \
-                        -skip qtscript \
-                        -skip qtwebengine \
-                        -skip qtwebview \
-                        -skip qtactiveqt \
-                        -skip qtcanvas3d \
-                        -skip qtconnectivity \
-                        -skip qtquickcontrols \
-                        -skip qtremoteobjects \
-                        -skip qtscxml \
-                        -skip qtsensors \
-                        -skip qtserialbus \
-                        -skip qtserialport \
-                        -skip qttranslations \
-                        -skip qtvirtualkeyboard \
-                        -skip qtwayland \
-                        -skip qtwebchannel \
+			-skip qtxmlpatterns \
+            -skip qtx11extras \
+            -skip qtwinextras \
+            -skip qtspeech \
+            -skip qtdatavis3d \
+            -skip qtcharts \
+            -skip qtandroidextras \
+            -skip qt3d \
+            -skip qtlocation \
+            -skip qtmacextras \
+            -skip qtdoc \
+            -skip qtdatavis3d \
+            -skip qtpurchasing \
+            -skip qtnetworkauth \
+            -skip qtscript \
+            -skip qtwebengine \
+            -skip qtwebview \
+            -skip qtactiveqt \
+            -skip qtcanvas3d \
+            -skip qtconnectivity \
+            -skip qtquickcontrols \
+            -skip qtremoteobjects \
+            -skip qtscxml \
+            -skip qtsensors \
+            -skip qtserialbus \
+            -skip qtserialport \
+            -skip qttranslations \
+            -skip qtvirtualkeyboard \
+            -skip qtwayland \
+            -skip qtwebchannel \
 			-skip qtwebsockets"
 
 
@@ -169,6 +169,3 @@ makeinstall_target() {
   #STRIP=$BACKUP_STRIP
   #debug_strip ${INSTALL}/usr/local/qt5/
 }
-
-
-

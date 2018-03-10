@@ -1,0 +1,14 @@
+--- a/src/app/setup.cpp	2018-02-18 21:00:46.305834438 -0600
++++ b/src/app/setup.cpp	2018-02-19 14:07:36.939194881 -0600
+@@ -173,8 +173,10 @@
+ {
+     using ScriptEvent = ScriptRunner::EventType;
+ 
+-    ScriptRunner::findAndRunScripts(ScriptEvent::QUIT);
+     switch (type) {
++       case AppCloseType::QUIT:
++            ScriptRunner::findAndRunScripts(ScriptEvent::QUIT);
++            break;
+         case AppCloseType::REBOOT:
+             ScriptRunner::findAndRunScripts(ScriptEvent::REBOOT);
+             break;

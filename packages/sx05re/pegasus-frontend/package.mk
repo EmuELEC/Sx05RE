@@ -19,7 +19,7 @@
 ################################################################################
 
 PKG_NAME="pegasus-frontend"
-PKG_VERSION="daba453"
+PKG_VERSION="eba7520"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
@@ -52,11 +52,17 @@ pre_configure_target() {
 
 make_target() {
 # Nasty hack to get qmake to work, if you change qt-everywhere version, make sure you change this.
-$BUILD/qt-everywhere-5.9.1/qtbase/qmake/qmake INSTALLDIR=${INSTALL}/usr/bin INSTALL_BINDIR=${INSTALL}/usr/bin INSTALL_DATADIR=${INSTALL}/usr/bin INSTALL_ICONDIR=${INSTALL}/usr/bin INSTALL_DESKTOPDIR=${INSTALL}/usr/bin
+$BUILD/qt-everywhere-5.9.4/qtbase/qmake/qmake INSTALLDIR=${INSTALL}/usr/bin INSTALL_BINDIR=${INSTALL}/usr/bin INSTALL_DATADIR=${INSTALL}/usr/bin INSTALL_ICONDIR=${INSTALL}/usr/bin INSTALL_DESKTOPDIR=${INSTALL}/usr/bin
 cd $PKG_BUILD
 make
+
+  
 }
 
+post_install() {  
+  enable_service pegasus.service
+
+}
 
 
 
