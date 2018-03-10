@@ -1,7 +1,7 @@
-diff U3 a/es-core/src/guis/GuiInputConfig.cpp b/es-core/src/guis/GuiInputConfig.cpp
+diff U3 sx05re/es-core/src/guis/GuiInputConfig.cpp sx05re/es-core/src/guis/GuiInputConfig.cpp
 --- a/es-core/src/guis/GuiInputConfig.cpp	Thu Jun 08 07:58:22 2017
 +++ b/es-core/src/guis/GuiInputConfig.cpp	Thu Jun 08 17:32:17 2017
-@@ -16,7 +16,7 @@
+@@ -15,7 +15,7 @@
  // 											":/help/button_a.svg", ":/help/button_b.svg", ":/help/button_start.svg", ":/help/button_select.svg", 
  // 											":/help/button_l.svg", ":/help/button_r.svg" };
  
@@ -10,10 +10,12 @@ diff U3 a/es-core/src/guis/GuiInputConfig.cpp b/es-core/src/guis/GuiInputConfig.
  static const char* inputName[inputCount] =
  {
  	"Up",
-@@ -31,19 +31,7 @@
+@@ -28,21 +28,8 @@
+ 	"B",
+ 	"X",
  	"Y",
- 	"LeftShoulder",
- 	"RightShoulder",
+-	"LeftShoulder",
+-	"RightShoulder",
 -	"LeftTrigger",
 -	"RightTrigger",
 -	"LeftThumb",
@@ -27,37 +29,39 @@ diff U3 a/es-core/src/guis/GuiInputConfig.cpp b/es-core/src/guis/GuiInputConfig.
 -	"RightAnalogLeft",
 -	"RightAnalogRight",
 -	"HotKeyEnable"
-+	
++	"PageUp",
++	"PageDown"
  };
  static const bool inputSkippable[inputCount] =
  {
-@@ -57,21 +45,8 @@
+@@ -53,20 +40,7 @@
+ 	true,
+ 	true,
+ 	false,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
+-	true,
++	false,
  	true,
  	true,
  	true,
--	true,
--	true,
--	true,
--	true,
--	true,
--	true,
--	true,
--	true,
--	true,
--	true,
--	true,
--	true,
--	true,
--	true,
- 	true
-+	
- };
- static const char* inputDispName[inputCount] =
- {
-@@ -87,19 +62,7 @@
+@@ -84,21 +58,9 @@
+ 	"B",
+ 	"X",
  	"Y",
- 	"LEFT SHOULDER",
- 	"RIGHT SHOULDER",
+-	"LEFT SHOULDER",
+-	"RIGHT SHOULDER",
 -	"LEFT TRIGGER",
 -	"RIGHT TRIGGER",
 -	"LEFT THUMB",
@@ -71,14 +75,17 @@ diff U3 a/es-core/src/guis/GuiInputConfig.cpp b/es-core/src/guis/GuiInputConfig.
 -	"RIGHT ANALOG LEFT",
 -	"RIGHT ANALOG RIGHT",
 -	"HOTKEY ENABLE"
-+
++	"PAGE UP",
++	"PAGE DOWN"
++	
  };
  static const char* inputIcon[inputCount] =
  {
-@@ -115,19 +78,7 @@
+@@ -113,20 +75,7 @@
+ 	":/help/button_x.svg",
  	":/help/button_y.svg",
  	":/help/button_l.svg",
- 	":/help/button_r.svg",
+-	":/help/button_r.svg",
 -	":/help/button_l.svg",
 -	":/help/button_r.svg",
 -	":/help/analog_thumb.svg",
@@ -92,7 +99,18 @@ diff U3 a/es-core/src/guis/GuiInputConfig.cpp b/es-core/src/guis/GuiInputConfig.
 -	":/help/analog_left.svg",
 -	":/help/analog_right.svg",
 -	":/help/button_hotkey.svg"
-+	
++	":/help/button_r.svg"
  };
  
  //MasterVolUp and MasterVolDown are also hooked up, but do not appear on this screen.
+@@ -222,6 +222,9 @@
+ 	buttons.push_back(std::make_shared<ButtonComponent>(mWindow, "OK", "ok", [this, okFunction] {
+ 		// check if the hotkey enable button is set. if not prompt the user to use select or nothing.
+ 		Input input;
++                //Sx05RE does not use hotkey, but always set to select, just in case
++                    mTargetConfig->getInputByName("Select", &input);
++	            mTargetConfig->mapInput("HotKeyEnable", input);
+ 		if (!mTargetConfig->getInputByName("HotKeyEnable", &input)) {
+ 			mWindow->pushGui(new GuiMsgBox(mWindow,
+ 				"YOU DIDN'T CHOOSE A HOTKEY ENABLE BUTTON. THIS IS REQUIRED FOR EXITING GAMES WITH A CONTROLLER. DO YOU WANT TO USE THE SELECT BUTTON DEFAULT ? PLEASE ANSWER YES TO USE SELECT OR NO TO NOT SET A HOTKEY ENABLE BUTTON.",
+
