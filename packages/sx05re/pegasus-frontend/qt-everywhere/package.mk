@@ -150,7 +150,6 @@ configure_target() {
   echo "load(qt_config)" >> $QMAKE_CONF
   echo '#include "../../linux-g++/qplatformdefs.h"' >> $QMAKE_CONF_DIR/qplatformdefs.h
 
-
   # Undefines compiler options
   # BACKUP_STRIP=$STRIP
   #unset CC CXX AR OBJCOPY STRIP CFLAGS CXXFLAGS CPPFLAGS LDFLAGS LD RANLIB

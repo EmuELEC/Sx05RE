@@ -34,15 +34,6 @@ PKG_LONGDESC="Gstreamer"
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no" 
 
-#post_unpack() {
-#  rm -rf $BUILD/$PKG_NAME-*/
-#  git clone https://github.com/GStreamer/gstreamer.git $BUILD/$PKG_NAME-$PKG_VERSION/
-#  cd $BUILD/$PKG_NAME-$PKG_VERSION/
-#  git checkout $PKG_VERSION
-#  git submodule update --init
-#  cd $ROOT
-#}
-
 pre_configure_target() {
   strip_lto
 }
