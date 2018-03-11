@@ -18,34 +18,38 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="skyscraper"
-PKG_VERSION="62070a0"
+PKG_NAME="scraper"
+PKG_VERSION="1.4.5"
 PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/muldjord/skyscraper"
-PKG_URL="https://github.com/muldjord/skyscraper/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="skyscraper*"
-PKG_DEPENDS_TARGET="toolchain qt-everywhere"
+PKG_LICENSE="MIT"
+PKG_SITE="https://github.com/sselph/scraper"
+PKG_URL="https://github.com/sselph/scraper/releases/download/v$PKG_VERSION/scraper_rpi2.zip"
+PKG_SOURCE_DIR="scraper"
+PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="sx05re"
-PKG_SHORTDESC="Powerful and versatile game scraper written in c++"
-PKG_LONGDESC="Powerful and versatile game scraper written in c++ "
+PKG_SHORTDESC="A scraper for EmulationStation written in Go using hashing"
+PKG_LONGDESC="A scraper for EmulationStation written in Go using hashing"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no" 
 
+pre_unpack() {
+mkdir -p $BUILD/$PKG_SOURCE_DIR-$PKG_VERSION
+}
+
+post_unpack() {
+mv $BUILD/scraper $BUILD/$PKG_SOURCE_DIR-$PKG_VERSION
+rm $BUILD/LICENSE.txt
+}
 
 make_target() {
-# Nasty hack to get qmake to work, if you change qt-everywhere version, make sure you change this.
-$BUILD/qt-everywhere-5.9.4/qtbase/qmake/qmake INSTALLDIR=${INSTALL}/usr/bin
-cd $PKG_BUILD
-make
+: not 
 }
 
 makeinstall_target() {
-make install
+mkdir -p $INSTALL/usr/bin/
+    cp $BUILD/$PKG_SOURCE_DIR-$PKG_VERSION/* $INSTALL/usr/bin/
 }
-
-
 
