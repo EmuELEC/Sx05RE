@@ -20,15 +20,19 @@ PKG_AUTORECONF="no"
 
 
 make_target() {
-#CFLAGS="$CFLAGS -mfpu=neon-fp-armv8"
-#CFLAGS="$CFLAGS -mfpu=neon-vfpv4 -march=armv7-a"
 ./autogen.sh
 ./configure --host=arm --enable-fb --enable-sdl2 --enable-freetype --prefix=$INSTALL/usr --with-freetype-prefix=$SYSROOT_PREFIX/usr/ --with-sdl2-prefix=$SYSROOT_PREFIX/usr/ --enable-slang
-
-#./configure --host=arm --enable-alsa --enable-fb --enable-freetype --prefix=$INSTALL/usr --with-freetype-prefix=$SYSROOT_PREFIX/usr/ --enable-slang
-
- 
 make 
+}
+
+post_makeinstall_target() { 
+# Cleanup unnecessary files
+find $INSTALL/usr/bin/. ! -name 'advmame' -type f -exec rm -f {} +
+rm -rf $INSTALL/usr/doc
+rm -rf $INSTALL/usr/share/advance/image
+rm -rf $INSTALL/usr/share/advance/rom
+rm -rf $INSTALL/usr/share/advance/rom
+rm -rf $INSTALL/usr/share/advance/snap
 mkdir -p $INSTALL/usr/share/advance
    cp -r $PKG_DIR/config/* $INSTALL/usr/share/advance/
 mkdir -p $INSTALL/usr/bin
