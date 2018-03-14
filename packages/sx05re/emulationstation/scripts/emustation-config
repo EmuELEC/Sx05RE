@@ -21,9 +21,8 @@ fi
 if [ ! -d "$CONFIG_DIR" ]; then
  mkdir -p $CONFIG_DIR
  cp -urf /usr/config/emulationstation/* $CONFIG_DIR/
+ cp -urf /usr/config/emulationstation/themes/* $CONFIG_DIR/themes
 fi
-
-cp -urf /usr/config/emulationstation/themes/* $CONFIG_DIR/themes
 
 if [ -d "$CONFIG_DIR2" ]; then
 rm -rf $CONFIG_DIR2

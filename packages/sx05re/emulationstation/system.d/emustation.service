@@ -9,7 +9,7 @@ ConditionPathExists=/var/lock/start.games
 Environment=SDL_MOUSE_RELATIVE=0
 Environment=FB_MULTI_BUFFER=2
 Environment=HOME=/storage
-ExecStartPre=-/usr/bin/remotecfg /storage/.config/amremote/remote-games.conf
+#ExecStartPre=-/usr/bin/remotecfg /storage/.config/amremote/remote-games.conf
 ExecStartPre=/usr/bin/emustation-config
 ExecStart=/usr/bin/emulationstation
 KillMode=process
