@@ -18,6 +18,9 @@ PKG_LONGDESC="A MAME and MESS port with an advanced video support for Arcade Mon
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
+post_unpack() {
+cp -r $PKG_DIR/.version $PKG_BUILD
+}
 
 make_target() {
 ./autogen.sh
