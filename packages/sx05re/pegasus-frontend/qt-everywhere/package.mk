@@ -21,7 +21,7 @@ PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://qt-project.org"
 PKG_URL="http://download.qt.io/official_releases/qt/5.9/$PKG_VERSION/single/$PKG_NAME-opensource-src-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="pcre2 zlib freetype libjpeg-turbo libpng tiff glib gst-plugins-base gst-libav gst-plugins-good"
+PKG_DEPENDS_TARGET="pcre zlib zlib:host freetype libjpeg-turbo libpng tiff glib glib:host gst-plugins-base gst-libav gst-plugins-good"
 PKG_SOURCE_DIR="$PKG_NAME-opensource-src-$PKG_VERSION"
 PKG_LONGDESC="A cross-platform application and UI framework"
 
@@ -88,6 +88,7 @@ PKG_CONFIGURE_OPTS_TARGET="-prefix /usr \
 			-no-feature-validator \
 			-no-feature-vnc \
 			-no-feature-widgets \
+			-no-feature-xml \
 			-skip qtxmlpatterns \
             -skip qtx11extras \
             -skip qtwinextras \
