@@ -10,12 +10,9 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  
  	addEntry("SOUND SETTINGS", 0x777777FF, true, [this] { openSoundSettings(); });
  
-@@ -48,36 +48,53 @@
- 	setPosition((Renderer::getScreenWidth() - mSize.x()) / 2, Renderer::getScreenHeight() * 0.15f);
- }
+@@ -50,39 +50,43 @@
  
--void GuiMenu::openScraperSettings()
-+void GuiMenu::openScraperSettings()
+ void GuiMenu::openScraperSettings()
  {
 -	auto s = new GuiSettings(mWindow, "SCRAPER");
 +	auto s = new GuiSettings(mWindow, "Sx05RE Settings");
@@ -34,6 +31,21 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 -	scrape_ratings->setState(Settings::getInstance()->getBool("ScrapeRatings"));
 -	s->addWithLabel("SCRAPE RATINGS", scrape_ratings);
 -	s->addSaveFunc([scrape_ratings] { Settings::getInstance()->setBool("ScrapeRatings", scrape_ratings->getState()); });
++	auto sx05re_boot_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "START AT BOOT", false);
++		std::vector<std::string> devices;
++		devices.push_back("Emulationstation");
++		devices.push_back("Kodi");
++		devices.push_back("Retroarch");
++		for (auto it = devices.cbegin(); it != devices.cend(); it++)
++		sx05re_boot_def->add(*it, *it, Settings::getInstance()->getString("Sx05RE_BOOT") == *it);
++		s->addWithLabel("START AT BOOT", sx05re_boot_def);
++		s->addSaveFunc([sx05re_boot_def] {
++			runSystemCommand("echo "+sx05re_boot_def->getSelected()+" > /storage/.config/def_fe");
++			if (Settings::getInstance()->getString("Sx05RE_BOOT") != sx05re_boot_def->getSelected())
++				Settings::getInstance()->setString("Sx05RE_BOOT", sx05re_boot_def->getSelected());
++		});
++		
++	
 +	Window* window = mWindow;
  
 -	// scrape now
@@ -49,37 +61,6 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 -	row.addElement(bracket, false);
 +	if (UIModeController::getInstance()->isUIModeFull())
 +	{
-+		row.makeAcceptInputHandler([window] {
-+			window->pushGui(new GuiMsgBox(window, "REALLY SET KODI AT BOOT?", "YES",
-+				[] { 
-+				runSystemCommand("echo KODI > /storage/.config/def_fe");
-+				}, "NO", nullptr));
-+		});
-+		row.addElement(std::make_shared<TextComponent>(window, "KODI AT BOOT", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
-+		s->addRow(row);
-+
-+    	row.elements.clear();
-+			row.makeAcceptInputHandler([window] {
-+				window->pushGui(new GuiMsgBox(window, "REALLY SET RETROARCH AT BOOT?", "YES",
-+				[] { 
-+				runSystemCommand("echo RA > /storage/.config/def_fe");
-+				}, "NO", nullptr));
-+			});
-+			row.addElement(std::make_shared<TextComponent>(window, "RETROARCH AT BOOT", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
-+			s->addRow(row);
-+		
-+	}
-+	row.elements.clear();
-+	row.makeAcceptInputHandler([window] {
-+		window->pushGui(new GuiMsgBox(window, "REALLY SET EMULATIONSTATION AT BOOT?", "YES",
-+				[] { 
-+				runSystemCommand("echo ES > /storage/.config/def_fe");
-+				}, "NO", nullptr));
-+	});
-+	row.addElement(std::make_shared<TextComponent>(window, "EMULATIONSTATION AT BOOT", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
-+	s->addRow(row);
-+
-+	row.elements.clear();
 +	row.makeAcceptInputHandler([window] {
 +		window->pushGui(new GuiMsgBox(window, "WARNING!! RESET Sx05RE TO DEFAULT CONFIG AND RESTART?", "YES",
 +				[] { 
@@ -90,7 +71,42 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  	s->addRow(row);
  
  	mWindow->pushGui(s);
-@@ -408,55 +425,67 @@
++ }
+ }
+ 
++
++
+ void GuiMenu::openSoundSettings()
+ {
+ 	auto s = new GuiSettings(mWindow, "SOUND SETTINGS");
+@@ -95,13 +99,16 @@
+ 
+ 	if (UIModeController::getInstance()->isUIModeFull())
+ 	{
+-#ifdef _RPI_
++
+ 		// volume control device
+ 		auto vol_dev = std::make_shared< OptionListComponent<std::string> >(mWindow, "AUDIO DEVICE", false);
+ 		std::vector<std::string> transitions;
+ 		transitions.push_back("PCM");
++		transitions.push_back("AMLM8AUDIO");
+ 		transitions.push_back("Speaker");
+ 		transitions.push_back("Master");
++		transitions.push_back("AML-M8AUDIO");
++		transitions.push_back("alsa:hw:0,0");
+ 		for(auto it = transitions.cbegin(); it != transitions.cend(); it++)
+ 			vol_dev->add(*it, *it, Settings::getInstance()->getString("AudioDevice") == *it);
+ 		s->addWithLabel("AUDIO DEVICE", vol_dev);
+@@ -110,7 +117,7 @@
+ 			VolumeControl::getInstance()->deinit();
+ 			VolumeControl::getInstance()->init();
+ 		});
+-#endif
++
+ 
+ 		// disable sounds
+ 		auto sounds_enabled = std::make_shared<SwitchComponent>(mWindow);
+@@ -408,55 +415,67 @@
  	Window* window = mWindow;
  
  	ComponentListRow row;
@@ -173,7 +189,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  	s->addRow(row);
  
  	mWindow->pushGui(s);
-@@ -468,7 +497,7 @@
+@@ -468,7 +487,7 @@
  
  	mVersion.setFont(Font::get(FONT_SIZE_SMALL));
  	mVersion.setColor(0x5E5E5EFF);
@@ -182,40 +198,3 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  	mVersion.setHorizontalAlignment(ALIGN_CENTER);
  	addChild(&mVersion);
  }
---- a/es-app/src/main.cpp	Thu Jun 08 07:58:22 2017
-+++ b/es-app/src/main.cpp	Thu Jun 08 16:57:52 2017
-@@ -267,6 +267,9 @@
- 		window.pushGui(new GuiMsgBox(&window,
- 			errorMsg,
- 			"QUIT", [] {
-+               remove("/var/lock/start.games");
-+				runSystemCommand("touch /var/lock/start.kodi");
-+				runSystemCommand("systemctl start kodi.service");
- 				SDL_Event* quit = new SDL_Event();
- 				quit->type = SDL_QUIT;
- 				SDL_PushEvent(quit);
---- a/es-core/src/platform.cpp	Thu Jun 08 07:58:22 2017
-+++ b/es-core/src/platform.cpp	Thu Jun 08 17:02:03 2017
-@@ -43,20 +43,12 @@
- 
- int runShutdownCommand()
- {
--#ifdef WIN32 // windows
--	return system("shutdown -s -t 0");
--#else // osx / linux
--	return system("sudo shutdown -h now");
--#endif
-+return system("systemctl poweroff");
- }
- 
- int runRestartCommand()
- {
--#ifdef WIN32 // windows
--	return system("shutdown -r -t 0");
--#else // osx / linux
--	return system("sudo shutdown -r now");
--#endif
-+return system("systemctl reboot");
- }
- 
- int runSystemCommand(const std::string& cmd_utf8)

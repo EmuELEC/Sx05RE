@@ -115,12 +115,12 @@ fi
 DEFE=`cat /storage/.config/def_fe`;
 
 case "$DEFE" in
-"KODI")
+"Kodi")
 	rm -rf /var/lock/start.retro
 	rm -rf /var/lock/start.games
 	touch  /var/lock/start.kodi
 	;;
-"RA")
+"Retroarch")
 	rm -rf /var/lock/start.kodi
 	rm -rf /var/lock/start.games
 	touch /var/lock/start.retro
