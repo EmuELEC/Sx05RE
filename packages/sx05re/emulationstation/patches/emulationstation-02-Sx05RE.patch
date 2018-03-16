@@ -1,36 +1,22 @@
 diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 --- a/es-app/src/guis/GuiMenu.cpp	Thu Jun 08 07:58:22 2017
 +++ b/es-app/src/guis/GuiMenu.cpp	Thu Jun 08 16:55:16 2017
-@@ -22,7 +22,7 @@
+@@ -21,6 +21,7 @@
+ {
  	bool isFullUI = UIModeController::getInstance()->isUIModeFull();
  
++		addEntry("Sx05RE", 0x777777FF, true, [this] { openSx05RESettings(); });
  	if (isFullUI)
--		addEntry("SCRAPER", 0x777777FF, true, [this] { openScraperSettings(); });
-+		addEntry("Sx05RE", 0x777777FF, true, [this] { openScraperSettings(); });
+ 		addEntry("SCRAPER", 0x777777FF, true, [this] { openScraperSettings(); });
  
- 	addEntry("SOUND SETTINGS", 0x777777FF, true, [this] { openSoundSettings(); });
+@@ -48,6 +49,43 @@
+ 	setPosition((Renderer::getScreenWidth() - mSize.x()) / 2, Renderer::getScreenHeight() * 0.15f);
+ }
  
-@@ -50,39 +50,43 @@
- 
- void GuiMenu::openScraperSettings()
- {
--	auto s = new GuiSettings(mWindow, "SCRAPER");
++void GuiMenu::openSx05RESettings()
++{
 +	auto s = new GuiSettings(mWindow, "Sx05RE Settings");
- 
--	// scrape from
--	auto scraper_list = std::make_shared< OptionListComponent< std::string > >(mWindow, "SCRAPE FROM", false);
--	std::vector<std::string> scrapers = getScraperList();
--	for(auto it = scrapers.cbegin(); it != scrapers.cend(); it++)
--		scraper_list->add(*it, *it, *it == Settings::getInstance()->getString("Scraper"));
--
--	s->addWithLabel("SCRAPE FROM", scraper_list);
--	s->addSaveFunc([scraper_list] { Settings::getInstance()->setString("Scraper", scraper_list->getSelected()); });
--
--	// scrape ratings
--	auto scrape_ratings = std::make_shared<SwitchComponent>(mWindow);
--	scrape_ratings->setState(Settings::getInstance()->getBool("ScrapeRatings"));
--	s->addWithLabel("SCRAPE RATINGS", scrape_ratings);
--	s->addSaveFunc([scrape_ratings] { Settings::getInstance()->setBool("ScrapeRatings", scrape_ratings->getState()); });
++
 +	auto sx05re_boot_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "START AT BOOT", false);
 +		std::vector<std::string> devices;
 +		devices.push_back("Emulationstation");
@@ -47,65 +33,26 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 +		
 +	
 +	Window* window = mWindow;
- 
--	// scrape now
- 	ComponentListRow row;
--	auto openScrapeNow = [this] { mWindow->pushGui(new GuiScraperStart(mWindow)); };
--	std::function<void()> openAndSave = openScrapeNow;
--	openAndSave = [s, openAndSave] { s->save(); openAndSave(); };
--	row.makeAcceptInputHandler(openAndSave);
--
--	auto scrape_now = std::make_shared<TextComponent>(mWindow, "SCRAPE NOW", Font::get(FONT_SIZE_MEDIUM), 0x777777FF);
--	auto bracket = makeArrow(mWindow);
--	row.addElement(scrape_now, true);
--	row.addElement(bracket, false);
++
++	ComponentListRow row;
 +	if (UIModeController::getInstance()->isUIModeFull())
 +	{
 +	row.makeAcceptInputHandler([window] {
-+		window->pushGui(new GuiMsgBox(window, "WARNING!! RESET Sx05RE TO DEFAULT CONFIG AND RESTART?", "YES",
++		window->pushGui(new GuiMsgBox(window, "!!!!!!WARNING!!!!!!!!!! RESET Sx05RE/KODI TO DEFAULT CONFIG AND RESTART?", "YES",
 +				[] { 
 +				runSystemCommand("/usr/bin/clearconfig.sh");
 +				}, "NO", nullptr));
 +	});
 +	row.addElement(std::make_shared<TextComponent>(window, "RESET DEFAULT CONFIG", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
- 	s->addRow(row);
- 
- 	mWindow->pushGui(s);
++	s->addRow(row);
++
++	mWindow->pushGui(s);
 + }
- }
- 
++}
 +
-+
- void GuiMenu::openSoundSettings()
+ void GuiMenu::openScraperSettings()
  {
- 	auto s = new GuiSettings(mWindow, "SOUND SETTINGS");
-@@ -95,13 +99,16 @@
- 
- 	if (UIModeController::getInstance()->isUIModeFull())
- 	{
--#ifdef _RPI_
-+
- 		// volume control device
- 		auto vol_dev = std::make_shared< OptionListComponent<std::string> >(mWindow, "AUDIO DEVICE", false);
- 		std::vector<std::string> transitions;
- 		transitions.push_back("PCM");
-+		transitions.push_back("AMLM8AUDIO");
- 		transitions.push_back("Speaker");
- 		transitions.push_back("Master");
-+		transitions.push_back("AML-M8AUDIO");
-+		transitions.push_back("alsa:hw:0,0");
- 		for(auto it = transitions.cbegin(); it != transitions.cend(); it++)
- 			vol_dev->add(*it, *it, Settings::getInstance()->getString("AudioDevice") == *it);
- 		s->addWithLabel("AUDIO DEVICE", vol_dev);
-@@ -110,7 +117,7 @@
- 			VolumeControl::getInstance()->deinit();
- 			VolumeControl::getInstance()->init();
- 		});
--#endif
-+
- 
- 		// disable sounds
- 		auto sounds_enabled = std::make_shared<SwitchComponent>(mWindow);
+ 	auto s = new GuiSettings(mWindow, "SCRAPER");
 @@ -408,55 +415,67 @@
  	Window* window = mWindow;
  
@@ -198,3 +145,14 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  	mVersion.setHorizontalAlignment(ALIGN_CENTER);
  	addChild(&mVersion);
  }
+--- a/es-app/src/guis/GuiMenu.h	2018-03-09 12:11:38.000000000 -0600
++++ b/es-app/src/guis/GuiMenu.h	2018-03-16 01:20:44.411257304 -0600
+@@ -26,6 +26,7 @@
+ 	void openScreensaverOptions();
+ 	void openSoundSettings();
+ 	void openUISettings();
++	void openSx05RESettings();
+ 
+ 	MenuComponent mMenu;
+ 	TextComponent mVersion;
+
