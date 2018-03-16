@@ -13,7 +13,7 @@ device_color_yuy2 yes
 device_dpi_pclock_low 31250000
 device_hdmi_pclock_low 0
 device_joystick auto
-device_keyboard raw
+device_keyboard auto
 device_mouse auto
 device_raw_firstkeyhack no
 device_raw_mousedev[0] auto
@@ -24,9 +24,9 @@ device_raw_mousetype[0] pnp
 device_raw_mousetype[1] pnp
 device_raw_mousetype[2] pnp
 device_raw_mousetype[3] pnp
-device_sound alsa
-device_video fb
-device_video_cursor off
+device_sound auto
+device_video auto
+device_video_cursor auto
 device_video_doublescan yes
 device_video_fastchange no
 device_video_interlace yes
@@ -63,23 +63,25 @@ display_frameskip auto
 display_gamma 1
 display_intensity 1.5
 display_interlaceeffect none
-display_magnify 1
+display_magnify auto
 display_magnifysize 640
 display_mode auto
 display_pausebrightness 1
 display_resize fractional
-display_resizeeffect none
+display_resizeeffect auto
 display_restore yes
+#display_rgbeffect none
 display_rol no
 display_ror no
 display_scanlines no
 display_skipcolumns auto
 display_skiplines auto
 display_translucency yes
+#display_vsync yes
 include 
 input_hotkey yes
 input_idleexit 0
-input_map[coin1] auto
+input_map[coin1] keyboard[0e8f_2519,5] or joystick_button[046d_c21d,6]
 input_map[event10] auto
 input_map[event11] auto
 input_map[event12] auto
@@ -371,9 +373,9 @@ input_map[service_coin5] auto
 input_map[service_coin6] auto
 input_map[service_coin7] auto
 input_map[service_coin8] auto
-input_map[start1] auto
-input_map[ui_cancel] auto
-input_map[ui_configure] auto
+input_map[start1] joystick_button[046d_c21d,7] or keyboard[0e8f_2519,1]
+input_map[ui_cancel] joystick_button[046d_c21d,10] or keyboard[0e8f_2519,esc]
+input_map[ui_configure] joystick_button[046d_c21d,8] or keyboard[0e8f_2519,tab]
 input_map[ui_toggle_ui] auto
 input_steadykey no
 lcd_server none
@@ -434,10 +436,10 @@ sound_adjust auto
 sound_equalizer_highvolume 0
 sound_equalizer_lowvolume 0
 sound_equalizer_midvolume 0
-sound_latency 0.02
+sound_latency 0.05
 sound_mode auto
 sound_normalize no
-sound_samplerate 22050
+sound_samplerate 44100
 sound_samples yes
 sound_volume -3
 sync_fps auto
