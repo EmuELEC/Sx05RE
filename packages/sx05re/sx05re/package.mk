@@ -49,6 +49,7 @@ makeinstall_target() {
  
   mkdir -p $INSTALL/usr/bin/
     cp $PKG_DIR/bin/* $INSTALL/usr/bin/
+    chmod +x $INSTALL/usr/bin/*
 
   mkdir -p $INSTALL/usr/share/kodi/addons/
     cp -rf $PKG_DIR/addon/* $INSTALL/usr/share/kodi/addons/
