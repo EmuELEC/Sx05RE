@@ -1,13 +1,11 @@
 #!/bin/sh
 
 BIOS_DIR="/storage/roms/bios"
-ROMS_DIR="/storage/roms/"
+ROMS_DIR="/storage/roms"
 CONFIG_DIR="/storage/.emulationstation"
 CONFIG_DIR2="/storage/.config/emulationstation"
 
 # initial ES setup
- 
-
 if [ ! -f "$BIOS_DIR/putbioshere" ]; then
     mkdir -p $BIOS_DIR
     touch $BIOS_DIR/putbioshere
@@ -24,9 +22,9 @@ if [ ! -d "$CONFIG_DIR" ]; then
  cp -urf /usr/config/emulationstation/themes/* $CONFIG_DIR/themes
 fi
 
-if [ -d "$CONFIG_DIR2" ]; then
-rm -rf $CONFIG_DIR2
+if [ ! -f "$CONFIG_DIR2/done" ]; then
+rm -rf $CONFIG_DIR2/*
+touch $CONFIG_DIR2/done
 fi 
-
 
 exit 0

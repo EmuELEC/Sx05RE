@@ -52,7 +52,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 +		row.makeAcceptInputHandler([window] {
 +			window->pushGui(new GuiMsgBox(window, "REALLY SET KODI AT BOOT?", "YES",
 +				[] { 
-+				runSystemCommand("echo KODI > /storage/.config/def_ef");
++				runSystemCommand("echo KODI > /storage/.config/def_fe");
 +				}, "NO", nullptr));
 +		});
 +		row.addElement(std::make_shared<TextComponent>(window, "KODI AT BOOT", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
@@ -62,7 +62,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 +			row.makeAcceptInputHandler([window] {
 +				window->pushGui(new GuiMsgBox(window, "REALLY SET RETROARCH AT BOOT?", "YES",
 +				[] { 
-+				runSystemCommand("echo RA > /storage/.config/def_ef");
++				runSystemCommand("echo RA > /storage/.config/def_fe");
 +				}, "NO", nullptr));
 +			});
 +			row.addElement(std::make_shared<TextComponent>(window, "RETROARCH AT BOOT", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
@@ -73,7 +73,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 +	row.makeAcceptInputHandler([window] {
 +		window->pushGui(new GuiMsgBox(window, "REALLY SET EMULATIONSTATION AT BOOT?", "YES",
 +				[] { 
-+				runSystemCommand("echo ES > /storage/.config/def_ef");
++				runSystemCommand("echo ES > /storage/.config/def_fe");
 +				}, "NO", nullptr));
 +	});
 +	row.addElement(std::make_shared<TextComponent>(window, "EMULATIONSTATION AT BOOT", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);

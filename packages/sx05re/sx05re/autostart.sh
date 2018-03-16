@@ -86,7 +86,6 @@ if [[ -z "${FULLPATHTOROMS}" ]]; then
       rm /storage/roms
       mv /storage/roms2 /storage/roms
  fi
-
     else
       mv /storage/roms /storage/roms2
       #echo "move the roms folder"
@@ -96,14 +95,13 @@ if [[ -z "${FULLPATHTOROMS}" ]]; then
 
        #we create the symlink to the roms in our USB
        ln -sf $PATHTOROMS /storage/roms
-
  fi
 
 #set reicast BIOS dir to point to /storage/roms/bios
 if [ ! -L /storage/.local/share/reicast/data ]; then
-mkdir -p /storage/.local/share/reicast 
-rm -rf /storage/.local/share/reicast/data
-ln -s /storage/roms/bios /storage/.local/share/reicast/data
+	mkdir -p /storage/.local/share/reicast 
+	rm -rf /storage/.local/share/reicast/data
+	ln -s /storage/roms/bios /storage/.local/share/reicast/data
 fi
 
 #hacky way to get samba on boot
@@ -111,17 +109,20 @@ fi
 systemctl start smbd
 
 if [ ! -f /storage/.config/def_fe ]; then
-   echo ES > /storage/.config/def_ef
+   echo ES > /storage/.config/def_fe
 fi
 
 DEFE=`cat /storage/.config/def_fe`;
 
 case "$DEFE" in
 "KODI")
+	rm -rf /var/lock/start.retro
+	rm -rf /var/lock/start.games
 	touch  /var/lock/start.kodi
 	;;
 "RA")
 	rm -rf /var/lock/start.kodi
+	rm -rf /var/lock/start.games
 	touch /var/lock/start.retro
 	systemctl start retroarch
 	;;
