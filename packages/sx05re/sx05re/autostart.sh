@@ -76,10 +76,8 @@ fi
 #name of the file we need to put in the roms folder in your USB or SDCARD 
 ROMFILE="sx05reroms"
 
-
 # we look for the file in the rompath
 FULLPATHTOROMS="$(find /media/*/roms/ -name $ROMFILE -maxdepth 1)"
-
 
 if [[ -z "${FULLPATHTOROMS}" ]]; then
 # echo "can't find roms"
@@ -108,14 +106,28 @@ rm -rf /storage/.local/share/reicast/data
 ln -s /storage/roms/bios /storage/.local/share/reicast/data
 fi
 
-
 #hacky way to get samba on boot
 /usr/lib/samba/samba-config
 systemctl start smbd
 
-#make sure the requirement to run kodi is met.
-touch  /var/lock/start.kodi
+if [ ! -f /storage/.config/def_fe ]; then
+   echo ES > /storage/.config/def_ef
+fi
 
- #if you don't want the emulator front end to start first, comment the next 3 lines
- rm -rf /var/lock/start.kodi
- /usr/bin/startfe.sh &
+DEFE=`cat /storage/.config/def_fe`;
+
+case "$DEFE" in
+"KODI")
+	touch  /var/lock/start.kodi
+	;;
+"RA")
+	rm -rf /var/lock/start.kodi
+	touch /var/lock/start.retro
+	systemctl start retroarch
+	;;
+*)
+	rm -rf /var/lock/start.kodi
+	rm -rf /var/lock/start.retro
+	/usr/bin/startfe.sh &
+	;;
+esac
