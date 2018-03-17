@@ -139,7 +139,7 @@ index fc252bd86d..e7547dbf50 100755
 +          </constraints>
 +          <control type="list" format="string" />
 +        </setting>
-+        <setting id="videoscreen.noisereduction" type="boolean" label="13136" help="36471">
++        <setting id="videoscreen.noisereduction" type="boolean" label="13135" help="36470">
 +          <level>1</level>
 +          <default>false</default>
 +          <control type="toggle" />
