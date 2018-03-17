@@ -9,15 +9,47 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  	if (isFullUI)
  		addEntry("SCRAPER", 0x777777FF, true, [this] { openScraperSettings(); });
  
-@@ -48,6 +49,43 @@
+@@ -48,6 +49,73 @@
  	setPosition((Renderer::getScreenWidth() - mSize.x()) / 2, Renderer::getScreenHeight() * 0.15f);
  }
  
 +void GuiMenu::openSx05RESettings()
 +{
 +	auto s = new GuiSettings(mWindow, "Sx05RE Settings");
++	
++	Window* window = mWindow;
++	ComponentListRow row;
 +
-+	auto sx05re_boot_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "START AT BOOT", false);
++			row.makeAcceptInputHandler([window] {
++				window->pushGui(new GuiMsgBox(window, "QUIT TO KODI? ", "YES",
++					[] {
++					remove("/var/lock/start.games");
++            		runSystemCommand("touch /var/lock/start.kodi");
++			        runSystemCommand("systemctl start kodi.service");
++					SDL_Event ev;
++					ev.type = SDL_QUIT;
++					SDL_PushEvent(&ev);
++				}, "NO", nullptr));
++			});
++			row.addElement(std::make_shared<TextComponent>(window, "START KODI", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
++			s->addRow(row);
++
++			row.elements.clear();
++			row.makeAcceptInputHandler([window] {
++				window->pushGui(new GuiMsgBox(window, "QUIT TO RETROARCH? ", "YES",
++					[] {
++					remove("/var/lock/start.games");
++            		runSystemCommand("touch /var/lock/start.retro");
++			        runSystemCommand("systemctl start retroarch.service");
++					SDL_Event ev;
++					ev.type = SDL_QUIT;
++					SDL_PushEvent(&ev);
++				}, "NO", nullptr));
++			});
++			row.addElement(std::make_shared<TextComponent>(window, "START RETROARCH", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
++			s->addRow(row);
++			
++auto sx05re_boot_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "START AT BOOT", false);
 +		std::vector<std::string> devices;
 +		devices.push_back("Emulationstation");
 +		devices.push_back("Kodi");
@@ -30,11 +62,9 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 +			if (Settings::getInstance()->getString("Sx05RE_BOOT") != sx05re_boot_def->getSelected())
 +				Settings::getInstance()->setString("Sx05RE_BOOT", sx05re_boot_def->getSelected());
 +		});
-+		
-+	
-+	Window* window = mWindow;
++					
 +
-+	ComponentListRow row;
++	row.elements.clear();
 +	if (UIModeController::getInstance()->isUIModeFull())
 +	{
 +	row.makeAcceptInputHandler([window] {
@@ -53,7 +83,32 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  void GuiMenu::openScraperSettings()
  {
  	auto s = new GuiSettings(mWindow, "SCRAPER");
-@@ -408,55 +415,67 @@
+@@ -95,13 +163,15 @@
+ 
+ 	if (UIModeController::getInstance()->isUIModeFull())
+ 	{
+-#ifdef _RPI_
++
+ 		// volume control device
+ 		auto vol_dev = std::make_shared< OptionListComponent<std::string> >(mWindow, "AUDIO DEVICE", false);
+ 		std::vector<std::string> transitions;
+ 		transitions.push_back("PCM");
+ 		transitions.push_back("Speaker");
+ 		transitions.push_back("Master");
++		transitions.push_back("AMLM8AUDIO");
++		transitions.push_back("AML-M8AUDIO");
+ 		for(auto it = transitions.cbegin(); it != transitions.cend(); it++)
+ 			vol_dev->add(*it, *it, Settings::getInstance()->getString("AudioDevice") == *it);
+ 		s->addWithLabel("AUDIO DEVICE", vol_dev);
+@@ -110,7 +180,6 @@
+ 			VolumeControl::getInstance()->deinit();
+ 			VolumeControl::getInstance()->init();
+ 		});
+-#endif
+ 
+ 		// disable sounds
+ 		auto sounds_enabled = std::make_shared<SwitchComponent>(mWindow);
+@@ -408,55 +477,36 @@
  	Window* window = mWindow;
  
  	ComponentListRow row;
@@ -71,44 +126,23 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  		row.addElement(std::make_shared<TextComponent>(window, "RESTART EMULATIONSTATION", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
  		s->addRow(row);
  
-+			row.elements.clear();
-+			row.makeAcceptInputHandler([window] {
-+				window->pushGui(new GuiMsgBox(window, "QUIT TO KODI? ", "YES",
-+					[] {
-+					remove("/var/lock/start.games");
-+            		runSystemCommand("touch /var/lock/start.kodi");
-+			        runSystemCommand("systemctl start kodi.service");
-+					SDL_Event ev;
-+					ev.type = SDL_QUIT;
-+					SDL_PushEvent(&ev);
-+				}, "NO", nullptr));
-+			});
-+			row.addElement(std::make_shared<TextComponent>(window, "KODI", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
-+			s->addRow(row);
- 
+-
 -
 -		if(Settings::getInstance()->getBool("ShowExit"))
 -		{
- 			row.elements.clear();
- 			row.makeAcceptInputHandler([window] {
+-			row.elements.clear();
+-			row.makeAcceptInputHandler([window] {
 -				window->pushGui(new GuiMsgBox(window, "REALLY QUIT?", "YES",
-+				window->pushGui(new GuiMsgBox(window, "QUIT TO RETROARCH? ", "YES",
- 					[] {
-+					remove("/var/lock/start.games");
-+            		runSystemCommand("touch /var/lock/start.retro");
-+			        runSystemCommand("systemctl start retroarch.service");
- 					SDL_Event ev;
- 					ev.type = SDL_QUIT;
- 					SDL_PushEvent(&ev);
- 				}, "NO", nullptr));
- 			});
+-					[] {
+-					SDL_Event ev;
+-					ev.type = SDL_QUIT;
+-					SDL_PushEvent(&ev);
+-				}, "NO", nullptr));
+-			});
 -			row.addElement(std::make_shared<TextComponent>(window, "QUIT EMULATIONSTATION", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
-+			row.addElement(std::make_shared<TextComponent>(window, "RETROARCH", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
- 			s->addRow(row);
+-			s->addRow(row);
 -		}
 -	}
-+
-+	
  	row.elements.clear();
  	row.makeAcceptInputHandler([window] {
  		window->pushGui(new GuiMsgBox(window, "REALLY RESTART?", "YES",
@@ -136,7 +170,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  	s->addRow(row);
  
  	mWindow->pushGui(s);
-@@ -468,7 +487,7 @@
+@@ -468,7 +518,7 @@
  
  	mVersion.setFont(Font::get(FONT_SIZE_SMALL));
  	mVersion.setColor(0x5E5E5EFF);
@@ -155,4 +189,18 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  
  	MenuComponent mMenu;
  	TextComponent mVersion;
+--- a/es-app/src/VolumeControl.cpp	2018-03-09 12:11:38.000000000 -0600
++++ b/es-app/src/VolumeControl.cpp	2018-03-16 17:43:59.431463781 -0600
+@@ -86,9 +86,9 @@
+ 	//try to open mixer device
+ 	if (mixerHandle == nullptr)
+ 	{
+-		#ifdef _RPI_
++	//	
+ 		mixerName = Settings::getInstance()->getString("AudioDevice").c_str();
+-		#endif
++	//	
+ 
+ 		snd_mixer_selem_id_alloca(&mixerSelemId);
+ 		//sets simple-mixer index and name
 
