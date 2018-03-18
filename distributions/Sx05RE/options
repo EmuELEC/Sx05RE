@@ -199,8 +199,8 @@
 
 LAKKA_MIRROR="http://sources.lakka.tv"
 
-LIBRETRO_CORES="atari800 beetle-bsnes beetle-lynx beetle-pce beetle-pcfx beetle-psx beetle-saturn beetle-supergrafx beetle-vb bluemsx cap32 chailove fbalpha fceumm freeintv fuse-libretro gambatte genesis-plus-gx gearboy gme gpsp handy mame2003 mame2003-midway meowpc98 mgba mupen64plus nestopia parallel-n64 pcsx_rearmed picodrive ppsspp prosystem puae px68k scummvm snes9x snes9x2002 snes9x2005 snes9x2005_plus stella tgbdual vbam vecx vice"
-LIBRETRO_EXTRA_CORES="2048 4do 81  beetle-ngp beetle-wswan bsnes bsnes-mercury cap32 citra crocods desmume dinothawr dolphin dosbox easyrpg gw-libretro hatari lutro melonds mrboom o2em openlara nxengine puae prboom pocketcdg redream reicast tyrquake uae4arm uzem virtualjaguar xrick yabause uzebox sameboy snes9x2010"
+LIBRETRO_CORES="atari800 beetle-bsnes beetle-lynx beetle-pce beetle-pcfx beetle-psx beetle-saturn beetle-supergrafx beetle-vb bluemsx cap32 chailove fbalpha fceumm freeintv fuse-libretro gambatte genesis-plus-gx gearboy gme gpsp handy mame2003 mame2003-midway meowpc98 mgba mupen64plus nestopia parallel-n64 pcsx_rearmed picodrive ppsspp prosystem puae px68k scummvm snes9x snes9x2002 snes9x2005 snes9x2005_plus snes9x2010 stella tgbdual vbam vecx vice"
+LIBRETRO_EXTRA_CORES="2048 4do 81  beetle-ngp beetle-wswan bsnes bsnes-mercury cap32 citra crocods desmume dinothawr dolphin dosbox easyrpg gw-libretro hatari lutro melonds mrboom o2em openlara nxengine puae prboom pocketcdg redream reicast tyrquake uae4arm uzem virtualjaguar xrick yabause uzebox sameboy"
 
 RA_PLAYLIST_NAMES=""\
 "Atari - 2600.lpl;"\
