@@ -14,7 +14,7 @@ case $1 in
         fi
         ;;
 "PSP")
-        if [ "$EMU" = "PPSSPP" ]; then
+        if [ "$EMU" = "PPSSPPSA" ]; then
         /usr/bin/ppsspp.sh "$2"
                 else
         /usr/bin/retroarch -L /tmp/cores/${EMU}_libretro.so "$2"
