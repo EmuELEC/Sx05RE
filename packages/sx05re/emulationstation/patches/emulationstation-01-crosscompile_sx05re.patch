@@ -1,0 +1,44 @@
+diff U3 a/EmulationStation-master/CMakeLists.txt b/test/EmulationStation-master/CMakeLists.txt
+--- a/CMakeLists.txt	Thu Jun 08 07:58:22 2017
++++ b/CMakeLists.txt	Thu Jun 08 17:25:50 2017
+@@ -26,7 +26,7 @@
+     set(GLSystem "OpenGL ES" CACHE STRING "The OpenGL system to be used")
+ #-------------------------------------------------------------------------------
+ #check if we're running on olinuxino / odroid / etc
+-elseif(EXISTS "/usr/lib/libMali.so" OR
++elseif(EXISTS "${CMAKE_FIND_ROOT_PATH}/usr/lib/libMali.so" OR
+     EXISTS "/usr/lib/arm-linux-gnueabihf/libMali.so" OR
+     EXISTS "/usr/lib/aarch64-linux-gnu/libMali.so" OR
+     EXISTS "/usr/lib/arm-linux-gnueabihf/mali-egl/libmali.so" OR
+@@ -51,7 +51,7 @@
+ find_package(SDL2 REQUIRED)
+ find_package(CURL REQUIRED)
+ find_package(VLC REQUIRED)
+-find_package(libCEC)
++#find_package(libCEC)
+ 
+ #add ALSA for Linux
+ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+@@ -64,9 +64,9 @@
+     add_definitions(-D_RPI_)
+ endif()
+ 
+-if(DEFINED libCEC_FOUND)
+-    add_definitions(-DHAVE_LIBCEC)
+-endif()
++#if(DEFINED libCEC_FOUND)
++#    add_definitions(-DHAVE_LIBCEC)
++#endif()
+ 
+ #-------------------------------------------------------------------------------
+ 
+@@ -91,8 +91,8 @@
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-attributes -O0") #support C++11 for std::, optimize
+     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -O0")
+ else()
+-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-attributes -O2") #support C++11 for std::, optimize
+-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -O2")  #-s = strip binary
++    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-attributes -O2 -lm") #support C++11 for std::, optimize
++    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -O2 -lm")  #-s = strip binary
+ endif()
+ endif()

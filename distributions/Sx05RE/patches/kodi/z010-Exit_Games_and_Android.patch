@@ -1,0 +1,86 @@
+diff -Naurp kodi-17.0-beta7-b9fe8e9/addons/resource.language.en_gb/resources/strings.po kodi-17.0-beta7-b9fe8e9-patch/addons/resource.language.en_gb/resources/strings.po
+--- kodi-17.0-beta7-b9fe8e9/addons/resource.language.en_gb/resources/strings.po	2016-12-05 20:49:44.000000000 +0200
++++ kodi-17.0-beta7-b9fe8e9-patch/addons/resource.language.en_gb/resources/strings.po	2016-12-06 09:48:10.000000000 +0200
+@@ -5596,7 +5596,7 @@ msgstr ""
+ #: system/settings/settings.xml
+ #: addons/skin.estuary/1080i/DialogButtonMenu.xml
+ msgctxt "#13010"
+-msgid "Hibernate"
++msgid "Boot From Nand"
+ msgstr ""
+ 
+ #: system/settings/settings.xml
+@@ -5609,7 +5609,7 @@ msgstr ""
+ #: addons/skin.estuary/1080i/DialogButtonMenu.xml
+ #: addons/skin.estouchy/xml/Home.xml
+ msgctxt "#13012"
+-msgid "Exit"
++msgid "Emulationstation"
+ msgstr ""
+ 
+ #: addons/skin.estuary/1080i/DialogButtonMenu.xml
+diff -Naurp kodi-17.0-beta7-b9fe8e9/xbmc/Application.cpp kodi-17.0-beta7-b9fe8e9-patch/xbmc/Application.cpp
+--- kodi-17.0-beta7-b9fe8e9/xbmc/Application.cpp	2016-12-05 20:49:44.000000000 +0200
++++ kodi-17.0-beta7-b9fe8e9-patch/xbmc/Application.cpp	2016-12-06 08:47:08.000000000 +0200
+@@ -224,6 +224,9 @@
+ #include "pictures/GUIWindowSlideShow.h"
+ #include "windows/GUIWindowLoginScreen.h"
+ 
++#include <fstream>
++#include <fcntl.h>
++
+ using namespace ADDON;
+ using namespace XFILE;
+ #ifdef HAS_DVD_DRIVE
+@@ -2431,7 +2434,8 @@ void CApplication::OnApplicationMessage(
+     break;
+ 
+   case TMSG_QUIT:
+-    SetExitCode(EXITCODE_QUIT);
++    SetExitCode(EXITCODE_GAMES);
++    Stop(EXITCODE_GAMES);
+     break;
+   
+   case TMSG_SHUTDOWN:
+@@ -2443,7 +2447,8 @@ void CApplication::OnApplicationMessage(
+     break;
+ 
+   case TMSG_HIBERNATE:
+-    g_powerManager.Hibernate();
++    SetExitCode(EXITCODE_SWITCH);
++    Stop(EXITCODE_SWITCH);
+     break;
+ 
+   case TMSG_SUSPEND:
+@@ -3007,6 +3012,18 @@ void CApplication::Stop(int exitCode)
+ 
+   cleanup_emu_environ();
+ 
++  // start Games & switch to Android
++  if (m_ExitCode == EXITCODE_SWITCH)
++  {
++    system("/usr/sbin/nand-reboot");
++  }
++  else if (m_ExitCode == EXITCODE_GAMES)
++  {
++    
++    creat("/var/lock/start.games", S_IRUSR|S_IROTH);
++    system("systemctl start emustation.service"); system("systemctl stop kodi");
++  }
++
+   Sleep(200);
+ }
+ 
+diff -Naurp kodi-17.0-beta7-b9fe8e9/xbmc/GUIInfoManager.cpp kodi-17.0-beta7-b9fe8e9-patch/xbmc/GUIInfoManager.cpp
+--- kodi-17.0-beta7-b9fe8e9/xbmc/GUIInfoManager.cpp	2016-12-05 20:49:44.000000000 +0200
++++ kodi-17.0-beta7-b9fe8e9-patch/xbmc/GUIInfoManager.cpp	2016-12-06 08:43:41.000000000 +0200
+@@ -7026,7 +7026,7 @@ bool CGUIInfoManager::GetBool(int condit
+   else if (condition == SYSTEM_LOGGEDON)
+     bReturn = !(g_windowManager.GetActiveWindow() == WINDOW_LOGIN_SCREEN);
+   else if (condition == SYSTEM_SHOW_EXIT_BUTTON)
+-    bReturn = g_advancedSettings.m_showExitButton;
++    bReturn = true;
+   else if (condition == SYSTEM_HAS_LOGINSCREEN)
+     bReturn = CProfilesManager::GetInstance().UsingLoginScreen();
+   else if (condition == SYSTEM_HAS_MODAL_DIALOG)
+

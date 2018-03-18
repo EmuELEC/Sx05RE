@@ -1,0 +1,18 @@
+[Unit]
+Description=RetroArch emulator frontend
+ConditionPathExists=/var/lock/start.retro
+
+[Service]
+Environment=DISPLAY=:0.0
+Environment=SDL_MOUSE_RELATIVE=0
+Environment=FB_MULTI_BUFFER=2
+Environment=HOME=/storage
+ExecStart=/usr/bin/retroarch
+KillMode=process
+TimeoutStopSec=3
+Restart=on-failure
+RestartSec=2
+StartLimitInterval=0
+
+[Install]
+WantedBy=kodi.target

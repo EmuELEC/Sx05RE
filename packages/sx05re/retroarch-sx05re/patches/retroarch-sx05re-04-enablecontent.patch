@@ -1,0 +1,52 @@
+--- a/menu/menu_displaylist.c	2017-08-18 06:30:31.000000000 -0500
++++ b/menu/menu_displaylist.c	2017-08-20 01:54:59.625855817 -0500
+@@ -3200,11 +3200,11 @@
+       menu_displaylist_info_t *info)
+ {
+ #ifdef HAVE_LAKKA
+-   menu_entries_append_enum(info->list,
++  /* menu_entries_append_enum(info->list,
+          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_UPDATE_LAKKA),
+          msg_hash_to_str(MENU_ENUM_LABEL_UPDATE_LAKKA),
+          MENU_ENUM_LABEL_UPDATE_LAKKA,
+-         MENU_SETTING_ACTION, 0, 0);
++         MENU_SETTING_ACTION, 0, 0); */
+    menu_entries_append_enum(info->list,
+          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_THUMBNAILS_UPDATER_LIST),
+          msg_hash_to_str(MENU_ENUM_LABEL_THUMBNAILS_UPDATER_LIST),
+@@ -5123,13 +5123,13 @@
+                PARSE_ONLY_BOOL, false);
+ 
+ #if defined(HAVE_LAKKA)
+-         menu_displaylist_parse_settings_enum(menu, info,
++ /*        menu_displaylist_parse_settings_enum(menu, info,
+                MENU_ENUM_LABEL_MENU_SHOW_QUIT_RETROARCH,
+                PARSE_ONLY_BOOL, false);
+ 
+          menu_displaylist_parse_settings_enum(menu, info,
+                MENU_ENUM_LABEL_MENU_SHOW_REBOOT,
+-               PARSE_ONLY_BOOL, false);
++               PARSE_ONLY_BOOL, false);*/
+ #endif
+ 
+          menu_displaylist_parse_settings_enum(menu, info,
+--- a/menu/menu_setting.c	2017-03-12 17:52:42.000000000 -0600
++++ b/menu/menu_setting.c	2017-03-13 19:05:16.526319525 -0600
+@@ -2459,7 +2459,7 @@
+ #endif
+ 
+ #if defined(HAVE_LAKKA)
+-         CONFIG_ACTION(
++    /*     CONFIG_ACTION(
+                list, list_info,
+                MENU_ENUM_LABEL_REBOOT,
+                MENU_ENUM_LABEL_VALUE_REBOOT,
+@@ -2475,7 +2475,7 @@
+                &group_info,
+                &subgroup_info,
+                parent_group);
+-         menu_settings_list_current_add_cmd(list, list_info, CMD_EVENT_SHUTDOWN);
++         menu_settings_list_current_add_cmd(list, list_info, CMD_EVENT_SHUTDOWN);*/
+ #endif
+ 
+          CONFIG_ACTION(

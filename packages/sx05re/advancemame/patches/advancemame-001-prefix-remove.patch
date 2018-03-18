@@ -1,0 +1,74 @@
+--- a/configure.ac	2018-02-28 22:04:34.268047528 -0600
++++ b/configure.ac	2018-02-28 22:07:53.263130920 -0600
+@@ -782,7 +782,7 @@
+ if test $ac_lib_freetype = auto; then
+ 	AC_PATH_PROGS(
+ 		[ac_lib_freetype_config],
+-		[${ac_tool_prefix}freetype-config],
++		[freetype-config],
+ 		[],
+ 		[${ac_lib_freetype_path}]
+ 	)
+@@ -817,12 +817,12 @@
+ elif test $ac_lib_freetype = yes; then
+ 	AC_PATH_PROGS(
+ 		[ac_lib_freetype_config],
+-		[${ac_tool_prefix}freetype-config],
++		[freetype-config],
+ 		[],
+ 		[${ac_lib_freetype_path}]
+ 	)
+ 	if test -z $ac_lib_freetype_config ; then
+-		AC_MSG_ERROR([the ${ac_tool_prefix}freetype-config tool is missing])
++		AC_MSG_ERROR([the freetype-config tool is missing])
+ 	else
+ 		ac_save_CFLAGS="$CFLAGS"
+ 		ac_save_LIBS="$LIBS"
+@@ -893,7 +893,7 @@
+ 	else
+ 		AC_PATH_PROGS(
+ 			[ac_lib_sdl2_config],
+-			[${ac_tool_prefix}sdl2-config],
++			[sdl2-config],
+ 			[],
+ 			[${ac_lib_sdl2_path}]
+ 		)
+@@ -925,12 +925,12 @@
+ elif test $ac_lib_sdl2 = yes; then
+ 	AC_PATH_PROGS(
+ 		[ac_lib_sdl2_config],
+-		[${ac_tool_prefix}sdl2-config],
++		[sdl2-config],
+ 		[],
+ 		[${ac_lib_sdl2_path}]
+ 	)
+ 	if test -z $ac_lib_sdl2_config ; then
+-		AC_MSG_ERROR([the ${ac_tool_prefix}sdl2-config tool is missing])
++		AC_MSG_ERROR([the sdl2-config tool is missing])
+ 	else
+ 		ac_save_CFLAGS="$CFLAGS"
+ 		ac_save_LIBS="$LIBS"
+@@ -997,7 +997,7 @@
+ 		else
+ 			AC_PATH_PROGS(
+ 				[ac_lib_sdl_config],
+-				[${ac_tool_prefix}sdl-config],
++				[sdl-config],
+ 				[],
+ 				[${ac_lib_sdl_path}]
+ 			)
+@@ -1033,12 +1033,12 @@
+ 	fi
+ 	AC_PATH_PROGS(
+ 		[ac_lib_sdl_config],
+-		[${ac_tool_prefix}sdl-config],
++		[sdl-config],
+ 		[],
+ 		[${ac_lib_sdl_path}]
+ 	)
+ 	if test -z $ac_lib_sdl_config ; then
+-		AC_MSG_ERROR([the ${ac_tool_prefix}sdl-config tool is missing])
++		AC_MSG_ERROR([the sdl-config tool is missing])
+ 	else
+ 		ac_save_CFLAGS="$CFLAGS"
+ 		ac_save_LIBS="$LIBS"

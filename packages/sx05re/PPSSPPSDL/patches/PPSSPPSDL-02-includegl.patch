@@ -1,0 +1,95 @@
+--- a/CMakeLists.txt	2018-02-26 00:08:30.150219106 +0800
++++ b/CMakeLists.txt	2018-02-26 00:09:16.474069170 +0800
+@@ -96,6 +96,7 @@
+ # :: Processors
+ option(ARMV7 "Set to ON if targeting an ARMv7 processor" ${ARMV7})
+ option(ARM "Set to ON if targeting an ARM processor" ${ARM})
++option(ARM64 "Set to ON if targeting an ARM64 processor" ${ARM64})
+ option(MIPS "Set to ON if targeting a MIPS processor" ${MIPS})
+ option(X86 "Set to ON if targeting an X86 processor" ${X86})
+ option(X86_64 "Set to ON if targeting an X86_64 processor" ${X86_64})
+@@ -117,6 +118,10 @@
+ option(USE_WAYLAND_WSI "Set to ON to require Wayland support for Vulkan" ${USE_WAYLAND_WSI})
+ option(USE_ADDRESS_SANITIZER "Use Clang memory sanitizer" ${USE_ADDRESS_SANITIZER})
+ 
++if(ARM64 OR ARMV7 OR ARM)
++	set(VULKAN OFF)
++endif()
++
+ if(UNIX AND NOT (APPLE OR ANDROID) AND VULKAN)
+ 	add_definitions(-DVK_USE_PLATFORM_XLIB_KHR)
+ 	# add_definitions(-DVK_USE_PLATFORM_XCB_K
+--- a/SDL/SDLGLGraphicsContext.cpp	2018-02-26 18:52:34.215272977 -0600
++++ b/SDL/SDLGLGraphicsContext.cpp	2018-02-26 18:53:52.062362524 -0600
+@@ -6,61 +6,36 @@
+ #include "gfx_es2/gpu_features.h"
+ #include "thin3d/thin3d_create.h"
+ 
++#if defined(USING_EGL)
++#include "EGL/egl.h"
++ int8_t EGL_Init(); 
++ static EGLDisplay g_eglDisplay = NULL; 
++ static EGLSurface g_eglSurface = NULL; 
++ int8_t EGL_Close();
++#endif
++
+ class GLRenderManager;
+ 
+ // Returns 0 on success.
+ int SDLGLGraphicsContext::Init(SDL_Window *&window, int x, int y, int mode, std::string *error_message) {
+-	struct GLVersionPair {
+-		int major;
+-		int minor;
+-	};
+-	GLVersionPair attemptVersions[] = {
+-#ifdef USING_GLES2
+-		{3, 2}, {3, 1}, {3, 0}, {2, 0},
+-#else
+-		{4, 6}, {4, 5}, {4, 4}, {4, 3}, {4, 2}, {4, 1}, {4, 0},
+-		{3, 3}, {3, 2}, {3, 1}, {3, 0},
+-#endif
+-	};
+-
+-#ifdef USING_GLES2
++	
+ 	mode |= SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN;
+-#else
+-	mode |= SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
+-#endif
+ 	SDL_GLContext glContext = nullptr;
+-	for (size_t i = 0; i < ARRAY_SIZE(attemptVersions); ++i) {
+-		const auto &ver = attemptVersions[i];
+-		// Make sure to request a somewhat modern GL context at least - the
+-		// latest supported by MacOS X (really, really sad...)
+-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, ver.major);
+-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, ver.minor);
+-#ifdef USING_GLES2
++
+ 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+ 		SetGLCoreContext(false);
+-#else
+-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+-		SetGLCoreContext(true);
+-#endif
+ 
+ 		window = SDL_CreateWindow("PPSSPP", x,y, pixel_xres, pixel_yres, mode);
+ 		if (!window) {
+ 			NativeShutdown();
+ 			fprintf(stderr, "SDL_CreateWindow failed: %s\n", SDL_GetError());
+-			continue;
+ 		}
+ 
+ 		glContext = SDL_GL_CreateContext(window);
+ 		if (glContext != nullptr) {
+ 			// Victory, got one.
+-			break;
+ 		}
+ 
+-		// Let's keep trying.  To be safe, destroy the window - docs say needed to change profile.
+-		// in practice, it doesn't seem to matter, but maybe it differs by platform.
+-		SDL_DestroyWindow(window);
+-	}
+-
+ 	if (glContext == nullptr) {
+ 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, 0);
+ 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 0);

@@ -1,0 +1,74 @@
+--- ./command.c	2017-07-26 23:59:01.195225618 -0500
++++ ./command.c	2017-08-14 01:58:07.722644341 -0500
+@@ -17,6 +17,7 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <ctype.h>
++#include <fcntl.h>
+ 
+ #include <compat/strl.h>
+ #include <compat/posix_string.h>
+@@ -1695,9 +1696,7 @@
+          break;
+       case CMD_EVENT_LOAD_CORE:
+          command_event(CMD_EVENT_LOAD_CORE_PERSIST, NULL);
+-#ifndef HAVE_DYNAMIC
+-         command_event(CMD_EVENT_QUIT, NULL);
+-#endif
++
+          break;
+       case CMD_EVENT_LOAD_STATE:
+          /* Immutable - disallow savestate load when
+@@ -1809,7 +1808,28 @@
+          }
+          break;
+       case CMD_EVENT_QUIT:
++{
++    /* Exit Back to Kodi if the option exists on the cfg file*/
++      settings_t *settings      = config_get_ptr();
++      if(settings->bools.sx05re_exit_to_kodi)
++      {
++      remove("/var/lock/start.retro");
++      system("touch /var/lock/start.kodi");
++      system("systemctl start kodi.service");
++      system("systemctl stop retroarch.service");
++      }
++       else
++      {
++      /* Exit back to ES - TODO: Check if start.retro file exists, if it does, then exit with the following code */ 
++     if( access( "/var/lock/start.retro", F_OK ) != -1 ) { remove("/var/lock/start.retro");
++      system("touch /var/lock/start.games");
++      system("systemctl start emustation.service");
++      system("systemctl stop retroarch.service"); 
++      } }
++      /* if it doesn't exist then just exit */
++
+          return retroarch_main_quit();
++}
+       case CMD_EVENT_CHEEVOS_HARDCORE_MODE_TOGGLE:
+ #ifdef HAVE_CHEEVOS
+          cheevos_toggle_hardcore_mode();
+--- ./configuration.h	2017-08-14 02:20:37.546187576 -0500
++++ ./configuration.h	2017-08-14 02:20:46.390236188 -0500
+@@ -47,6 +47,8 @@
+    {
+       bool placeholder;
+ 
++      /* sx05re */
++      bool sx05re_exit_to_kodi;
+       /* Video */
+       bool video_fullscreen;
+       bool video_windowed_fullscreen;
+--- ./configuration.c	2017-08-18 06:30:31.000000000 -0500
++++ ./configuration.c	2017-08-23 01:24:28.009570267 -0500
+@@ -1115,6 +1115,10 @@
+    unsigned count                      = 0;
+    global_t   *global                  = global_get_ptr();
+ 
++  /* sx05re */
++  SETTING_BOOL("sx05re_exit_to_kodi",           &settings->bools.sx05re_exit_to_kodi, true, false, false);
++  /* sx05re */
++
+    SETTING_BOOL("automatically_add_content_to_playlist", &settings->bools.automatically_add_content_to_playlist, true, automatically_add_content_to_playlist, false);
+    SETTING_BOOL("ui_companion_start_on_boot",    &settings->bools.ui_companion_start_on_boot, true, ui_companion_start_on_boot, false);
+    SETTING_BOOL("ui_companion_enable",           &settings->bools.ui_companion_enable, true, ui_companion_enable, false);
