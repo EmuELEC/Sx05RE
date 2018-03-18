@@ -1,13 +1,17 @@
 diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 --- a/es-app/src/guis/GuiMenu.cpp	Thu Jun 08 07:58:22 2017
 +++ b/es-app/src/guis/GuiMenu.cpp	Thu Jun 08 16:55:16 2017
+--- GuiMenu.cpp	2018-03-18 16:41:31.432784508 -0600
++++ GuiMenu.cpp2	2018-03-18 16:41:12.513095202 -0600
+--- GuiMenu.cpp	2018-03-18 16:46:26.363943621 -0600
++++ GuiMenu.cpp2	2018-03-18 16:45:30.072867272 -0600
 @@ -21,11 +21,14 @@
  {
  	bool isFullUI = UIModeController::getInstance()->isUIModeFull();
  
 +		addEntry("Sx05RE", 0x777777FF, true, [this] { openSx05RESettings(); });
 +	
-+	// this will be removed/changed as it doesn't work, or works poorly on Sx05RE
++	// This will be removed/changed as it doesn't work, or works poorly on Sx05RE,try to use sselph scraper
  	if (isFullUI)
  		addEntry("SCRAPER", 0x777777FF, true, [this] { openScraperSettings(); });
 -
@@ -19,7 +23,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  
  	if (isFullUI)
  		addEntry("UI SETTINGS", 0x777777FF, true, [this] { openUISettings(); });
-@@ -48,6 +51,209 @@
+@@ -48,6 +51,228 @@
  	setPosition((Renderer::getScreenWidth() - mSize.x()) / 2, Renderer::getScreenHeight() * 0.15f);
  }
  
@@ -45,6 +49,25 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 +		/* runSystemCommand("echo "+sx05re_mame_def->getSelected()+" > /storage/.config/sx05re/mame"); */
 +			if (Settings::getInstance()->getString("Sx05RE_MAME_CORE") != sx05re_mame_def->getSelected())
 +				Settings::getInstance()->setString("Sx05RE_MAME_CORE", sx05re_mame_def->getSelected());
++		});
++	
++	auto sx05re_fba_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "FBA/NEO-GEO CORE", false);
++		std::vector<std::string> fbachoices;
++		fbachoices.push_back("fbalpha");
++		fbachoices.push_back("mame2003");
++		fbachoices.push_back("mame2003-midway");
++		fbachoices.push_back("mame2010");
++		fbachoices.push_back("mame2014");
++		/*fbachoices.push_back("mame2000");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		for (auto it = fbachoices.cbegin(); it != fbachoices.cend(); it++)
++		sx05re_fba_def->add(*it, *it, Settings::getInstance()->getString("Sx05RE_FBA_CORE") == *it);
++		s->addWithLabel("FBA/NEO-GEO CORE", sx05re_fba_def);
++		s->addSaveFunc([sx05re_fba_def] {
++		/* runSystemCommand("echo "+sx05re_fba_def->getSelected()+" > /storage/.config/sx05re/mame"); */
++			if (Settings::getInstance()->getString("Sx05RE_FBA_CORE") != sx05re_fba_def->getSelected())
++				Settings::getInstance()->setString("Sx05RE_FBA_CORE", sx05re_fba_def->getSelected());
 +		});
 +		
 +	auto sx05re_psp_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "PSP EMULATOR", false);
@@ -229,7 +252,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  void GuiMenu::openScraperSettings()
  {
  	auto s = new GuiSettings(mWindow, "SCRAPER");
-@@ -95,13 +301,15 @@
+@@ -95,13 +320,15 @@
  
  	if (UIModeController::getInstance()->isUIModeFull())
  	{
@@ -246,7 +269,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  		for(auto it = transitions.cbegin(); it != transitions.cend(); it++)
  			vol_dev->add(*it, *it, Settings::getInstance()->getString("AudioDevice") == *it);
  		s->addWithLabel("AUDIO DEVICE", vol_dev);
-@@ -110,7 +318,6 @@
+@@ -110,7 +337,6 @@
  			VolumeControl::getInstance()->deinit();
  			VolumeControl::getInstance()->init();
  		});
@@ -254,7 +277,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  
  		// disable sounds
  		auto sounds_enabled = std::make_shared<SwitchComponent>(mWindow);
-@@ -406,57 +613,67 @@
+@@ -406,57 +632,67 @@
  	auto s = new GuiSettings(mWindow, "QUIT");
  
  	Window* window = mWindow;
@@ -345,7 +368,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  	s->addRow(row);
  
  	mWindow->pushGui(s);
-@@ -468,7 +685,7 @@
+@@ -468,7 +704,7 @@
  
  	mVersion.setFont(Font::get(FONT_SIZE_SMALL));
  	mVersion.setColor(0x5E5E5EFF);
