@@ -1,6 +1,6 @@
 # VERSION: set full version, use "devel" for development version
- Sx05RE_VERSION="1.8.4"
- LIBREELEC_VERSION="1.8.4"
+ Sx05RE_VERSION="1.8.5"
+ LIBREELEC_VERSION="1.8.5"
 
 # OS_VERSION: OS Version
   OS_VERSION="8.2"
