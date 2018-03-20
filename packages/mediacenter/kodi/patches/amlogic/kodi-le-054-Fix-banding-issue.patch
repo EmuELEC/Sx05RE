@@ -1,0 +1,38 @@
+From 0a3e4757d2a2dcbb56d11ebe88916545e1012bdd Mon Sep 17 00:00:00 2001
+From: Sam Nazarko <email@samnazarko.co.uk>
+Date: Sat, 17 Mar 2018 20:01:17 +0000
+Subject: [PATCH] Prevent banding during playback
+
+Signed-off-by: Sam Nazarko <email@samnazarko.co.uk>
+---
+ xbmc/cores/VideoPlayer/VideoPlayer.cpp | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/xbmc/cores/VideoPlayer/VideoPlayer.cpp b/xbmc/cores/VideoPlayer/VideoPlayer.cpp
+index 5a8ebe5262..be96e6c25d 100644
+--- a/xbmc/cores/VideoPlayer/VideoPlayer.cpp
++++ b/xbmc/cores/VideoPlayer/VideoPlayer.cpp
+@@ -82,6 +82,11 @@
+ #include "windowing/WinSystem.h"
+ #include "DVDCodecs/DVDCodecUtils.h"
+
++#if defined(HAS_LIBAMCODEC)
++#include "utils/AMLUtils.h"
++#include "utils/SysfsUtils.h"
++#endif
++
+ #include <iterator>
+
+ using namespace PVR;
+@@ -1371,6 +1376,9 @@ void CVideoPlayer::Process()
+
+   Prepare();
+
++  CLog::Log(LOGINFO, "Fix potential banding issue with material");
++  SysfsUtils::SetString("/sys/class/amhdmitx/amhdmitx0/debug", "round1");
++
+   while (!m_bAbortRequest)
+   {
+ #ifdef TARGET_RASPBERRY_PI
+-- 
+2.7.4
