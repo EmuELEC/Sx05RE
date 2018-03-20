@@ -17,12 +17,11 @@
 ################################################################################
 
 PKG_NAME="SDL2"
-PKG_VERSION="48f2328"
+PKG_VERSION="2.0.7"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/spurious/SDL-mirror.git"
-PKG_URL="https://github.com/spurious/SDL-mirror/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="SDL-mirror*"
+PKG_SITE="https://www.libsdl.org/"
+PKG_URL="https://www.libsdl.org/release/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain yasm:host alsa-lib systemd dbus"
 PKG_SECTION="multimedia"
 PKG_SHORTDESC="SDL2: A cross-platform Graphic API"
@@ -63,7 +62,7 @@ PKG_CONFIGURE_OPTS_TARGET="SYSROOT_PREFIX=$SYSROOT_PREFIX --enable-shared --enab
                            --disable-video-wayland --enable-video-wayland-qt-touch --disable-wayland-shared \
                            --disable-video-mir --disable-mir-shared \
                            --disable-video-cocoa \
-                           --disable-video-directfb --disable-directfb-shared \
+                           --enable-video-directfb --enable-directfb-shared \
                            --disable-fusionsound --disable-fusionsound-shared \
                            --disable-video-dummy \
                            --enable-libudev \
