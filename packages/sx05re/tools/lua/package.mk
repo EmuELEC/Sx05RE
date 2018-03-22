@@ -37,8 +37,8 @@ make_host() {
 }
 
 makeinstall_host() {
-  mkdir -p $ROOT/$TOOLCHAIN/bin
-   cp -P $PKG_DIR/src/* $ROOT/$TOOLCHAIN/bin
+  mkdir -p $TOOLCHAIN/bin
+   cp -P $PKG_DIR/src/* $TOOLCHAIN/bin
 }
 
 make_target() {
