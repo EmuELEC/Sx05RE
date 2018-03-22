@@ -1,0 +1,832 @@
+From 2b27b64aa93768f2b398b3d2c08100d2e26a1c94 Mon Sep 17 00:00:00 2001
+From: afl1 <afl2001@gmail.com>
+Date: Wed, 21 Mar 2018 11:10:54 +0100
+Subject: [PATCH] dvb-aml: add support for serial data transfer from avl6862
+
+---
+ drivers/amlogic/dvb-avl/aml_dmx.c      | 186 +++++++++++++++++----------------
+ drivers/amlogic/dvb-avl/aml_dvb.c      |  37 ++++---
+ drivers/amlogic/dvb-avl/aml_dvb.h      |   1 +
+ drivers/amlogic/dvb-avl/aml_fe.c       |  12 ++-
+ drivers/amlogic/dvb-avl/avl6862.c      |  56 ++++++++--
+ drivers/amlogic/dvb-avl/avl6862.h      |  25 +----
+ drivers/amlogic/dvb-avl/c_stb_define.h |   1 +
+ 7 files changed, 185 insertions(+), 133 deletions(-)
+
+diff --git a/drivers/amlogic/dvb-avl/aml_dmx.c b/drivers/amlogic/dvb-avl/aml_dmx.c
+index 8959789b5b1b..0eba2aebd03f 100644
+--- a/drivers/amlogic/dvb-avl/aml_dmx.c
++++ b/drivers/amlogic/dvb-avl/aml_dmx.c
+@@ -1152,6 +1152,7 @@ static void dvr_process_channel(struct aml_asyncfifo *afifo,
+ {
+ 	int cnt;
+ 	int ret = 0;
++	pr_dbg_irq_dvr("buf_read:%d buf_toggle:%d\n", afifo->buf_read, afifo->buf_toggle);
+ 
+ 	if (afifo->buf_read > afifo->buf_toggle) {
+ 		cnt = total - afifo->buf_read;
+@@ -1159,6 +1160,7 @@ static void dvr_process_channel(struct aml_asyncfifo *afifo,
+ 				afifo->pages_map+afifo->buf_read*size,
+ 				cnt*size,
+ 				DMA_FROM_DEVICE);
++		pr_dbg_irq_dvr("DMA_sync_single_for_cpu cnt:%d size:%d\n", cnt, size);
+ 		if (sf)
+ 			ret = _rbuf_write(&sf->rbuf,
+ 					(u8 *)afifo->pages+afifo->buf_read*size,
+@@ -1177,6 +1179,7 @@ static void dvr_process_channel(struct aml_asyncfifo *afifo,
+ 				afifo->pages_map+afifo->buf_read*size,
+ 				cnt*size,
+ 				DMA_FROM_DEVICE);
++		pr_dbg_irq_dvr("dma_sync_single_for_cpu cnt:%d size:%d\n", cnt, size);
+ 		if (sf) {
+ 			if (ret >= 0)
+ 				ret = _rbuf_write(&sf->rbuf,
+@@ -1209,7 +1212,7 @@ static void dvr_irq_bh_handler(unsigned long arg)
+ 	int i, factor;
+ 	unsigned long flags;
+ 
+-	pr_dbg_irq_dvr("async fifo %d irq:%d, %d\n", afifo->id, afifo->asyncfifo_irq, afifo->buf_toggle);
++	pr_dbg_irq_dvr("async fifo %d irq:%d, %d source:%d\n", afifo->id, afifo->asyncfifo_irq, afifo->buf_toggle, afifo->source);
+ 
+ 	spin_lock_irqsave(&dvb->slock, flags);
+ 
+@@ -1227,8 +1230,7 @@ static void dvr_irq_bh_handler(unsigned long arg)
+ 				issf = 1;
+ 
+ 			for (i = 0; i < CHANNEL_COUNT; i++) {
+-				if (dmx->channel[i].used
+-						&& dmx->channel[i].dvr_feed) {
++				if (dmx->channel[i].used && dmx->channel[i].dvr_feed) {
+ 					dvr_process_channel(afifo,
+ 							&dmx->channel[i],
+ 							total,
+@@ -1263,18 +1265,17 @@ static void stb_enable(struct aml_dvb *dvb)
+ 	u32 fec_s0, fec_s1;
+ 	u32 invert0, invert1;
+ 
++	u32 data;
+ 	switch (dvb->stb_source) {
+ 	case AM_TS_SRC_DMX0:
+ 		src = dvb->dmx[0].source;
+ 		break;
+-//
+ 	case AM_TS_SRC_DMX1:
+ 		src = dvb->dmx[1].source;
+ 		break;
+ 	case AM_TS_SRC_DMX2:
+ 		src = dvb->dmx[2].source;
+ 		break;
+-//
+ 	default:
+ 		src = dvb->stb_source;
+ 		break;
+@@ -1315,40 +1316,17 @@ static void stb_enable(struct aml_dvb *dvb)
+ 		break;
+ 	}
+ 
+-	switch (dvb->dsc_source+7) {
+-	case AM_TS_SRC_DMX0:
+-		des_in = 0;
+-		en_des = 1;
+-		dec_clk_en = 1;
+-		break;
+-	case AM_TS_SRC_DMX1:
+-		des_in = 1;
+-		en_des = 1;
+-		dec_clk_en = 1;
+-		break;
+-	case AM_TS_SRC_DMX2:
+-		des_in = 2;
+-		en_des = 1;
+-		dec_clk_en = 1;
+-		break;
+-	default:
+-		des_in = 0;
+-		en_des = 0;
+-		dec_clk_en = 0;
+-		break;
+-	}
+-
+ 	switch (dvb->tso_source) {
+ 	case AM_TS_SRC_DMX0:
+ 		tso_src = dvb->dmx[0].source;
+ 		break;
+-/**/	case AM_TS_SRC_DMX1:
++	case AM_TS_SRC_DMX1:
+ 		tso_src = dvb->dmx[1].source;
+ 		break;
+ 	case AM_TS_SRC_DMX2:
+ 		tso_src = dvb->dmx[2].source;
+ 		break;
+-/**/	default:
++	default:
+ 		tso_src = dvb->tso_source;
+ 		break;
+ 	}
+@@ -1364,9 +1342,11 @@ static void stb_enable(struct aml_dvb *dvb)
+ 		out_src = 2;
+ 		break;
+ 	case AM_TS_SRC_S_TS0:
++		out_src = 6;
++		break;
+ 	case AM_TS_SRC_S_TS1:
+ 	case AM_TS_SRC_S_TS2:
+-		out_src = 6;
++		out_src = 5;
+ 		break;
+ 	case AM_TS_SRC_HIU:
+ 		out_src = 7;
+@@ -1376,7 +1356,7 @@ static void stb_enable(struct aml_dvb *dvb)
+ 		break;
+ 	}
+ 
+-	pr_dbg("[stb]src: %d, dsc1in: %d, tso: %d\n", src, des_in, out_src);
++	pr_dbg("[stb]src:%d tso:%d out_src:%d\n", src, tso_src, out_src);
+ 
+ 	fec_s0 = 0;
+ 	fec_s1 = 0;
+@@ -1392,6 +1372,7 @@ static void stb_enable(struct aml_dvb *dvb)
+ 
+ 	invert0 = dvb->s2p[0].invert;
+ 	invert1 = dvb->s2p[1].invert;
++	pr_dbg("fec_s0:%d, invert0:%d fec_s1:%d invert1:%d en_des:%d\n", fec_s0, invert0, fec_s1, invert1, en_des);
+ 
+ 	WRITE_MPEG_REG(STB_TOP_CONFIG,
+ 		       (invert1 << INVERT_S2P1_FEC_CLK) |
+@@ -1405,7 +1386,14 @@ static void stb_enable(struct aml_dvb *dvb)
+ 
+ 	if (dvb->reset_flag)
+ 		hiu = 0;
+-
++	/* invert ts out clk,add ci model need add this*/
++	if (dvb->ts_out_invert) {
++		/*printk("ts out invert ---\r\n");*/
++		data = READ_MPEG_REG(TS_TOP_CONFIG);
++		data |= 1 << TS_OUT_CLK_INVERT;
++		WRITE_MPEG_REG(TS_TOP_CONFIG, data);
++	}
++	/* invert ts out clk  end */
+ 	WRITE_MPEG_REG(TS_FILE_CONFIG,
+ 		       (demux_skipbyte << 16) |
+ 		       (6 << DES_OUT_DLY) |
+@@ -1875,6 +1863,7 @@ static int dmx_init(struct aml_dmx *dmx)
+ 		irq = request_irq(dmx->dmx_irq,	dmx_irq_handler,
+ 				IRQF_SHARED|IRQF_TRIGGER_RISING,
+ 				"dmx irq", dmx);
++		pr_dbg("request_irq:%d\n", dmx->dmx_irq);
+ 	}
+ 
+ 	/*Allocate buffer */
+@@ -2009,6 +1998,7 @@ static int dmx_get_record_flag(struct aml_dmx *dmx)
+ 	}
+ 
+ find_done:
++	pr_dbg("channel:%d record_flag:%d linked:%d\n", i, record_flag, linked);
+ 	return record_flag;
+ }
+ 
+@@ -2084,65 +2074,79 @@ static int dmx_enable(struct aml_dmx *dmx)
+ //		&& ((dvb->dsc_source-AM_TS_SRC_DMX0)== dmx->id))
+ //		fec_core_sel = 1;
+ 
+-	pr_dbg("[dmx-%d]src: %d, rec: %d, hi_bsf: %d, dsc: %d\n",
+-			dmx->id, dmx->source, record, hi_bsf, fec_core_sel);
++	pr_dbg("dmx->source:%d fec_sel:%d fec_core_sel:%d record:%d hi_bsf:%d dmx->dump_ts_select:%d\n",
++		dmx->source, fec_sel, fec_core_sel, record, hi_bsf, dmx->dump_ts_select);
+ 
+ 	if (dmx->chan_count) {
+-		if (set_stb) {
+-			u32 v = READ_MPEG_REG(STB_TOP_CONFIG);
+-			int i;
++	    if (set_stb) {
++		u32 v = READ_MPEG_REG(STB_TOP_CONFIG);
++		int i;
++		u32 v0 = v;
+ 
+-			for (i = 0; i < TS_IN_COUNT; i++) {
+-				if (dvb->ts[i].s2p_id == 0)
+-					fec_s0 = i;
+-				else if (dvb->ts[i].s2p_id == 1)
+-					fec_s1 = i;
+-			}
+-if (dsc_source == 1) {
+-			invert0 = dvb->s2p[0].invert;
+-			invert1 = dvb->s2p[1].invert;
+-}
+-			v &= ~((0x3 << S2P0_FEC_SERIAL_SEL) |
+-			       (0x1f << INVERT_S2P0_FEC_CLK) |
+-			       (0x3 << S2P1_FEC_SERIAL_SEL) |
+-			       (0x1f << INVERT_S2P1_FEC_CLK));
+-
+-			v |= (fec_s0 << S2P0_FEC_SERIAL_SEL) |
+-			    (invert0 << INVERT_S2P0_FEC_CLK) |
+-			    (fec_s1 << S2P1_FEC_SERIAL_SEL) |
+-			    (invert1 << INVERT_S2P1_FEC_CLK);
+-			WRITE_MPEG_REG(STB_TOP_CONFIG, v);
++		for (i = 0; i < TS_IN_COUNT; i++) {
++		    if (dvb->ts[i].s2p_id == 0)
++			fec_s0 = i;
++		    else if (dvb->ts[i].s2p_id == 1)
++			fec_s1 = i;
+ 		}
+-
+-		/*Initialize the registers */
+-		DMX_WRITE_REG(dmx->id, STB_INT_MASK, DEMUX_INT_MASK);
+-		DMX_WRITE_REG(dmx->id, DEMUX_MEM_REQ_EN,
++		if (dsc_source == 1) {
++		    invert0 = dvb->s2p[0].invert;
++		    invert1 = dvb->s2p[1].invert;
++		}
++		v &= ~((0x3 << S2P0_FEC_SERIAL_SEL) |
++		       (0x1f << INVERT_S2P0_FEC_CLK) |
++		       (0x3 << S2P1_FEC_SERIAL_SEL) |
++		       (0x1f << INVERT_S2P1_FEC_CLK));
++
++		v |= (fec_s0 << S2P0_FEC_SERIAL_SEL) |
++		     (invert0 << INVERT_S2P0_FEC_CLK) |
++		     (fec_s1 << S2P1_FEC_SERIAL_SEL) |
++		     (invert1 << INVERT_S2P1_FEC_CLK);
++		WRITE_MPEG_REG(STB_TOP_CONFIG, v);
++		pr_dbg("cfg0:%x cfg:%x fec_s0:%x invert0:%x fec_s1:%x invert1:%x\n",
++			v0, v, fec_s0, invert0, fec_s1, invert1);
++	    }
++
++	    /*Initialize the registers */
++	    DMX_WRITE_REG(dmx->id, STB_INT_MASK, DEMUX_INT_MASK);
++	    DMX_WRITE_REG(dmx->id, DEMUX_MEM_REQ_EN,
+ #ifdef USE_AHB_MODE
+-			      (1 << SECTION_AHB_DMA_EN) |
+-			      (0 << SUB_AHB_DMA_EN) |
+-			      (1 << OTHER_PES_AHB_DMA_EN) |
++			  (1 << SECTION_AHB_DMA_EN) |
++			  (0 << SUB_AHB_DMA_EN) |
++			  (1 << OTHER_PES_AHB_DMA_EN) |
+ #endif
+-			      (1 << SECTION_PACKET) |
+-			      (1 << VIDEO_PACKET) |
+-			      (1 << AUDIO_PACKET) |
+-			      (1 << SUB_PACKET) |
+-			      (1 << SCR_ONLY_PACKET) |
+-				(1 << OTHER_PES_PACKET));
+-		DMX_WRITE_REG(dmx->id, PES_STRONG_SYNC, 0x1234);
++			  (1 << SECTION_PACKET) |
++			  (1 << VIDEO_PACKET) |
++			  (1 << AUDIO_PACKET) |
++			  (1 << SUB_PACKET) |
++			  (1 << SCR_ONLY_PACKET) |
++			  (1 << OTHER_PES_PACKET));
++	    DMX_WRITE_REG(dmx->id, PES_STRONG_SYNC, 0x1234);
++
+ 		DMX_WRITE_REG(dmx->id, DEMUX_ENDIAN,
++			      (1<<SEPERATE_ENDIAN) |
++			      (0<<OTHER_PES_ENDIAN) |
++			      (7<<SCR_ENDIAN) |
++			      (7<<SUB_ENDIAN) |
++			      (7<<AUDIO_ENDIAN) |
++			      (7<<VIDEO_ENDIAN) |
+ 			      (7 << OTHER_ENDIAN) |
+ 			      (7 << BYPASS_ENDIAN) | (0 << SECTION_ENDIAN));
+-		DMX_WRITE_REG(dmx->id, TS_HIU_CTL,
+-			      (0 << LAST_BURST_THRESHOLD) |
+-			      (hi_bsf << USE_HI_BSF_INTERFACE));
++//	    DMX_WRITE_REG(dmx->id, DEMUX_ENDIAN,
++//		          (7 << OTHER_ENDIAN) |
++//			  (7 << BYPASS_ENDIAN) | (0 << SECTION_ENDIAN));
+ 
+-		DMX_WRITE_REG(dmx->id, FEC_INPUT_CONTROL,
++	    DMX_WRITE_REG(dmx->id, TS_HIU_CTL,
++		          (0 << LAST_BURST_THRESHOLD) |
++			  (hi_bsf << USE_HI_BSF_INTERFACE));
++
++	    DMX_WRITE_REG(dmx->id, FEC_INPUT_CONTROL,
+ 			      (fec_core_sel << FEC_CORE_SEL) |
+ 			      (fec_sel << FEC_SEL) | (fec_ctrl << 0));
+-		DMX_WRITE_REG(dmx->id, STB_OM_CTL,
++	    DMX_WRITE_REG(dmx->id, STB_OM_CTL,
+ 			      (0x40 << MAX_OM_DMA_COUNT) |
+ 			      (0x7f << LAST_OM_ADDR));
+-		DMX_WRITE_REG(dmx->id, DEMUX_CONTROL,
++	    DMX_WRITE_REG(dmx->id, DEMUX_CONTROL,
+ 			      (0 << BYPASS_USE_RECODER_PATH) |
+ 			      (0 << INSERT_AUDIO_PES_STRONG_SYNC) |
+ 			      (0 << INSERT_VIDEO_PES_STRONG_SYNC) |
+@@ -2239,7 +2243,6 @@ static u32 dmx_get_chan_target(struct aml_dmx *dmx, int cid)
+ 		}
+ 	}
+ 
+-	pr_dbg("chan target: %x %x\n", type, dmx->channel[cid].pid);
+ 	return (type << PID_TYPE) | dmx->channel[cid].pid;
+ }
+ 
+@@ -2254,9 +2257,6 @@ static int dmx_set_chan_regs(struct aml_dmx *dmx, int cid)
+ {
+ 	u32 data, addr, advance, max;
+ 
+-	pr_dbg("set channel (id:%d PID:0x%x) registers\n", cid,
+-	       dmx->channel[cid].pid);
+-
+ 	while (DMX_READ_REG(dmx->id, FM_WR_ADDR) & 0x8000)
+ 		udelay(1);
+ 
+@@ -2279,8 +2279,6 @@ static int dmx_set_chan_regs(struct aml_dmx *dmx, int cid)
+ 	DMX_WRITE_REG(dmx->id, FM_WR_DATA, data);
+ 	DMX_WRITE_REG(dmx->id, FM_WR_ADDR, (advance << 16) | 0x8000 | addr);
+ 
+-	pr_dbg("write fm %x:%x\n", (advance << 16) | 0x8000 | addr, data);
+-
+ 	for (max = CHANNEL_COUNT - 1; max > 0; max--) {
+ 		if (dmx->channel[max].used)
+ 			break;
+@@ -2289,8 +2287,6 @@ static int dmx_set_chan_regs(struct aml_dmx *dmx, int cid)
+ 	data = DMX_READ_REG(dmx->id, MAX_FM_COMP_ADDR) & 0xF0;
+ 	DMX_WRITE_REG(dmx->id, MAX_FM_COMP_ADDR, data | (max >> 1));
+ 
+-	pr_dbg("write fm comp %x\n", data | (max >> 1));
+-
+ 	if (DMX_READ_REG(dmx->id, OM_CMD_STATUS) & 0x8e00) {
+ 		pr_error("error send cmd %x\n",
+ 			 DMX_READ_REG(dmx->id, OM_CMD_STATUS));
+@@ -2581,6 +2577,9 @@ static void reset_async_fifos(struct aml_dvb *dvb)
+ 		dvb->asyncfifo[i].buf_read = 0;
+ 	}
+ 
++	if (dvb->ts[0].mode == AM_TS_SERIAL)
++		dvb->dmx[0].source = AM_TS_SRC_S_TS0;
++
+ 	for (j = 0; j < DMX_DEV_COUNT; j++) {
+ 		if (!dvb->dmx[j].init)
+ 			continue;
+@@ -2608,8 +2607,8 @@ static void reset_async_fifos(struct aml_dvb *dvb)
+ 				break;
+ 			}
+ 		}
+-		pr_dbg("Set DMX%d TS_RECORDER_ENABLE: %s\n", dvb->dmx[j].id,
+-		       record_enable ? "yes" : "no");
++		pr_dbg("Set DMX%d TS_RECORDER_ENABLE: %s mode:%d\n", dvb->dmx[j].id,
++		       record_enable ? "yes" : "no", dvb->ts[j].mode);
+ 		if (record_enable) {
+ 			/*DMX_SET_REG_MASK(dvb->dmx[j].id,
+ 			DEMUX_CONTROL, 1<<TS_RECORDER_ENABLE); */
+@@ -3103,7 +3102,7 @@ int dmx_alloc_chan(struct aml_dmx *dmx, int type, int pes_type, int pid)
+ 		return -1;
+ 	}
+ 
+-	pr_dbg("allocate channel(id:%d PID:0x%x)\n", id, pid);
++	pr_dbg("allocate channel(id:%d PID:%d)\n", id, pid);
+ 
+ 	if (id <= 3) {
+ 		ret = dmx_get_chan(dmx, pid);
+@@ -3395,7 +3394,7 @@ static int dmx_add_feed(struct aml_dmx *dmx, struct dvb_demux_feed *feed)
+ 	case DMX_TYPE_TS:
+ 
+ 		ret = dmx_get_chan(dmx, feed->pid);
+-		pr_dbg("DMX_TYPE_TS pid:0x%x, ret:%d sf_ret:%d\n", feed->pid, ret, sf_ret);
++		pr_dbg("DMX_TYPE_TS pid:%d pes:%d ret:%d sf_ret:%d\n", feed->pid, feed->pes_type, ret, sf_ret);
+ 		if (ret >= 0) {
+ 			if (DVR_FEED(dmx->channel[ret].feed)) {
+ 				if (DVR_FEED(feed)) {
+@@ -3828,6 +3827,8 @@ int aml_dmx_hw_set_source(struct dmx_demux *demux, dmx_source_t src)
+ 		ret = -EINVAL;
+ 		break;
+ 	}
++	pr_dbg("src:%d hw_src:%d dmx->source:%d\n",
++						src, hw_src, dmx->source);
+ 
+ 	if (hw_src != dmx->source) {
+ 		dmx->source = hw_src;
+@@ -3885,6 +3886,8 @@ int aml_stb_hw_set_source(struct aml_dvb *dvb, dmx_source_t src)
+ 		ret = -EINVAL;
+ 		break;
+ 	}
++	pr_dbg("src:%d hw_src:%d dvb->stb_source:%d\n",
++						src, hw_src, dvb->stb_source);
+ 
+ 	if (dvb->stb_source != hw_src) {
+ 		int old_source = dvb->stb_source;
+@@ -3995,6 +3998,8 @@ int aml_tso_hw_set_source(struct aml_dvb *dvb, dmx_source_t src)
+ 		ret = -EINVAL;
+ 		break;
+ 	}
++	pr_dbg("src:%d hw_src:%d dvb->tso_source:%d\n",
++						src, hw_src, dvb->tso_source);
+ 
+ 	if (hw_src != dvb->tso_source) {
+ 		dvb->tso_source = hw_src;
+@@ -4126,6 +4131,7 @@ int aml_dmx_set_demux(struct aml_dvb *dvb, int id)
+ {
+ 	aml_stb_hw_set_source(dvb, DMX_SOURCE_DVR0);
+ 	if (id < DMX_DEV_COUNT) {
++		pr_dbg("demux: %d\n", id);
+ 		struct aml_dmx *dmx = &dvb->dmx[id];
+ 		aml_dmx_hw_set_source((struct dmx_demux *)dmx,
+ 							DMX_SOURCE_DVR0);
+diff --git a/drivers/amlogic/dvb-avl/aml_dvb.c b/drivers/amlogic/dvb-avl/aml_dvb.c
+index 41b94a924a59..23b2a8eae471 100644
+--- a/drivers/amlogic/dvb-avl/aml_dvb.c
++++ b/drivers/amlogic/dvb-avl/aml_dvb.c
+@@ -57,14 +57,16 @@
+ #include "aml_dvb.h"
+ #include "aml_dvb_reg.h"
+ 
+-#define pr_dbg(fmt, args...) printk("%s: " fmt, __func__, ## args)
+-#define pr_error(fmt, args...) printk("%s: " fmt, __func__, ## args)
+-#define pr_inf(fmt, args...)   printk("%s: " fmt, __func__, ## args)
+-//#define pr_error(fmt, args...) printk("DVB: " fmt, ## args)
+-//#define pr_inf(fmt, args...)   printk("DVB: " fmt, ## args)
++#define pr_dbg(fmt, args...)\
++	do {\
++		if (debug_dvb)\
++			printk("DVB: %s: " fmt, __func__, ## args);\
++	} while (0)
++#define pr_error(fmt, args...) printk("DVB: %s: " fmt, __func__, ## args)
++#define pr_inf(fmt, args...)   printk("DVB: %s: " fmt, __func__, ## args)
+ 
+ MODULE_PARM_DESC(debug_dvb, "\n\t\t Enable dvb debug information");
+-static int debug_dvb = 1;
++static int debug_dvb;
+ module_param(debug_dvb, int, 0644);
+ 
+ #define CARD_NAME "amlogic-dvb"
+@@ -166,6 +168,7 @@ static int aml_dvb_dmx_init(struct aml_dvb *advb, struct aml_dmx *dmx, int id)
+ 		dmx->dmx_irq = res->start;
+ 	}
+ #endif
++	pr_dbg("demux%d_irq: %d\n", id, dmx->dmx_irq);
+ 
+ 	dmx->source  = 0;
+ 	dmx->dump_ts_select = 0;
+@@ -194,6 +197,7 @@ static int aml_dvb_dmx_init(struct aml_dvb *advb, struct aml_dmx *dmx, int id)
+ 	for (i=0; i<DMX_DEV_COUNT; i++) {
+ 		int source = i+DMX_FRONTEND_0;
+ 		dmx->hw_fe[i].source = source;
++	pr_dbg("demux%d: source:%d\n", i, source);
+ 
+ 		if ((ret = dmx->demux.dmx.add_frontend(&dmx->demux.dmx, &dmx->hw_fe[i])) < 0) {
+ 			pr_error("adding hw_frontend to dmx failed: error %d",ret);
+@@ -280,7 +284,6 @@ static int aml_dvb_asyncfifo_init(struct aml_dvb *advb, struct aml_asyncfifo *as
+ 		asyncfifo->asyncfifo_irq = res->start;
+ 	}
+ #endif
+-pr_inf("af:%d irq:%d\n", id, asyncfifo->asyncfifo_irq);
+ 
+ 	asyncfifo->dvb = advb;
+ 	asyncfifo->id = id;
+@@ -344,7 +347,6 @@ static ssize_t stb_show_source(struct class *class, struct class_attribute *attr
+ static ssize_t stb_store_source(struct class *class,struct class_attribute *attr, const char *buf, size_t size)
+ {
+     dmx_source_t src = -1;
+-pr_inf("inp:%s\n", buf);
+     if(!strncmp("ts0", buf, 3)) {
+     	src = DMX_SOURCE_FRONT0;
+     } else if(!strncmp("ts1", buf, 3)) {
+@@ -400,7 +402,6 @@ static ssize_t dsc_store_source(struct class *class, struct class_attribute *att
+                           size_t size)
+ {
+ 	dmx_source_t src = -1;
+-pr_inf("inp:%s\n", buf);
+ 
+ 	if(!strncmp("dmx0", buf, 4)) {
+ 		src = DMX_SOURCE_FRONT0; 	//	src = DMX_SOURCE_FRONT0+100;
+@@ -487,7 +488,6 @@ static ssize_t tso_store_source(struct class *class,struct class_attribute *attr
+                           size_t size)
+ {
+     dmx_source_t src = -1;
+-pr_inf("inp:%s\n", buf);
+ 
+     if(!strncmp("ts0", buf, 3)) {
+     	src = DMX_SOURCE_FRONT0;
+@@ -558,7 +558,6 @@ static ssize_t demux##i##_show_source(struct class *class,  struct class_attribu
+ static ssize_t demux##i##_store_source(struct class *class,  struct class_attribute *attr,const char *buf, size_t size)\
+ {\
+     dmx_source_t src = -1;\
+-pr_inf("inp:%s\n", buf);    \
+ 	if(!strncmp("ts0", buf, 3)) {\
+     	src = DMX_SOURCE_FRONT0;\
+     } else if(!strncmp("ts1", buf, 3)) {\
+@@ -757,7 +756,6 @@ static ssize_t asyncfifo##i##_show_source(struct class *class,  struct class_att
+ static ssize_t asyncfifo##i##_store_source(struct class *class,  struct class_attribute *attr,const char *buf, size_t size)\
+ {\
+     enum aml_dmx_id_t src = -1;\
+-pr_inf("inp:%s\n", buf);    \
+ 	if(!strncmp("dmx0", buf, 4)) {\
+     	src = AM_DMX_0;\
+     } else if(!strncmp("dmx1", buf, 4)) {\
+@@ -990,6 +988,7 @@ static const struct of_device_id aml_dvb_dt_match[]={
+ 	{
+ 		.compatible = "amlogic,dvb",
+ 	},
++
+ 	{},
+ };
+ #endif /*CONFIG_OF*/
+@@ -1174,10 +1173,10 @@ static int aml_dvb_probe(struct platform_device *pdev)
+ 	if(pdev->dev.of_node){
+ 		int s2p_id = 0;
+ 
++		char buf[32];
++		const char *str;
++		u32 value;
+ 		for (i=0; i<TS_IN_COUNT; i++){
+-			char buf[32];
+-			const char *str;
+-			u32 value;
+ 
+ 			advb->ts[i].mode   = AM_TS_DISABLE;
+ 			advb->ts[i].s2p_id = -1;
+@@ -1230,6 +1229,14 @@ static int aml_dvb_probe(struct platform_device *pdev)
+ 				}
+ 			}
+ 		}
++		snprintf(buf, sizeof(buf), "ts_out_invert");
++		ret =
++			of_property_read_u32(pdev->dev.of_node, buf,
++				&value);
++		if (!ret) {
++				pr_inf("%s: 0x%x\n", buf, value);
++				advb->ts_out_invert = value;
++		}
+ 	}
+ #endif
+ 	pd_dvb = (struct devio_aml_platform_data *)advb->dev->platform_data;
+diff --git a/drivers/amlogic/dvb-avl/aml_dvb.h b/drivers/amlogic/dvb-avl/aml_dvb.h
+index f8419d77b8ac..22bdf766cabe 100644
+--- a/drivers/amlogic/dvb-avl/aml_dvb.h
++++ b/drivers/amlogic/dvb-avl/aml_dvb.h
+@@ -243,6 +243,7 @@ struct aml_dvb {
+ 	struct timer_list    watchdog_timer;
+ 	int                  dmx_watchdog_disable[DMX_DEV_COUNT];
+ 	struct aml_swfilter  swfilter;
++	int		     ts_out_invert;
+ };
+ 
+ 
+diff --git a/drivers/amlogic/dvb-avl/aml_fe.c b/drivers/amlogic/dvb-avl/aml_fe.c
+index bcd869a61f44..037b3c30c74e 100644
+--- a/drivers/amlogic/dvb-avl/aml_fe.c
++++ b/drivers/amlogic/dvb-avl/aml_fe.c
+@@ -73,6 +73,7 @@ static struct r848_config r848_config = {
+ static struct avl6862_config avl6862_config = {
+ 	.demod_address = 0x14,
+ 	.tuner_address = 0x7A,
++	.ts_serial = 0,
+ };
+ 
+ int avl6862_Reset(void)
+@@ -113,11 +114,13 @@ static int avl6862_fe_init(struct aml_dvb *advb, struct platform_device *pdev, s
+ 	pr_inf("Init AVL6862 frontend %d\n", id);
+ 	
+ #ifdef CONFIG_OF
++	of_property_read_u32(pdev->dev.of_node, "fe0_ts", &avl6862_config.ts_serial);
++	pr_dbg("fe0_ts=%d\n", avl6862_config.ts_serial);
+ 	if (of_property_read_u32(pdev->dev.of_node, "dtv_demod0_i2c_adap_id", &i2c_adap_id)) {
+ 		ret = -ENOMEM;
+ 		goto err_resource;
+ 	}
+-	pr_dbg("i2c_adap_id=%d\n", &i2c_adap_id);
++	pr_dbg("i2c_adap_id=%d\n", i2c_adap_id);
+ 	desc = of_get_named_gpiod_flags(pdev->dev.of_node, "dtv_demod0_reset_gpio-gpios", 0, NULL);
+ 	gpio_reset = desc_to_gpio(desc);
+ 	pr_dbg("gpio_reset=%d\n", gpio_reset);
+@@ -125,6 +128,13 @@ static int avl6862_fe_init(struct aml_dvb *advb, struct platform_device *pdev, s
+ 	desc = of_get_named_gpiod_flags(pdev->dev.of_node, "dtv_demod0_power_gpio-gpios", 0, NULL);
+ 	gpio_power = desc_to_gpio(desc);
+ 	pr_dbg("gpio_power=%d\n", gpio_power);
++
++	avl6862_config.gpio_lock_led =0;
++	desc = of_get_named_gpiod_flags(pdev->dev.of_node, "dtv_demod0_lock_gpio-gpios", 0, NULL);
++	if (!PTR_RET(desc)) {
++	  avl6862_config.gpio_lock_led = desc_to_gpio(desc);
++	  pr_dbg("gpio_lock_led=%d\n", avl6862_config.gpio_lock_led);
++        }
+ #endif /*CONFIG_OF*/
+ 
+ 	frontend_reset = gpio_reset;
+diff --git a/drivers/amlogic/dvb-avl/avl6862.c b/drivers/amlogic/dvb-avl/avl6862.c
+index ac53f796779e..f814b999c739 100644
+--- a/drivers/amlogic/dvb-avl/avl6862.c
++++ b/drivers/amlogic/dvb-avl/avl6862.c
+@@ -26,6 +26,7 @@
+ #include <linux/init.h>
+ #include <linux/string.h>
+ #include <linux/bitrev.h>
++#include <linux/amlogic/aml_gpio_consumer.h>
+ 
+ #include "dvb_frontend.h"
+ #include "avl6862.h"
+@@ -40,7 +41,6 @@ MODULE_PARM_DESC(debug_avl, "\n\t\t Enable AVL demodulator debug information");
+ static int debug_avl;
+ module_param(debug_avl, int, 0644);
+ 
+-
+ static int avl6862_i2c_rd(struct avl6862_priv *priv, u8 *buf, int len)
+ {
+ 	int ret;
+@@ -952,6 +952,7 @@ static int avl6862_set_dvbt(struct dvb_frontend *fe)
+ }
+ 
+ #define I2C_RPT_DIV ((0x2A)*(250000)/(240*1000))	//m_CoreFrequency_Hz 250000000
++#define uiTSFrequencyHz 270000000
+ 
+ 
+ static int avl6862_set_dvbmode(struct dvb_frontend *fe,
+@@ -1005,14 +1006,42 @@ static int avl6862_set_dvbmode(struct dvb_frontend *fe,
+ 	ret |= avl6862_WR_REG32(priv, REG_GPIO_BASE + GPIO_LNB_VOLTAGE, GPIO_0);
+ 
+ 	/* set TS mode */
+-	ret |= avl6862_WR_REG8(priv,0x200 + rc_ts_serial_caddr_offset, AVL_TS_PARALLEL);
++	if (priv->config->ts_serial) {
++		ret |= avl6862_WR_REG8(priv,0x200 + rc_ts_serial_caddr_offset, AVL_TS_SERIAL);
++		dbg_avl("set AVL_TS_SERIAL");
++	}
++	else {
++		ret |= avl6862_WR_REG8(priv,0x200 + rc_ts_serial_caddr_offset, AVL_TS_PARALLEL);
++		dbg_avl("set AVL_TS_PARALLEL");
++	}
++
+ 	ret |= avl6862_WR_REG8(priv,0x200 + rc_ts_clock_edge_caddr_offset, AVL_MPCM_RISING);
+ 	ret |= avl6862_WR_REG8(priv,0x200 + rc_enable_ts_continuous_caddr_offset, AVL_TS_CONTINUOUS_ENABLE);
++	ret |= avl6862_WR_REG32(priv,0x200 + rc_ts_cntns_clk_frac_d_iaddr_offset, uiTSFrequencyHz);
++	if (priv->config->ts_serial) {
++		switch (priv->delivery_system) {
++		case SYS_DVBS:
++		case SYS_DVBS2:
++			ret |= avl6862_WR_REG32(priv,0x200 + rc_ts_cntns_clk_frac_n_iaddr_offset, uiTSFrequencyHz);
++			break;
++		case SYS_DVBT:
++		case SYS_DVBT2:
++		case SYS_DVBC_ANNEX_A:
++		case SYS_DVBC_ANNEX_B:
++		default:
++			ret |= avl6862_WR_REG32(priv,0x200 + rc_ts_cntns_clk_frac_n_iaddr_offset, uiTSFrequencyHz / 2);
++			break;
++		}
++	}
++	else
++		ret |= avl6862_WR_REG32(priv,0x200 + rc_ts_cntns_clk_frac_n_iaddr_offset, uiTSFrequencyHz / 8);
+ 
+ 	/* TS serial pin */
+ 	ret |= avl6862_WR_REG8(priv,0x200 + rc_ts_serial_outpin_caddr_offset, AVL_MPSP_DATA0);
++
+ 	/* TS serial order */
+ 	ret |= avl6862_WR_REG8(priv,0x200 + rc_ts_serial_msb_caddr_offset, AVL_MPBO_MSB);
++
+ 	/* TS serial sync pulse */
+ 	ret |= avl6862_WR_REG8(priv,0x200 + rc_ts_sync_pulse_caddr_offset, AVL_TS_SERIAL_SYNC_1_PULSE);
+ 	/* TS error pol */
+@@ -1030,6 +1059,7 @@ static int avl6862_set_dvbmode(struct dvb_frontend *fe,
+ 	ret |= avl6862_WR_REG32(priv, REG_TS_OUTPUT, TS_OUTPUT_ENABLE);
+ 
+ 	/* init tuner i2c repeater */
++
+ 	/* hold in reset */
+ 	ret |= avl6862_WR_REG32(priv, 0x118000 + tuner_i2c_srst_offset, 1);
+ 	/* close gate */
+@@ -1418,6 +1448,7 @@ static int avl6862_read_status(struct dvb_frontend *fe, enum fe_status *status)
+ 	c->strength.stat[1].scale = FE_SCALE_RELATIVE;
+ 	c->strength.stat[1].uvalue = (Percent * 65535) / 100; //(100 - agc/1000) * 656;
+ 
++	int lock_led = priv->config->gpio_lock_led;
+ 	if (reg){
+ 		*status |= FE_HAS_CARRIER | FE_HAS_VITERBI | FE_HAS_SYNC | FE_HAS_LOCK;
+ 		c->cnr.len = 2;
+@@ -1433,6 +1464,9 @@ static int avl6862_read_status(struct dvb_frontend *fe, enum fe_status *status)
+ 		c->cnr.len = 1;
+ 		c->cnr.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
+ 	}
++	if (lock_led)
++		gpio_direction_output(lock_led, snr > 1000 ? 1 : 0);
++	dbg_avl("Status:%x level:%d snr:%d", *status, Percent, snr);
+ 	return ret;
+ }
+ 
+@@ -1492,6 +1526,7 @@ static int avl6862_read_ber(struct dvb_frontend *fe, u32 *ber)
+ 	default:
+ 		ret = 1;
+ 	}
++	dbg_avl("BER:%d ret:%d", ber, ret);
+ 	return ret;
+ }
+ 
+@@ -1507,7 +1542,10 @@ static int avl6862_set_frontend(struct dvb_frontend *fe)
+ 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
+ 	u32 demod_mode;
+ 	int ret;
++	int lock_led = priv->config->gpio_lock_led;
+ 
++	if (lock_led)
++		gpio_direction_output(lock_led, 0);
+ 
+ 	/* check that mode is correctly set */
+ 	ret = avl6862_RD_REG32(priv, 0x200 + rs_current_active_mode_iaddr_offset, &demod_mode);
+@@ -1531,7 +1569,8 @@ static int avl6862_set_frontend(struct dvb_frontend *fe)
+ 	case SYS_DVBT2:
+ 		if (demod_mode != AVL_DVBTX)
+ 			ret = avl6862_set_dvbmode(fe, c->delivery_system);
+-		if (demod_mode != AVL_DVBTX) {
++		ret = avl6862_RD_REG32(priv, 0x200 + rs_current_active_mode_iaddr_offset, &demod_mode);
++		if (ret || demod_mode != AVL_DVBTX) {
+ 			dev_err(&priv->i2c->dev, "%s: failed to enter DVBTx mode",
+ 				KBUILD_MODNAME);
+ 			ret = -EAGAIN;
+@@ -1542,7 +1581,8 @@ static int avl6862_set_frontend(struct dvb_frontend *fe)
+ 	case SYS_DVBC_ANNEX_A:
+ 		if (demod_mode != AVL_DVBC)
+ 			ret = avl6862_set_dvbmode(fe, c->delivery_system);
+-		if (demod_mode != AVL_DVBC) {
++		ret = avl6862_RD_REG32(priv, 0x200 + rs_current_active_mode_iaddr_offset, &demod_mode);
++		if (ret || demod_mode != AVL_DVBC) {
+ 			dev_err(&priv->i2c->dev, "%s: failed to enter DVBC mode",
+ 				KBUILD_MODNAME);
+ 			ret = -EAGAIN;
+@@ -1553,7 +1593,8 @@ static int avl6862_set_frontend(struct dvb_frontend *fe)
+ 	case SYS_DVBC_ANNEX_B:
+ 		if (demod_mode != AVL_DVBC)
+ 			ret = avl6862_set_dvbmode(fe, c->delivery_system);
+-		if (demod_mode != AVL_DVBC) {
++		ret = avl6862_RD_REG32(priv, 0x200 + rs_current_active_mode_iaddr_offset, &demod_mode);
++		if (ret || demod_mode != AVL_DVBC) {
+ 			dev_err(&priv->i2c->dev, "%s: failed to enter DVBC annex B mode",
+ 				KBUILD_MODNAME);
+ 			ret = -EAGAIN;
+@@ -1565,7 +1606,8 @@ static int avl6862_set_frontend(struct dvb_frontend *fe)
+ 	case SYS_DVBS2:
+ 		if (demod_mode != AVL_DVBSX)
+ 			ret = avl6862_set_dvbmode(fe, c->delivery_system);
+-		if (demod_mode != AVL_DVBSX) {
++		ret = avl6862_RD_REG32(priv, 0x200 + rs_current_active_mode_iaddr_offset, &demod_mode);
++		if (ret || demod_mode != AVL_DVBSX) {
+ 			dev_err(&priv->i2c->dev, "%s: failed to enter DVBSx mode",
+ 				KBUILD_MODNAME);
+ 			ret = -EAGAIN;
+@@ -1697,7 +1739,7 @@ static struct dvb_frontend_ops avl6862_ops = {
+ 	.get_frontend_algo		= avl6862fe_algo,
+ 	.tune				= avl6862_tune,
+ 
+-//	.set_property			= avl6862_set_property,
++// 	.set_property			= NULL, // avl6862_set_property,
+ 	.set_frontend			= avl6862_set_frontend,
+ };
+ 
+diff --git a/drivers/amlogic/dvb-avl/avl6862.h b/drivers/amlogic/dvb-avl/avl6862.h
+index dbf091f6eef2..83f977868701 100644
+--- a/drivers/amlogic/dvb-avl/avl6862.h
++++ b/drivers/amlogic/dvb-avl/avl6862.h
+@@ -23,22 +23,7 @@
+ #include "dvb_frontend.h"
+ 
+ #define MAX_CHANNEL_INFO 256
+-#if 0
+-typedef struct s_DVBTx_Channel_TS
+-{
+-    // number, example 474*1000 is RF frequency 474MHz.
+-    int channel_freq_khz;
+-    // number, example 8000 is 8MHz bandwith channel.
+-    int channel_bandwith_khz;
+ 
+-    u8 channel_type;
+-    // 0 - Low priority layer, 1 - High priority layer
+-    u8 dvbt_hierarchy_layer;
+-    // data PLP id, 0 to 255; for single PLP DVBT2 channel, this ID is 0; for DVBT channel, this ID isn't used.
+-    u8 data_plp_id;
+-    u8 channel_profile;
+-}s_DVBTx_Channel_TS;
+-#endif
+ struct avl6862_priv {
+ 	struct i2c_adapter *i2c;
+  	struct avl6862_config *config;
+@@ -47,18 +32,18 @@ struct avl6862_priv {
+ 
+ 	/* DVB-Tx */
+ 	u16 g_nChannel_ts_total;
+-//	s_DVBTx_Channel_TS global_channel_ts_table[MAX_CHANNEL_INFO];
+ };
+ 
+ struct avl6862_config {
+-	int		i2c_id; // i2c adapter id
+-	void	*i2c_adapter; // i2c adapter
++	int		i2c_id;        // i2c adapter id
++	void		*i2c_adapter;  // i2c adapter
+ 	u8		demod_address; // demodulator i2c address
+ 	u8		tuner_address; // tuner i2c address
+-	unsigned char eDiseqcStatus;
++	unsigned char 	eDiseqcStatus;
++	int             ts_serial;
++	int		gpio_lock_led;
+ };
+ 
+ extern struct dvb_frontend *avl6862_attach(struct avl6862_config *config, struct i2c_adapter *i2c);
+-extern struct dvb_frontend *avl6862x_attach(struct avl6862_config *config, struct i2c_adapter *i2c);
+ 
+ #endif /* AVL6862_H */
+diff --git a/drivers/amlogic/dvb-avl/c_stb_define.h b/drivers/amlogic/dvb-avl/c_stb_define.h
+index 66e30f17c50a..5061a893442f 100644
+--- a/drivers/amlogic/dvb-avl/c_stb_define.h
++++ b/drivers/amlogic/dvb-avl/c_stb_define.h
+@@ -91,6 +91,7 @@
+ /*  7:0 -- fec_sync_byte (default : 0x47)*/
+ /*#define TS_TOP_CONFIG           (STB_CBUS_BASE + 0xf1) // 0x16f1*/
+ /*----------- bit define -----------*/
++#define TS_OUT_CLK_INVERT	    16
+ #define TS_PACKAGE_LENGTH_SUB_1     8
+ #define FEC_DEFAULT_SYNC_BYTE       0
+ 
