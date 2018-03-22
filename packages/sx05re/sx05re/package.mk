@@ -56,6 +56,9 @@ makeinstall_target() {
 
   mkdir -p $INSTALL/usr/share/retroarch-overlays
     cp -r $PKG_DIR/overlay/* $INSTALL/usr/share/retroarch-overlays
+  
+  mkdir -p $INSTALL/usr/share/common-shaders
+    cp -r $PKG_DIR/shaders/* $INSTALL/usr/share/common-shaders
 
 ##this needs to be moved to filesystem, but I put it here for easy testing. 
   mkdir -p $INSTALL/usr/config/asound.conf

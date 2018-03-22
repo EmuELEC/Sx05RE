@@ -42,3 +42,11 @@ makeinstall_target() {
   mkdir -p $INSTALL/usr/share/retroarch-overlays
   cp -r * $INSTALL/usr/share/retroarch-overlays
 }
+
+
+post_makeinstall_target() {
+rm -rf $INSTALL/usr/share/retroarch-overlays/gamepads
+rm -rf $INSTALL/usr/share/retroarch-overlays/misc
+rm -rf $INSTALL/usr/share/retroarch-overlays/ipad
+rm -rf $INSTALL/usr/share/retroarch-overlays/keyboards
+}
