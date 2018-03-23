@@ -154,7 +154,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 +	
 +	auto sx05re_gen_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "GENESIS/MS/CD CORE", false);
 +		std::vector<std::string> genesischoices;
-+		genesischoices.push_back("genesis-plus-gx");
++		genesischoices.push_back("genesis_plus_gx");
 +		genesischoices.push_back("picodrive");
 +		/*genesischoices.push_back("snes9x2005");*/
 +		/*genesischoices.push_back("snes9x2005_plus");*/
