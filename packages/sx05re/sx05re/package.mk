@@ -59,6 +59,9 @@ makeinstall_target() {
   
   mkdir -p $INSTALL/usr/share/common-shaders
     cp -r $PKG_DIR/shaders/* $INSTALL/usr/share/common-shaders
+    
+    mkdir -p $INSTALL/usr/share/libretro-database
+     touch $INSTALL/usr/share/libretro-database/dummy
 
 ##this needs to be moved to filesystem, but I put it here for easy testing. 
   mkdir -p $INSTALL/usr/config/asound.conf
