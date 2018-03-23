@@ -12,8 +12,8 @@ if [ ! -f "$BIOS_DIR/putbioshere" ]; then
 fi
 
 if [ ! "$(ls -A $ROMS_DIR)" ]; then
-    mkdir -p $ROMS_DIR/nes/
-    touch $ROMS_DIR/nes/you_need_roms.nes
+    mkdir -p $ROMS_DIR
+    touch $ROMS_DIR/you_need_roms.nes
 fi
 
 
