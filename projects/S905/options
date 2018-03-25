@@ -147,7 +147,7 @@
     EXTRA_DEPS_PKG="u-boot-tools"
 
   # set the addon dirs
-    ADDON_SERVER_URL="http://kszaq.libreelec.tv/addons"
+    ADDON_SERVER_URL="http://libreelec.adamg.co.uk/addons"
     ADDON_URL="$ADDON_SERVER_URL/$ADDON_PATH"
 
   # OEM packages for OEM's (yes / no)
