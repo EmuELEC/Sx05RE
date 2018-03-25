@@ -1,0 +1,38 @@
+diff --git a/gxl_p212_1g_tx3mini.dts b/gxl_p212_1g_tx3mini.dts
+deleted file mode 100644
+index 392d9ec..0000000
+--- a/gxl_p212_1g_tx3mini.dts
++++ /dev/null
+@@ -1,13 +0,0 @@
+-#include "gxl_p212_1g.dts"
+-
+-/ {
+-	le-dt-id = "gxl_p212_1g_tx3mini";
+-	fd628_dev {
+-		compatible = "amlogic,fd628_dev";
+-		status = "okay";
+-		fd628_gpio_clk = <&gpio GPIODV_27 GPIO_ACTIVE_HIGH>;
+-		fd628_gpio_dat = <&gpio GPIODV_26 GPIO_ACTIVE_HIGH>;
+-		fd628_gpio_stb = <&gpio_ao GPIOAO_4 GPIO_ACTIVE_HIGH>;
+-	};
+-
+-};
+diff --git a/gxl_p212_2g_tx3mini.dts b/gxl_p212_2g_tx3mini.dts
+deleted file mode 100644
+index e99177f..0000000
+--- a/gxl_p212_2g_tx3mini.dts
++++ /dev/null
+@@ -1,13 +0,0 @@
+-#include "gxl_p212_2g.dts"
+-
+-/ {
+-	le-dt-id = "gxl_p212_2g_tx3mini";
+-	fd628_dev {
+-		compatible = "amlogic,fd628_dev";
+-		status = "okay";
+-		fd628_gpio_clk = <&gpio GPIODV_27 GPIO_ACTIVE_HIGH>;
+-		fd628_gpio_dat = <&gpio GPIODV_26 GPIO_ACTIVE_HIGH>;
+-		fd628_gpio_stb = <&gpio_ao GPIOAO_4 GPIO_ACTIVE_HIGH>;
+-	};
+-
+-};
