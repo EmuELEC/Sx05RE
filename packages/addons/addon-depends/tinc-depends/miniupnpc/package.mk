@@ -1,6 +1,6 @@
 ################################################################################
 #      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
+#      Copyright (C) 2018-present Team LibreELEC
 #
 #  LibreELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -16,15 +16,14 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="moonlight-common-c"
-PKG_VERSION="c4692a5"
-PKG_SHA256="9add55e53436d9f78c1dd88c5a4e3932d30922609e3f6ac6a007a635aa82f209"
+PKG_NAME="miniupnpc"
+PKG_VERSION="2.0.20180222"
+PKG_SHA256="587944686469d09f739744b3aed70c7ce753a79c40d6f1227f68a3e962665b75"
 PKG_ARCH="any"
-PKG_LICENSE="GPLv3"
-PKG_SITE="https://github.com/moonlight-stream/moonlight-common-c"
-PKG_URL="https://github.com/moonlight-stream/moonlight-common-c/archive/${PKG_VERSION}.tar.gz"
+PKG_LICENSE="BSD"
+PKG_SITE="http://miniupnp.free.fr"
+PKG_URL="http://miniupnp.free.fr/files/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_SECTION=""
-PKG_SHORTDESC="Shared C code for the implementation of Nvidia's GameStream protocol"
-PKG_LONGDESC="Shared C code for the implementation of Nvidia's GameStream protocol"
-PKG_TOOLCHAIN="manual"
+PKG_LONGDESC="The MiniUPnP project offers software which supports the UPnP Internet Gateway Device (IGD) specifications"
+
+PKG_CMAKE_OPTS_TARGET="-DUPNPC_BUILD_SHARED=OFF -DUPNPC_BUILD_STATIC=ON"
