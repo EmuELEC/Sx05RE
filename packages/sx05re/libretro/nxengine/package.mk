@@ -19,13 +19,12 @@
 ################################################################################
 
 PKG_NAME="nxengine"
-PKG_VERSION="3826092"
+PKG_VERSION="0d935ba"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/nxengine-libretro"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -33,6 +32,7 @@ PKG_SHORTDESC="Port of NxEngine to libretro - Cave Story game engine clone"
 PKG_LONGDESC="A complete open-source clone/rewrite of the masterpiece jump-and-run platformer Doukutsu Monogatari (also known as Cave Story)."
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 pre_configure_target() {

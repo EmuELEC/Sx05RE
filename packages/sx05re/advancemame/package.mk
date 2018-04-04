@@ -4,7 +4,7 @@
 ################################################################################
 
 PKG_NAME="advancemame"
-PKG_VERSION="dcaec4b"
+PKG_VERSION="83e75c7"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MAME"
@@ -16,8 +16,14 @@ PKG_SECTION="sx05re/mod"
 PKG_SHORTDESC="A MAME and MESS port with an advanced video support for Arcade Monitors, TVs, and PC Monitors "
 PKG_LONGDESC="A MAME and MESS port with an advanced video support for Arcade Monitors, TVs, and PC Monitors "
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="no"
 PKG_TOOLCHAIN="make"
+PKG_AUTORECONF="no"
+
+pre_configure_target() {
+  OLDCFLAGS=$CFLAGS
+  CFLAGS=(sed -i -e 's/Os/O3/g' $CFLAGS)
+  CFLAGS="$CFLAGS -Wall -pipe"
+}
 
 post_unpack() {
 cp -r $PKG_DIR/.version $PKG_BUILD
@@ -47,4 +53,5 @@ cp -r $PKG_BUILD/support/sysinfo.dat $INSTALL/usr/share/advance
 cp -r $PKG_BUILD/support/history.dat $INSTALL/usr/share/advance
 cp -r $PKG_BUILD/support/hiscore.dat $INSTALL/usr/share/advance
 cp -r $PKG_BUILD/support/event.dat $INSTALL/usr/share/advance
+CFLAGS=$OLDCFLAGS
 }

@@ -25,7 +25,6 @@ PKG_ARCH="any"
 PKG_LICENSE="MIT"
 PKG_SITE="https://github.com/libretro/libretro-lutro"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -33,6 +32,7 @@ PKG_SHORTDESC="An experimental lua game framework for libretro inspired by LÖVE
 PKG_LONGDESC="An experimental lua game framework for libretro inspired by LÖVE"
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 make_target() {

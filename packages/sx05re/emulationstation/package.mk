@@ -28,8 +28,8 @@ PKG_DEPENDS_TARGET="toolchain systemd SDL2 freetype curl cmake:host freeimage vl
 PKG_SECTION="sx05re"
 PKG_SHORTDESC="Emulationstation emulator frontend"
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="no"
 PKG_TOOLCHAIN="auto"
+PKG_AUTORECONF="no"
 
 # theme for Emulationstation
 #PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET emulationstation-theme-simple-dark"

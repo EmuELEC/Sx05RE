@@ -19,13 +19,12 @@
 ################################################################################
 
 PKG_NAME="2048"
-PKG_VERSION="a40238a"
+PKG_VERSION="6b6451b"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/libretro-2048"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -33,6 +32,7 @@ PKG_SHORTDESC="Port of 2048 puzzle game to the libretro API."
 PKG_LONGDESC="Port of 2048 puzzle game to the libretro API."
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 make_target() {

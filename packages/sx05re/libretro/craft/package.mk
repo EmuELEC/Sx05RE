@@ -19,13 +19,12 @@
 ################################################################################
 
 PKG_NAME="craft"
-PKG_VERSION="3513d34"
+PKG_VERSION="7421f79"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MIT"
 PKG_SITE="https://github.com/libretro/Craft"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -33,6 +32,7 @@ PKG_SHORTDESC="A simple Minecraft clone written in C using modern OpenGL (shader
 PKG_LONGDESC="A simple Minecraft clone written in C using modern OpenGL (shaders)."
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 pre_configure_target() {

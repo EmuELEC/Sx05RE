@@ -19,13 +19,12 @@
 ################################################################################
 
 PKG_NAME="desmume"
-PKG_VERSION="69658a2"
+PKG_VERSION="7dd6eb0"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
-PKG_SITE="https://github.com/libretro/desmume2015"
+PKG_SITE="https://github.com/libretro/desmume"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -33,6 +32,7 @@ PKG_SHORTDESC="libretro wrapper for desmume NDS emulator."
 PKG_LONGDESC="libretro wrapper for desmume NDS emulator."
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 make_target() {
@@ -45,5 +45,5 @@ make_target() {
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp desmume/desmume2015_libretro.so $INSTALL/usr/lib/libretro/
+  cp desmume/desmume_libretro.so $INSTALL/usr/lib/libretro/
 }

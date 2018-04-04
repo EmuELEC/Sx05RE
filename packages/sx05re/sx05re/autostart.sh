@@ -108,11 +108,11 @@ fi
 /usr/lib/samba/samba-config
 systemctl start smbd
 
-if [ ! -f /storage/.config/def_fe ]; then
-   echo ES > /storage/.config/def_fe
+if [ ! -f /storage/.emulationstation/es_settings.cfg ]; then
+   cp /usr/config/emulationstation/es_settings.cfg /storage/.emulationstation/es_settings.cfg
 fi
 
-DEFE=`cat /storage/.config/def_fe`;
+DEFE=$(sed -n 's|\s*<string name="Sx05RE_BOOT" value="\(.*\)" />|\1|p' /storage/.emulationstation/es_settings.cfg)
 
 case "$DEFE" in
 "Kodi")

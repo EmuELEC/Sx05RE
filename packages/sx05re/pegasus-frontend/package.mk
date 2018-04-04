@@ -33,6 +33,7 @@ PKG_SHORTDESC="A cross platform, customizable graphical frontend for launching e
 PKG_LONGDESC="A cross platform, customizable graphical frontend for launching emulators and managing your game collection. "
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no" 
 
 post_unpack() {
@@ -44,13 +45,9 @@ post_unpack() {
   cd $ROOT
 }
 
-pre_configure_target() {
-  strip_lto
-}
-
 make_target() {
-# Nasty hack to get qmake to work, if you change qt-everywhere version, make sure you change this.
-$BUILD/qt-everywhere-5.9.4/qtbase/qmake/qmake INSTALLDIR=${INSTALL}/usr/bin INSTALL_BINDIR=${INSTALL}/usr/bin INSTALL_DATADIR=${INSTALL}/usr/bin INSTALL_ICONDIR=${INSTALL}/usr/bin INSTALL_DESKTOPDIR=${INSTALL}/usr/bin
+QMAKEPATH=$(find $BUILD/qt-everywhere*/qtbase -maxdepth 1 -name qmake)
+$QMAKEPATH/qmake INSTALLDIR=${INSTALL}/usr/bin INSTALL_BINDIR=${INSTALL}/usr/bin INSTALL_DATADIR=${INSTALL}/usr/bin INSTALL_ICONDIR=${INSTALL}/usr/bin INSTALL_DESKTOPDIR=${INSTALL}/usr/bin
 cd $PKG_BUILD
 make
 }

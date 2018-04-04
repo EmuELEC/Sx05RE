@@ -28,6 +28,7 @@ PKG_DEPENDS_TARGET="toolchain"
 PKG_SECTION="xmedia/games"
 PKG_SHORTDESC="the nes-mini Emulationstation theme by ruckage"
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 make_target() {

@@ -15,8 +15,8 @@ PKG_SECTION="sx05re"
 PKG_SHORTDESC="Sx05re Meta Package"
 PKG_LONGDESC="Sx05re Meta Package"
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="no"
 PKG_TOOLCHAIN="make"
+PKG_AUTORECONF="no"
 
 # Thanks to magicseb  Reicast SA now WORKS :D
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET vba-next libretro-beetle-pce-fast advancemame PPSSPPSDL emulationstation reicastsa common-shaders scraper"
@@ -57,6 +57,12 @@ makeinstall_target() {
 
   mkdir -p $INSTALL/usr/share/retroarch-overlays
     cp -r $PKG_DIR/overlay/* $INSTALL/usr/share/retroarch-overlays
+  
+  mkdir -p $INSTALL/usr/share/common-shaders
+    cp -r $PKG_DIR/shaders/* $INSTALL/usr/share/common-shaders
+    
+    mkdir -p $INSTALL/usr/share/libretro-database
+     touch $INSTALL/usr/share/libretro-database/dummy
 
 ##this needs to be moved to filesystem, but I put it here for easy testing. 
   mkdir -p $INSTALL/usr/config/asound.conf

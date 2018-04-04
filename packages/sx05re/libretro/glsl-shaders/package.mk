@@ -19,13 +19,12 @@
 ################################################################################
 
 PKG_NAME="glsl-shaders"
-PKG_VERSION="f92cb1a"
+PKG_VERSION="dd9b3a4"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/libretro/glsl-shaders"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -33,6 +32,7 @@ PKG_SHORTDESC="Common GSLS shaders for RetroArch"
 PKG_LONGDESC="Common GSLS shaders for RetroArch"
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 configure_target() {

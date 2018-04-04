@@ -23,13 +23,14 @@ PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/libretro-fsuae"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain libmpeg2 openal-soft glib"
 PKG_SECTION="emulation"
 PKG_SHORTDESC="FS-UAE amiga emulator libretro core."
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="yes"
+PKG_BUILD_FLAGS="-lto"
 
 case $PROJECT in
   RPi*)
@@ -41,7 +42,6 @@ pre_configure_target() {
   cd $BUILD/$PKG_NAME-$PKG_VERSION
   rm -rf .$TARGET_NAME
   export ac_cv_func_realloc_0_nonnull=yes
-  strip_lto
 }
 
 make_target() {

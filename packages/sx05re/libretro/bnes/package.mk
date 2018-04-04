@@ -19,13 +19,12 @@
 ################################################################################
 
 PKG_NAME="bnes"
-PKG_VERSION="b3b740f"
+PKG_VERSION="cbdf063"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/bnes-libretro"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -33,6 +32,7 @@ PKG_SHORTDESC="libretro implementation of bNES/higan. (Nintendo Entertainment Sy
 PKG_LONGDESC="libretro implementation of bNES/higan. (Nintendo Entertainment System)"
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 makeinstall_target() {

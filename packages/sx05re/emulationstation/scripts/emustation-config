@@ -1,7 +1,7 @@
 #!/bin/sh
 
 BIOS_DIR="/storage/roms/bios"
-ROMS_DIR="/storage/roms"
+ROMS_DIR="/storage/roms/nes"
 CONFIG_DIR="/storage/.emulationstation"
 CONFIG_DIR2="/storage/.config/emulationstation"
 
@@ -11,10 +11,11 @@ if [ ! -f "$BIOS_DIR/putbioshere" ]; then
     touch $BIOS_DIR/putbioshere
 fi
 
-if [ ! -d "$ROMS_DIR" ]; then
-    mkdir -p $ROMS_DIR/n64/
-    touch $ROMS_DIR/n64/dummy.z64
+if [ ! "$(ls -A $ROMS_DIR)" ]; then
+    mkdir -p $ROMS_DIR
+    touch $ROMS_DIR/you_need_roms.nes
 fi
+
 
 if [ ! -d "$CONFIG_DIR" ]; then
  mkdir -p $CONFIG_DIR

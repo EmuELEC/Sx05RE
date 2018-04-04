@@ -25,7 +25,6 @@ PKG_ARCH="x86_64"
 PKG_LICENSE="GPLv2+"
 PKG_SITE="https://github.com/libretro/citra"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain boost curl"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -33,6 +32,7 @@ PKG_SHORTDESC="A Nintendo 3DS Emulator"
 PKG_LONGDESC="A Nintendo 3DS Emulator"
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 PKG_CMAKE_OPTS_TARGET="-DENABLE_LIBRETRO=1 \

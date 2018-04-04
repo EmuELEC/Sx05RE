@@ -25,14 +25,14 @@ PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/libretro/common-overlays"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="RetroArch overlays"
 PKG_LONGDESC="Collection of overlay files for use with libretro frontends, such as RetroArch."
-PKG_TOOLCHAIN="make"
+
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 make_target() {
@@ -42,4 +42,12 @@ make_target() {
 makeinstall_target() {
   mkdir -p $INSTALL/usr/share/retroarch-overlays
   cp -r * $INSTALL/usr/share/retroarch-overlays
+}
+
+
+post_makeinstall_target() {
+rm -rf $INSTALL/usr/share/retroarch-overlays/gamepads
+rm -rf $INSTALL/usr/share/retroarch-overlays/misc
+rm -rf $INSTALL/usr/share/retroarch-overlays/ipad
+rm -rf $INSTALL/usr/share/retroarch-overlays/keyboards
 }

@@ -30,8 +30,9 @@ PKG_PRIORITY="optional"
 PKG_SECTION="sx05re"
 PKG_SHORTDESC="Manually converted libretro/common-shaders for arm devices treebranch pi"
 PKG_LONGDESC="Manually converted libretro/common-shaders for arm devices treebranch pi"
-PKG_TOOLCHAIN="make"
+
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 

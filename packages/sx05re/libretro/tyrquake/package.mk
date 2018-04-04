@@ -19,13 +19,12 @@
 ################################################################################
 
 PKG_NAME="tyrquake"
-PKG_VERSION="0450638"
+PKG_VERSION="3031306"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/tyrquake"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -33,6 +32,7 @@ PKG_SHORTDESC="Libretro port of Tyrquake (Quake 1 engine)"
 PKG_LONGDESC="Libretro port of Tyrquake (Quake 1 engine)"
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 pre_configure_target() {

@@ -32,6 +32,7 @@ PKG_SHORTDESC="FFmpeg is a video player implemented in libretro."
 PKG_LONGDESC="FFmpeg is a complete, cross-platform solution to record, convert and stream audio and video. It includes libavcodec - the leading audio/video codec library."
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 makeinstall_target() {

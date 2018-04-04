@@ -28,6 +28,7 @@ PKG_DEPENDS_TARGET="toolchain"
 PKG_SECTION="xmedia/games"
 PKG_SHORTDESC="Simple dark theme for Emulationstation"
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 make_target() {

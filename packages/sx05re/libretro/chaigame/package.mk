@@ -32,6 +32,7 @@ PKG_SHORTDESC="ChaiGame: 2D Game Framework"
 PKG_LONGDESC="Framework to create 2D games with ChaiScript."
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 configure_target() {

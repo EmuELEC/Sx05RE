@@ -19,13 +19,12 @@
 ################################################################################
 
 PKG_NAME="mame"
-PKG_VERSION="213a9b4"
+PKG_VERSION="893f1ac"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MAME"
 PKG_SITE="https://github.com/libretro/mame"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -33,12 +32,11 @@ PKG_SHORTDESC="MAME - Multiple Arcade Machine Emulator"
 PKG_LONGDESC="MAME - Multiple Arcade Machine Emulator"
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
+PKG_BUILD_FLAGS="-lto -gold"
 
 make_target() {
-  strip_gold
-  strip_lto
-
   LCPU=$ARCH
   PTR64=0
   NOASM=0

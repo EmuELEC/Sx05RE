@@ -25,7 +25,6 @@ PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/mupen64plus-libretro"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain nasm:host"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -33,11 +32,9 @@ PKG_SHORTDESC="mupen64plus + RSP-HLE + GLideN64 + libretro"
 PKG_LONGDESC="mupen64plus + RSP-HLE + GLideN64 + libretro"
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
-
-pre_configure_target() {
-  strip_lto
-}
+PKG_BUILD_FLAGS="-lto"
 
 make_target() {
   case $PROJECT in

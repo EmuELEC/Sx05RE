@@ -25,7 +25,6 @@ PKG_ARCH="i386 x86_64"
 PKG_LICENSE="BSD"
 PKG_SITE="https://github.com/libretro/openlara"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -33,6 +32,7 @@ PKG_SHORTDESC="Classic Tomb Raider open-source engine"
 PKG_LONGDESC="Classic Tomb Raider open-source engine"
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 make_target() {

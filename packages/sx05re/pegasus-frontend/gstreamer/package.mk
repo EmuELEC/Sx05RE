@@ -30,13 +30,8 @@ PKG_PRIORITY="optional"
 PKG_SECTION="sx05re"
 PKG_SHORTDESC="Gstreamer"
 PKG_LONGDESC="Gstreamer"
+PKG_BUILD_FLAGS="-lto"
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no" 
-
-pre_configure_target() {
-  strip_lto
-}
-
-
-

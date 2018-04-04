@@ -28,8 +28,8 @@ PKG_DEPENDS_TARGET="toolchain"
 PKG_SECTION="xmedia/games"
 PKG_SHORTDESC="ComicBook Theme 16:9 v2.5  by TMNTturtleguy"
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="no"
 PKG_TOOLCHAIN="make"
+PKG_AUTORECONF="no"
 
 make_target() {
   : not

@@ -32,6 +32,7 @@ PKG_SHORTDESC="Gstreamer"
 PKG_LONGDESC="Gstreamer"
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no" 
 
 PKG_CONFIGURE_OPTS_TARGET="--enable-pulse=no --with-default-audiosink=alsasink"

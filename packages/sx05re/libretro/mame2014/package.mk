@@ -23,19 +23,19 @@ PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/mame2014-libretro"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="Late 2014 version of MAME (0.159-ish) for libretro and MAME 0.159 romsets"
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
+PKG_BUILD_FLAGS="-lto"
 
 pre_make_target() {
   export REALCC=$CC
   export CC=$CXX
   export LD=$CXX
-  strip_lto
 }
 
 make_target() {
@@ -52,7 +52,7 @@ make_target() {
     WeTek_Play)
       make platform=armv7-neon-hardfloat-cortex-a9
       ;;
-    Odroid_C2|WeTek_Hub|WeTek_Play_2|S905|S805)
+    Odroid_C2|WeTek_Hub|WeTek_Play_2|S905)
       make platform=armv-neon-hardfloat
       ;;
     Generic)

@@ -25,7 +25,6 @@ PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/libretro/libretro-uae"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -33,10 +32,12 @@ PKG_SHORTDESC="WIP libretro port of UAE (P-UAE and libco) Expect bugs"
 PKG_LONGDESC="WIP libretro port of UAE (P-UAE and libco) Expect bugs"
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
+PKG_BUILD_FLAGS="-lto"
+
 pre_configure_target() {
-  strip_lto
   if [ "$ARCH" == "arm" ]; then
     CFLAGS="$CFLAGS -DARM -marm"
   fi

@@ -26,14 +26,15 @@ PKG_SOURCE_DIR="reicast-emulator-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain alsa-utils libpng libevdev"
 PKG_SECTION="emulation"
 PKG_SHORTDESC="Reicast is a multi-platform Sega Dreamcast emulator"
-PKG_TOOLCHAIN="make"
+
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 make_target() {
   cd shell/linux
   case $PROJECT in
-    S905|S805|Amlogic)
+    S905|S805|S912|Amlogic)
       make CC=$CC CXX=$CXX AS=$CC STRIP=$STRIP platform=odroid reicast.elf
       ;;
     Generic)

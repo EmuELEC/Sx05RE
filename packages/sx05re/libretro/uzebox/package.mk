@@ -33,6 +33,7 @@ PKG_SHORTDESC="A retro-minimalist game console engine for the ATMega644"
 PKG_LONGDESC="A retro-minimalist game console engine for the ATMega644"
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 make_target() {

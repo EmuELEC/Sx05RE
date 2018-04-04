@@ -19,13 +19,12 @@
 ################################################################################
 
 PKG_NAME="bsnes-mercury"
-PKG_VERSION="fea594b"
+PKG_VERSION="2aa1bc1"
 PKG_REV="1"
 PKG_ARCH="x86_64 i386"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/bsnes-mercury"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -33,6 +32,7 @@ PKG_SHORTDESC="Fork of bsnes with HLE DSP emulation restored."
 PKG_LONGDESC="Fork of bsnes with HLE DSP emulation restored."
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 make_target() {

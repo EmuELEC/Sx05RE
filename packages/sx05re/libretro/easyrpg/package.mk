@@ -19,13 +19,12 @@
 ################################################################################
 
 PKG_NAME="easyrpg"
-PKG_VERSION="05e2971"
+PKG_VERSION="80340d4"
 PKG_REV="2"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/easyrpg-libretro"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain zlib"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -33,6 +32,7 @@ PKG_SHORTDESC="An unofficial libretro port of the EasyRPG/Player."
 PKG_LONGDESC="An unofficial libretro port of the EasyRPG/Player."
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 PKG_USE_CMAKE="no"
 

@@ -32,6 +32,7 @@ PKG_SHORTDESC="Port of blargg's Game_Music_Emu library."
 PKG_LONGDESC="Port of blargg's Game_Music_Emu library."
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 post_unpack() {

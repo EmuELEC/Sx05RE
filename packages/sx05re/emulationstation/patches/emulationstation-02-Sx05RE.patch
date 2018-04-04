@@ -1,15 +1,29 @@
 diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 --- a/es-app/src/guis/GuiMenu.cpp	Thu Jun 08 07:58:22 2017
 +++ b/es-app/src/guis/GuiMenu.cpp	Thu Jun 08 16:55:16 2017
-@@ -21,6 +21,7 @@
+--- GuiMenu.cpp	2018-03-18 16:41:31.432784508 -0600
++++ GuiMenu.cpp2	2018-03-18 16:41:12.513095202 -0600
+--- GuiMenu.cpp	2018-03-18 16:46:26.363943621 -0600
++++ GuiMenu.cpp2	2018-03-18 16:45:30.072867272 -0600
+@@ -21,11 +21,14 @@
  {
  	bool isFullUI = UIModeController::getInstance()->isUIModeFull();
  
 +		addEntry("Sx05RE", 0x777777FF, true, [this] { openSx05RESettings(); });
++	
++	// This will be removed/changed as it doesn't work, or works poorly on Sx05RE,try to use sselph scraper
  	if (isFullUI)
  		addEntry("SCRAPER", 0x777777FF, true, [this] { openScraperSettings(); });
+-
+-	addEntry("SOUND SETTINGS", 0x777777FF, true, [this] { openSoundSettings(); });
+-
++    /* removed, no use for it on Sx05RE
++  	addEntry("SOUND SETTINGS", 0x777777FF, true, [this] { openSoundSettings(); });
++    */
  
-@@ -48,6 +49,73 @@
+ 	if (isFullUI)
+ 		addEntry("UI SETTINGS", 0x777777FF, true, [this] { openUISettings(); });
+@@ -48,6 +51,228 @@
  	setPosition((Renderer::getScreenWidth() - mSize.x()) / 2, Renderer::getScreenHeight() * 0.15f);
  }
  
@@ -17,39 +31,188 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 +{
 +	auto s = new GuiSettings(mWindow, "Sx05RE Settings");
 +	
-+	Window* window = mWindow;
-+	ComponentListRow row;
-+
-+			row.makeAcceptInputHandler([window] {
-+				window->pushGui(new GuiMsgBox(window, "QUIT TO KODI? ", "YES",
-+					[] {
-+					remove("/var/lock/start.games");
-+            		runSystemCommand("touch /var/lock/start.kodi");
-+			        runSystemCommand("systemctl start kodi.service");
-+					SDL_Event ev;
-+					ev.type = SDL_QUIT;
-+					SDL_PushEvent(&ev);
-+				}, "NO", nullptr));
-+			});
-+			row.addElement(std::make_shared<TextComponent>(window, "START KODI", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
-+			s->addRow(row);
-+
-+			row.elements.clear();
-+			row.makeAcceptInputHandler([window] {
-+				window->pushGui(new GuiMsgBox(window, "QUIT TO RETROARCH? ", "YES",
-+					[] {
-+					remove("/var/lock/start.games");
-+            		runSystemCommand("touch /var/lock/start.retro");
-+			        runSystemCommand("systemctl start retroarch.service");
-+					SDL_Event ev;
-+					ev.type = SDL_QUIT;
-+					SDL_PushEvent(&ev);
-+				}, "NO", nullptr));
-+			});
-+			row.addElement(std::make_shared<TextComponent>(window, "START RETROARCH", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
-+			s->addRow(row);
++	
++	auto sx05re_mame_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "MAME EMULATOR", false);
++		std::vector<std::string> mamechoices;
++		mamechoices.push_back("AdvanceMame");
++		mamechoices.push_back("mame2003");
++		mamechoices.push_back("mame2003-midway");
++		mamechoices.push_back("mame2010");
++		mamechoices.push_back("mame2014");
++		/*mamechoices.push_back("mame2000");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		for (auto it = mamechoices.cbegin(); it != mamechoices.cend(); it++)
++		sx05re_mame_def->add(*it, *it, Settings::getInstance()->getString("Sx05RE_MAME_CORE") == *it);
++		s->addWithLabel("MAME EMULATOR", sx05re_mame_def);
++		s->addSaveFunc([sx05re_mame_def] {
++		/* runSystemCommand("echo "+sx05re_mame_def->getSelected()+" > /storage/.config/sx05re/mame"); */
++			if (Settings::getInstance()->getString("Sx05RE_MAME_CORE") != sx05re_mame_def->getSelected())
++				Settings::getInstance()->setString("Sx05RE_MAME_CORE", sx05re_mame_def->getSelected());
++		});
++	
++	auto sx05re_fba_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "FBA/NEO-GEO CORE", false);
++		std::vector<std::string> fbachoices;
++		fbachoices.push_back("fbalpha");
++		fbachoices.push_back("mame2003");
++		fbachoices.push_back("mame2003-midway");
++		fbachoices.push_back("mame2010");
++		fbachoices.push_back("mame2014");
++		/*fbachoices.push_back("mame2000");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		for (auto it = fbachoices.cbegin(); it != fbachoices.cend(); it++)
++		sx05re_fba_def->add(*it, *it, Settings::getInstance()->getString("Sx05RE_FBA_CORE") == *it);
++		s->addWithLabel("FBA/NEO-GEO CORE", sx05re_fba_def);
++		s->addSaveFunc([sx05re_fba_def] {
++		/* runSystemCommand("echo "+sx05re_fba_def->getSelected()+" > /storage/.config/sx05re/mame"); */
++			if (Settings::getInstance()->getString("Sx05RE_FBA_CORE") != sx05re_fba_def->getSelected())
++				Settings::getInstance()->setString("Sx05RE_FBA_CORE", sx05re_fba_def->getSelected());
++		});
++		
++	auto sx05re_psp_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "PSP EMULATOR", false);
++		std::vector<std::string> pspchoices;
++		pspchoices.push_back("PPSSPPSA");
++		/*pspchoices.push_back("ppsspp");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		for (auto it = pspchoices.cbegin(); it != pspchoices.cend(); it++)
++		sx05re_psp_def->add(*it, *it, Settings::getInstance()->getString("Sx05RE_PSP_CORE") == *it);
++		s->addWithLabel("PSP EMULATOR", sx05re_psp_def);
++		s->addSaveFunc([sx05re_psp_def] {
++		/* runSystemCommand("echo "+sx05re_psp_def->getSelected()+" > /storage/.config/sx05re/psp"); */
++			if (Settings::getInstance()->getString("Sx05RE_PSP_CORE") != sx05re_psp_def->getSelected())
++				Settings::getInstance()->setString("Sx05RE_PSP_CORE", sx05re_psp_def->getSelected());
++		});	
++	
++	
++	auto sx05re_n64_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "N64 CORE", false);
++		std::vector<std::string> n64choices;
++		n64choices.push_back("mupen64plus");
++		n64choices.push_back("parallel-n64");
++		/*n64choices.push_back("quicknes");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		for (auto it = n64choices.cbegin(); it != n64choices.cend(); it++)
++		sx05re_n64_def->add(*it, *it, Settings::getInstance()->getString("Sx05RE_N64_CORE") == *it);
++		s->addWithLabel("N64 CORE", sx05re_n64_def);
++		s->addSaveFunc([sx05re_n64_def] {
++		/* runSystemCommand("echo "+sx05re_n64_def->getSelected()+" > /storage/.config/sx05re/nes"); */
++			if (Settings::getInstance()->getString("Sx05RE_N64_CORE") != sx05re_n64_def->getSelected())
++				Settings::getInstance()->setString("Sx05RE_N64_CORE", sx05re_n64_def->getSelected());
++		});
++	
 +			
-+auto sx05re_boot_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "START AT BOOT", false);
++	auto sx05re_nes_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "NES/FC/FDS CORE", false);
++		std::vector<std::string> neschoices;
++		neschoices.push_back("fceumm");
++		neschoices.push_back("nestopia");
++		/*neschoices.push_back("quicknes");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		for (auto it = neschoices.cbegin(); it != neschoices.cend(); it++)
++		sx05re_nes_def->add(*it, *it, Settings::getInstance()->getString("Sx05RE_NES_CORE") == *it);
++		s->addWithLabel("NES/FC/FDS CORE", sx05re_nes_def);
++		s->addSaveFunc([sx05re_nes_def] {
++		/* runSystemCommand("echo "+sx05re_nes_def->getSelected()+" > /storage/.config/sx05re/nes"); */
++			if (Settings::getInstance()->getString("Sx05RE_NES_CORE") != sx05re_nes_def->getSelected())
++				Settings::getInstance()->setString("Sx05RE_NES_CORE", sx05re_nes_def->getSelected());
++		});
++		
++		
++	auto sx05re_snes_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "SNES CORE", false);
++		std::vector<std::string> sneschoices;
++		sneschoices.push_back("snes9x");
++		sneschoices.push_back("snes9x2002");
++		sneschoices.push_back("snes9x2005");
++		sneschoices.push_back("snes9x2005_plus");
++		sneschoices.push_back("snes9x2010");
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		for (auto it = sneschoices.cbegin(); it != sneschoices.cend(); it++)
++		sx05re_snes_def->add(*it, *it, Settings::getInstance()->getString("Sx05RE_SNES_CORE") == *it);
++		s->addWithLabel("SNES CORE", sx05re_snes_def);
++		s->addSaveFunc([sx05re_snes_def] {
++		/* runSystemCommand("echo "+sx05re_snes_def->getSelected()+" > /storage/.config/sx05re/snes"); */
++			if (Settings::getInstance()->getString("Sx05RE_SNES_CORE") != sx05re_snes_def->getSelected())
++				Settings::getInstance()->setString("Sx05RE_SNES_CORE", sx05re_snes_def->getSelected());
++		});
++	
++	auto sx05re_gen_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "GENESIS/MS/CD CORE", false);
++		std::vector<std::string> genesischoices;
++		genesischoices.push_back("genesis_plus_gx");
++		genesischoices.push_back("picodrive");
++		/*genesischoices.push_back("snes9x2005");*/
++		/*genesischoices.push_back("snes9x2005_plus");*/
++		/*genesischoices.push_back("snes9x2010");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		for (auto it = genesischoices.cbegin(); it != genesischoices.cend(); it++)
++		sx05re_gen_def->add(*it, *it, Settings::getInstance()->getString("Sx05RE_GEN_CORE") == *it);
++		s->addWithLabel("GENESIS/MS/CD CORE", sx05re_gen_def);
++		s->addSaveFunc([sx05re_gen_def] {
++			/* runSystemCommand("echo "+sx05re_gen_def->getSelected()+" > /storage/.config/sx05re/snes"); */
++			if (Settings::getInstance()->getString("Sx05RE_GEN_CORE") != sx05re_gen_def->getSelected())
++				Settings::getInstance()->setString("Sx05RE_GEN_CORE", sx05re_gen_def->getSelected());
++		});
++		
++	auto sx05re_gba_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "GBA CORE", false);
++		std::vector<std::string> gbachoices;
++		gbachoices.push_back("mgba");
++		gbachoices.push_back("gpsp");
++		gbachoices.push_back("vbam");
++		gbachoices.push_back("vba-next");
++		/*gbachoices.push_back("snes9x2010");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		for (auto it = gbachoices.cbegin(); it != gbachoices.cend(); it++)
++		sx05re_gba_def->add(*it, *it, Settings::getInstance()->getString("Sx05RE_GBA_CORE") == *it);
++		s->addWithLabel("GBA CORE", sx05re_gba_def);
++		s->addSaveFunc([sx05re_gba_def] {
++			/* runSystemCommand("echo "+sx05re_gba_def->getSelected()+" > /storage/.config/sx05re/snes"); */
++			if (Settings::getInstance()->getString("Sx05RE_GBA_CORE") != sx05re_gba_def->getSelected())
++				Settings::getInstance()->setString("Sx05RE_GBA_CORE", sx05re_gba_def->getSelected());
++		});
++		
++	auto sx05re_gbc_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "GB/GBC CORE", false);
++		std::vector<std::string> gbcchoices;
++		gbcchoices.push_back("gambatte");
++		gbcchoices.push_back("gearboy");
++		gbcchoices.push_back("tgbdual");
++		/*gbcchoices.push_back("snes9x2005_plus");*/
++		/*gbcchoices.push_back("snes9x2010");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		/*devices.push_back("Other");*/
++		/*devices.push_back("Options");*/
++		for (auto it = gbcchoices.cbegin(); it != gbcchoices.cend(); it++)
++		sx05re_gbc_def->add(*it, *it, Settings::getInstance()->getString("Sx05RE_GBC_CORE") == *it);
++		s->addWithLabel("GB/GBC CORE", sx05re_gbc_def);
++		s->addSaveFunc([sx05re_gbc_def] {
++			/* runSystemCommand("echo "+sx05re_gbc_def->getSelected()+" > /storage/.config/sx05re/snes"); */
++			if (Settings::getInstance()->getString("Sx05RE_GBC_CORE") != sx05re_gbc_def->getSelected())
++				Settings::getInstance()->setString("Sx05RE_GBC_CORE", sx05re_gbc_def->getSelected());
++		});
++	
++		auto sx05re_boot_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "START AT BOOT", false);
 +		std::vector<std::string> devices;
 +		devices.push_back("Emulationstation");
 +		devices.push_back("Kodi");
@@ -58,24 +221,30 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 +		sx05re_boot_def->add(*it, *it, Settings::getInstance()->getString("Sx05RE_BOOT") == *it);
 +		s->addWithLabel("START AT BOOT", sx05re_boot_def);
 +		s->addSaveFunc([sx05re_boot_def] {
-+			runSystemCommand("echo "+sx05re_boot_def->getSelected()+" > /storage/.config/def_fe");
++			/*runSystemCommand("echo "+sx05re_boot_def->getSelected()+" > /storage/.config/def_fe");*/
 +			if (Settings::getInstance()->getString("Sx05RE_BOOT") != sx05re_boot_def->getSelected())
 +				Settings::getInstance()->setString("Sx05RE_BOOT", sx05re_boot_def->getSelected());
 +		});
-+					
-+
-+	row.elements.clear();
++				
++	Window* window = mWindow;
++	ComponentListRow row;
++	
 +	if (UIModeController::getInstance()->isUIModeFull())
 +	{
++	row.addElement(std::make_shared<TextComponent>(window, "!!!!!!!DANGER ZONE!!!!!!!", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
++	s->addRow(row);
++	row.elements.clear();
++
 +	row.makeAcceptInputHandler([window] {
-+		window->pushGui(new GuiMsgBox(window, "!!!!!!WARNING!!!!!!!!!! RESET Sx05RE/KODI TO DEFAULT CONFIG AND RESTART?", "YES",
++		window->pushGui(new GuiMsgBox(window, "!!!!!!WARNING THIS WILL DELETE ALL CONFIGS/ADDONS!!!!!!!!!! RESET Sx05RE/KODI TO DEFAULT CONFIG AND RESTART?", "YES",
 +				[] { 
 +				runSystemCommand("/usr/bin/clearconfig.sh");
 +				}, "NO", nullptr));
 +	});
-+	row.addElement(std::make_shared<TextComponent>(window, "RESET DEFAULT CONFIG", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
++	row.addElement(std::make_shared<TextComponent>(window, "RESET SYSTEM TO DEFAULT CONFIG", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
 +	s->addRow(row);
-+
++	row.elements.clear();
++	
 +	mWindow->pushGui(s);
 + }
 +}
@@ -83,7 +252,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  void GuiMenu::openScraperSettings()
  {
  	auto s = new GuiSettings(mWindow, "SCRAPER");
-@@ -95,13 +163,15 @@
+@@ -95,13 +320,15 @@
  
  	if (UIModeController::getInstance()->isUIModeFull())
  	{
@@ -100,7 +269,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  		for(auto it = transitions.cbegin(); it != transitions.cend(); it++)
  			vol_dev->add(*it, *it, Settings::getInstance()->getString("AudioDevice") == *it);
  		s->addWithLabel("AUDIO DEVICE", vol_dev);
-@@ -110,7 +180,6 @@
+@@ -110,7 +337,6 @@
  			VolumeControl::getInstance()->deinit();
  			VolumeControl::getInstance()->init();
  		});
@@ -108,41 +277,70 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  
  		// disable sounds
  		auto sounds_enabled = std::make_shared<SwitchComponent>(mWindow);
-@@ -408,55 +477,36 @@
- 	Window* window = mWindow;
+@@ -406,57 +632,67 @@
+ 	auto s = new GuiSettings(mWindow, "QUIT");
  
+ 	Window* window = mWindow;
+-
  	ComponentListRow row;
 -	if (UIModeController::getInstance()->isUIModeFull())
 -	{
-+
- 		row.makeAcceptInputHandler([window] {
- 			window->pushGui(new GuiMsgBox(window, "REALLY RESTART?", "YES",
- 				[] {
+-		row.makeAcceptInputHandler([window] {
+-			window->pushGui(new GuiMsgBox(window, "REALLY RESTART?", "YES",
+-				[] {
 -				if(quitES("/tmp/es-restart") != 0)
 -					LOG(LogWarning) << "Restart terminated with non-zero result!";
-+    		   runSystemCommand("systemctl restart emustation.service");
- 			}, "NO", nullptr));
- 		});
- 		row.addElement(std::make_shared<TextComponent>(window, "RESTART EMULATIONSTATION", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
- 		s->addRow(row);
+-			}, "NO", nullptr));
+-		});
+-		row.addElement(std::make_shared<TextComponent>(window, "RESTART EMULATIONSTATION", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
+-		s->addRow(row);
+-
  
--
--
++			row.makeAcceptInputHandler([window] {
++				window->pushGui(new GuiMsgBox(window, "QUIT TO KODI? ", "YES",
++					[] {
++					remove("/var/lock/start.games");
++            		runSystemCommand("touch /var/lock/start.kodi");
++			        runSystemCommand("systemctl start kodi.service");
++					SDL_Event ev;
++					ev.type = SDL_QUIT;
++					SDL_PushEvent(&ev);
++				}, "NO", nullptr));
++			});
++			row.addElement(std::make_shared<TextComponent>(window, "START KODI", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
++			s->addRow(row);
+ 
 -		if(Settings::getInstance()->getBool("ShowExit"))
 -		{
--			row.elements.clear();
--			row.makeAcceptInputHandler([window] {
+ 			row.elements.clear();
+ 			row.makeAcceptInputHandler([window] {
 -				window->pushGui(new GuiMsgBox(window, "REALLY QUIT?", "YES",
--					[] {
--					SDL_Event ev;
--					ev.type = SDL_QUIT;
--					SDL_PushEvent(&ev);
--				}, "NO", nullptr));
--			});
++				window->pushGui(new GuiMsgBox(window, "QUIT TO RETROARCH? ", "YES",
+ 					[] {
++					remove("/var/lock/start.games");
++            		runSystemCommand("touch /var/lock/start.retro");
++			        runSystemCommand("systemctl start retroarch.service");
+ 					SDL_Event ev;
+ 					ev.type = SDL_QUIT;
+ 					SDL_PushEvent(&ev);
+ 				}, "NO", nullptr));
+ 			});
 -			row.addElement(std::make_shared<TextComponent>(window, "QUIT EMULATIONSTATION", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
--			s->addRow(row);
++			row.addElement(std::make_shared<TextComponent>(window, "START RETROARCH", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
+ 			s->addRow(row);
 -		}
 -	}
++      
++       row.elements.clear();
++		row.makeAcceptInputHandler([window] {
++			window->pushGui(new GuiMsgBox(window, "REALLY RESTART?", "YES",
++				[] {
++    		   runSystemCommand("systemctl restart emustation.service");
++			}, "NO", nullptr));
++		});
++		row.addElement(std::make_shared<TextComponent>(window, "RESTART EMULATIONSTATION", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
++		s->addRow(row);
++
  	row.elements.clear();
  	row.makeAcceptInputHandler([window] {
  		window->pushGui(new GuiMsgBox(window, "REALLY RESTART?", "YES",
@@ -170,12 +368,12 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  	s->addRow(row);
  
  	mWindow->pushGui(s);
-@@ -468,7 +518,7 @@
+@@ -468,7 +704,7 @@
  
  	mVersion.setFont(Font::get(FONT_SIZE_SMALL));
  	mVersion.setColor(0x5E5E5EFF);
 -	mVersion.setText("EMULATIONSTATION V" + Utils::String::toUpper(PROGRAM_VERSION_STRING) + buildDate);
-+	mVersion.setText("EMULATIONSTATION V" + Utils::String::toUpper(PROGRAM_VERSION_STRING) + buildDate +" SX05RE v1.8.4");
++	mVersion.setText("EMULATIONSTATION V" + Utils::String::toUpper(PROGRAM_VERSION_STRING) + buildDate +" SX05RE v1.8.6");
  	mVersion.setHorizontalAlignment(ALIGN_CENTER);
  	addChild(&mVersion);
  }

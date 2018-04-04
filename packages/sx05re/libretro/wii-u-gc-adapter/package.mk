@@ -32,6 +32,7 @@ PKG_SHORTDESC="Tool for using the Wii U GameCube Adapter on Linux"
 PKG_LONGDESC="Tool for using the Wii U GameCube Adapter on Linux"
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 makeinstall_target() {

@@ -19,13 +19,12 @@
 ################################################################################
 
 PKG_NAME="vba-next"
-PKG_VERSION="6b4bbcb"
+PKG_VERSION="34e02e2"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/libretro/vba-next"
 PKG_GIT_URL="$PKG_SITE"
-PKG_TOOLCHAIN="make"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -33,6 +32,7 @@ PKG_SHORTDESC="Optimized port of VBA-M to Libretro."
 PKG_LONGDESC="Optimized port of VBA-M to Libretro. "
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 make_target() {

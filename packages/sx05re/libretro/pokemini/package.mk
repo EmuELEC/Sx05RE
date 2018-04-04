@@ -19,7 +19,7 @@
 ################################################################################
 
 PKG_NAME="pokemini"
-PKG_VERSION="1bf6e54"
+PKG_VERSION="218bdd5"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv3"
@@ -31,6 +31,7 @@ PKG_SHORTDESC="Obscure nintendo handheld emulator (functional,no color files or 
 PKG_LONGDESC="Obscure nintendo handheld emulator (functional,no color files or savestates currently)"
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 
 makeinstall_target() {

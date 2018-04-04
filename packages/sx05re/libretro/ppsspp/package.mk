@@ -33,12 +33,11 @@ PKG_SHORTDESC="Libretro port of PPSSPP"
 PKG_LONGDESC="A fast and portable PSP emulator"
 
 PKG_IS_ADDON="no"
+PKG_TOOLCHAIN="make"
 PKG_AUTORECONF="no"
 PKG_USE_CMAKE="no"
+PKG_BUILD_FLAGS="-lto"
 
-pre_configure_target() {
-  strip_lto
-}
 
 make_target() {
   cd $PKG_BUILD/libretro

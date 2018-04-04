@@ -16,7 +16,7 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="beetle-pce-fast"
+PKG_NAME="libretro-beetle-pce-fast"
 PKG_VERSION="39185a6"
 PKG_REV="1"
 PKG_ARCH="any"
@@ -29,8 +29,9 @@ PKG_SECTION="xmedia/games"
 PKG_SHORTDESC="libretro-beetle-pce-fast"
 PKG_LONGDESC="libretro-beetle-pce-fast"
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="no"
 PKG_TOOLCHAIN="make"
+PKG_AUTORECONF="no"
+
 make_target() {
   make ARCH="" CC="$CC" NATIVE_CC="$CC" LD="$CC" -j 1
 }
