@@ -1,46 +1,15 @@
-From 81504045703f31c3880b99787b3e20f5e98ea27f Mon Sep 17 00:00:00 2001
-From: Jools Wills <buzz@exotica.org.uk>
-Date: Sun, 3 Jan 2016 21:27:57 +0000
-Subject: [PATCH] mali-fbdev support / debian package changes  * mali-fbdev
- support from https://github.com/mihailescu2m/libsdl2-2.0.2-dfsg1 with changes
- for newer SDL
-
----
- CMakeLists.txt                                    |   2 +
- cmake/sdlchecks.cmake                             |  23 ++
- configure                                         |  53 ++++
- configure.in                                      |  30 ++
- debian/control                                    |  17 +-
- debian/{libsdl2.install => libsdl2-2.0-0.install} |   0
- debian/rules                                      |   4 +-
- include/SDL_config.h.cmake                        |   1 +
- include/SDL_config.h.in                           |   1 +
- src/video/SDL_egl.c                               |   2 +-
- src/video/SDL_sysvideo.h                          |   1 +
- src/video/SDL_video.c                             |   3 +
- src/video/mali-fbdev/SDL_maliopengles.c           |  43 +++
- src/video/mali-fbdev/SDL_maliopengles.h           |  48 ++++
- src/video/mali-fbdev/SDL_malivideo.c              | 323 ++++++++++++++++++++++
- src/video/mali-fbdev/SDL_malivideo.h              |  80 ++++++
- 16 files changed, 620 insertions(+), 11 deletions(-)
- rename debian/{libsdl2.install => libsdl2-2.0-0.install} (100%)
- create mode 100644 src/video/mali-fbdev/SDL_maliopengles.c
- create mode 100644 src/video/mali-fbdev/SDL_maliopengles.h
- create mode 100644 src/video/mali-fbdev/SDL_malivideo.c
- create mode 100644 src/video/mali-fbdev/SDL_malivideo.h
-
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 73d94077fb..01695c8e97 100644
+index 73d9407..bcc872f 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -329,6 +329,7 @@ endforeach()
- set_option(VIDEO_COCOA         "Use Cocoa video driver" ${APPLE})
- set_option(DIRECTX             "Use DirectX for Windows audio/video" ${WINDOWS})
- set_option(RENDER_D3D          "Enable the Direct3D render driver" ${WINDOWS})
-+set_option(VIDEO_MALI          "Use Mali EGL video driver" ${UNIX_SYS})
- set_option(VIDEO_VIVANTE       "Use Vivante EGL video driver" ${UNIX_SYS})
+@@ -333,6 +333,7 @@ set_option(VIDEO_VIVANTE       "Use Vivante EGL video driver" ${UNIX_SYS})
  dep_option(VIDEO_VULKAN        "Enable Vulkan support" ON "ANDROID OR APPLE OR LINUX OR WINDOWS" OFF)
  set_option(VIDEO_KMSDRM        "Use KMS DRM video driver" ${UNIX_SYS})
+ dep_option(KMSDRM_SHARED       "Dynamically load KMS DRM support" ON "VIDEO_KMSDRM" OFF)
++set_option(VIDEO_MALI          "Use Mali EGL video driver" ${UNIX_SYS})
+ 
+ # TODO: We should (should we?) respect cmake's ${BUILD_SHARED_LIBS} flag here
+ # The options below are for compatibility to configure's default behaviour.
 @@ -976,6 +977,7 @@ elseif(UNIX AND NOT APPLE AND NOT ANDROID)
      CheckWayland()
      CheckVivante()
@@ -50,15 +19,13 @@ index 73d94077fb..01695c8e97 100644
  
    if(UNIX)
 diff --git a/cmake/sdlchecks.cmake b/cmake/sdlchecks.cmake
-index e2e89a279c..210f6ad13b 100644
+index e2e89a2..b890f49 100644
 --- a/cmake/sdlchecks.cmake
 +++ b/cmake/sdlchecks.cmake
-@@ -796,6 +796,29 @@ macro(CheckVivante)
-   endif(VIDEO_VIVANTE)
- endmacro(CheckVivante)
+@@ -768,6 +768,28 @@ endmacro()
  
-+# Requires:
-+# - n/a
+ # Requires:
+ # - n/a
 +macro(CheckMali)
 +  if(VIDEO_MALI)
 +    check_c_source_compiles("
@@ -79,12 +46,13 @@ index e2e89a279c..210f6ad13b 100644
 +  endif(VIDEO_MALI)
 +endmacro(CheckMali)
 +
-+
- # Requires:
- # - nada
- macro(CheckOpenGLX11)
++# Requires:
++# - n/a
+ macro(CheckVivante)
+   if(VIDEO_VIVANTE)
+     check_c_source_compiles("
 diff --git a/configure b/configure
-index b622085ed5..37dffacb84 100755
+index 55e0d4d..cd60ad6 100755
 --- a/configure
 +++ b/configure
 @@ -845,6 +845,7 @@ enable_video_x11_scrnsaver
@@ -164,12 +132,12 @@ index b622085ed5..37dffacb84 100755
          CheckLinuxVersion
          CheckRPATH
          CheckVivanteVideo
-+        CheckMaliVideo
++	CheckMaliVideo
  
          # Set up files for the audio library
          if test x$enable_audio = xyes; then
 diff --git a/configure.in b/configure.in
-index 5ac2130844..7ff586db7b 100644
+index 5ac2130..3e67f09 100644
 --- a/configure.in
 +++ b/configure.in
 @@ -2012,6 +2012,35 @@ AC_HELP_STRING([--enable-video-vivante], [use Vivante EGL video driver [[default
@@ -212,87 +180,12 @@ index 5ac2130844..7ff586db7b 100644
          CheckLinuxVersion
          CheckRPATH
          CheckVivanteVideo
-+        CheckMaliVideo
++	CheckMaliVideo
  
          # Set up files for the audio library
          if test x$enable_audio = xyes; then
-diff --git a/debian/control b/debian/control
-index a3411335ae..450aa29250 100644
---- a/debian/control
-+++ b/debian/control
-@@ -13,8 +13,6 @@ Build-Depends: debhelper (>= 9),
-                dpkg-dev (>= 1.16.1~),
-                fcitx-libs-dev [linux-any],
-                libasound2-dev [linux-any],
--               libgl1-mesa-dev,
--               libpulse-dev,
-                libudev-dev [linux-any],
-                libdbus-1-dev [linux-any],
-                libibus-1.0-dev[linux-any],
-@@ -30,16 +28,16 @@ Build-Depends: debhelper (>= 9),
-                libxxf86vm-dev
- Homepage: http://www.libsdl.org/
- 
--Package: libsdl2
-+Package: libsdl2-2.0-0
- Architecture: any
- Multi-Arch: same
- Pre-Depends: ${misc:Pre-Depends}
- Depends: ${misc:Depends},
-          ${shlibs:Depends},
--         libudev0 [linux-any],
-+         libudev0 | libudev1 [linux-any],
-          libdbus-1-3 [linux-any]
--Conflicts: libsdl-1.3-0
--Replaces: libsdl-1.3-0
-+Conflicts: libsdl-1.3-0, libsdl2
-+Replaces: libsdl-1.3-0, libsdl2
- Description: Simple DirectMedia Layer
-  SDL is a library that allows programs portable low level access to
-  a video framebuffer, audio output, mouse, and keyboard.
-@@ -51,9 +49,10 @@ Section: libdevel
- Architecture: any
- Multi-Arch: same
- Depends: ${misc:Depends},
--         libsdl2 (= ${binary:Version}),
-+         libsdl2-2.0-0 (= ${binary:Version}),
-          libc6-dev,
--         libgl1-mesa-dev
-+         libgl1-mesa-dev,
-+         libx11-dev
- Conflicts: libsdl-1.3-dev
- Replaces: libsdl-1.3-dev
- Description: Simple DirectMedia Layer development files
-@@ -68,7 +67,7 @@ Section: debug
- Architecture: any
- Multi-Arch: same
- Depends: ${misc:Depends},
--         libsdl2 (= ${binary:Version}),
-+         libsdl2-2.0-0 (= ${binary:Version}),
- Description: Simple DirectMedia Layer debug files
-  SDL is a library that allows programs portable low level access to a video
-  framebuffer, audio output, mouse, and keyboard.
-diff --git a/debian/libsdl2.install b/debian/libsdl2-2.0-0.install
-similarity index 100%
-rename from debian/libsdl2.install
-rename to debian/libsdl2-2.0-0.install
-diff --git a/debian/rules b/debian/rules
-index 4bde8f325e..5624d6f34d 100755
---- a/debian/rules
-+++ b/debian/rules
-@@ -6,7 +6,9 @@ DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
- confflags = --disable-rpath --disable-video-directfb \
-             --disable-nas --disable-esd --disable-arts \
-             --disable-alsa-shared --disable-pulseaudio-shared \
--            --disable-x11-shared
-+            --disable-x11-shared  --disable-video-opengl --enable-video-opengles --enable-video-mali \
-+            --disable-esd --disable-pulseaudio \
-+            --disable-input-tslib
- 
- %:
- 	dh $@ --parallel
 diff --git a/include/SDL_config.h.cmake b/include/SDL_config.h.cmake
-index 9b20398d0d..a14a92bd2d 100644
+index 9b20398..a14a92b 100644
 --- a/include/SDL_config.h.cmake
 +++ b/include/SDL_config.h.cmake
 @@ -302,6 +302,7 @@
@@ -304,7 +197,7 @@ index 9b20398d0d..a14a92bd2d 100644
  #cmakedefine SDL_VIDEO_DRIVER_KMSDRM @SDL_VIDEO_DRIVER_KMSDRM@
  #cmakedefine SDL_VIDEO_DRIVER_KMSDRM_DYNAMIC @SDL_VIDEO_DRIVER_KMSDRM_DYNAMIC@
 diff --git a/include/SDL_config.h.in b/include/SDL_config.h.in
-index a28e83ff07..605a421255 100644
+index a28e83f..605a421 100644
 --- a/include/SDL_config.h.in
 +++ b/include/SDL_config.h.in
 @@ -310,6 +310,7 @@
@@ -316,50 +209,51 @@ index a28e83ff07..605a421255 100644
  #undef SDL_VIDEO_DRIVER_X11_DYNAMIC_XEXT
  #undef SDL_VIDEO_DRIVER_X11_DYNAMIC_XCURSOR
 diff --git a/src/video/SDL_egl.c b/src/video/SDL_egl.c
-index 9ccc2c3e1c..1e69ffab37 100644
+index 9ccc2c3..9e726ea 100644
 --- a/src/video/SDL_egl.c
 +++ b/src/video/SDL_egl.c
-@@ -51,7 +51,7 @@
+@@ -51,8 +51,8 @@
  #define DEFAULT_OGL_ES_PVR "/opt/vc/lib/libGLES_CM.so"
  #define DEFAULT_OGL_ES "/opt/vc/lib/libGLESv1_CM.so"
  
 -#elif SDL_VIDEO_DRIVER_ANDROID || SDL_VIDEO_DRIVER_VIVANTE
-+#elif SDL_VIDEO_DRIVER_ANDROID || SDL_VIDEO_DRIVER_MALI || SDL_VIDEO_DRIVER_VIVANTE
- /* Android */
+-/* Android */
++#elif SDL_VIDEO_DRIVER_ANDROID || SDL_VIDEO_DRIVER_VIVANTE || SDL_VIDEO_DRIVER_MALI
++/* Android and Mali-fbdev */
  #define DEFAULT_EGL "libEGL.so"
  #define DEFAULT_OGL_ES2 "libGLESv2.so"
+ #define DEFAULT_OGL_ES_PVR "libGLES_CM.so"
 diff --git a/src/video/SDL_sysvideo.h b/src/video/SDL_sysvideo.h
-index 811fe19c25..316c8a4c08 100644
+index 811fe19..991245e 100644
 --- a/src/video/SDL_sysvideo.h
 +++ b/src/video/SDL_sysvideo.h
-@@ -412,6 +412,7 @@ extern VideoBootStrap Android_bootstrap;
- extern VideoBootStrap PSP_bootstrap;
- extern VideoBootStrap RPI_bootstrap;
- extern VideoBootStrap KMSDRM_bootstrap;
+@@ -418,6 +418,7 @@ extern VideoBootStrap NACL_bootstrap;
+ extern VideoBootStrap VIVANTE_bootstrap;
+ extern VideoBootStrap Emscripten_bootstrap;
+ extern VideoBootStrap QNX_bootstrap;
 +extern VideoBootStrap MALI_bootstrap;
- extern VideoBootStrap DUMMY_bootstrap;
- extern VideoBootStrap Wayland_bootstrap;
- extern VideoBootStrap NACL_bootstrap;
+ 
+ extern SDL_VideoDevice *SDL_GetVideoDevice(void);
+ extern int SDL_AddBasicVideoDisplay(const SDL_DisplayMode * desktop_mode);
 diff --git a/src/video/SDL_video.c b/src/video/SDL_video.c
-index 60b214718d..384f8eef47 100644
+index 60b2147..384f8ee 100644
 --- a/src/video/SDL_video.c
 +++ b/src/video/SDL_video.c
-@@ -103,6 +103,9 @@
+@@ -99,6 +99,9 @@ static VideoBootStrap *bootstrap[] = {
+ #endif
  #if SDL_VIDEO_DRIVER_RPI
      &RPI_bootstrap,
- #endif
++#endif
 +#if SDL_VIDEO_DRIVER_MALI
 +    &MALI_bootstrap,
-+ #endif 
- #if SDL_VIDEO_DRIVER_NACL
-     &NACL_bootstrap,
- #endif
+ #endif 
+ #if SDL_VIDEO_DRIVER_KMSDRM
+     &KMSDRM_bootstrap,
 diff --git a/src/video/mali-fbdev/SDL_maliopengles.c b/src/video/mali-fbdev/SDL_maliopengles.c
-new file mode 100644
-index 0000000000..0e4836d2ea
---- /dev/null
+index e69de29..0814ba3 100644
+--- a/src/video/mali-fbdev/SDL_maliopengles.c
 +++ b/src/video/mali-fbdev/SDL_maliopengles.c
-@@ -0,0 +1,43 @@
+@@ -0,0 +1,42 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2014 Sam Lantinga <slouken@libsdl.org>
@@ -402,11 +296,9 @@ index 0000000000..0e4836d2ea
 +#endif /* SDL_VIDEO_DRIVER_MALI && SDL_VIDEO_OPENGL_EGL */
 +
 +/* vi: set ts=4 sw=4 expandtab: */
-+
 diff --git a/src/video/mali-fbdev/SDL_maliopengles.h b/src/video/mali-fbdev/SDL_maliopengles.h
-new file mode 100644
-index 0000000000..121af74f93
---- /dev/null
+index e69de29..e9568e3 100644
+--- a/src/video/mali-fbdev/SDL_maliopengles.h
 +++ b/src/video/mali-fbdev/SDL_maliopengles.h
 @@ -0,0 +1,48 @@
 +/*
@@ -458,9 +350,8 @@ index 0000000000..121af74f93
 +
 +/* vi: set ts=4 sw=4 expandtab: */
 diff --git a/src/video/mali-fbdev/SDL_malivideo.c b/src/video/mali-fbdev/SDL_malivideo.c
-new file mode 100644
-index 0000000000..1d076a68d5
---- /dev/null
+index e69de29..d26e766 100644
+--- a/src/video/mali-fbdev/SDL_malivideo.c
 +++ b/src/video/mali-fbdev/SDL_malivideo.c
 @@ -0,0 +1,323 @@
 +/*
@@ -581,11 +472,11 @@ index 0000000000..1d076a68d5
 +int
 +MALI_VideoInit(_THIS)
 +{
++    struct fb_var_screeninfo vinfo;
++    int fd;
 +    SDL_VideoDisplay display;
 +    SDL_DisplayMode current_mode;
 +    SDL_DisplayData *data;
-+    struct fb_var_screeninfo vinfo;
-+    int fd;
 +
 +    data = (SDL_DisplayData *) SDL_calloc(1, sizeof(SDL_DisplayData));
 +    if (data == NULL) {
@@ -787,11 +678,10 @@ index 0000000000..1d076a68d5
 +/* vi: set ts=4 sw=4 expandtab: */
 +
 diff --git a/src/video/mali-fbdev/SDL_malivideo.h b/src/video/mali-fbdev/SDL_malivideo.h
-new file mode 100644
-index 0000000000..c14667fa80
---- /dev/null
+index e69de29..62a2920 100644
+--- a/src/video/mali-fbdev/SDL_malivideo.h
 +++ b/src/video/mali-fbdev/SDL_malivideo.h
-@@ -0,0 +1,80 @@
+@@ -0,0 +1,77 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2014 Sam Lantinga <slouken@libsdl.org>
@@ -833,10 +723,7 @@ index 0000000000..c14667fa80
 +
 +typedef struct SDL_DisplayData
 +{
-+    struct {
-+        unsigned short width;
-+        unsigned short height;
-+    } native_display;
++    struct fbdev_window native_display;
 +} SDL_DisplayData;
 +
 +typedef struct SDL_WindowData
