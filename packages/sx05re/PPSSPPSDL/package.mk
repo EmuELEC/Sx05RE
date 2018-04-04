@@ -23,14 +23,17 @@ PKG_ARCH="any"
 PKG_LICENSE="MAME"
 PKG_SITE="https://github.com/hrydgard/ppsspp"
 PKG_GIT_URL="$PKG_SITE"
-PKG_DEPENDS_TARGET="toolchain ffmpeg libzip libpng SDL2 zlib zip linux"
+PKG_DEPENDS_TARGET="toolchain ffmpeg libzip libpng SDL2 zlib zip linux libhybris"
 PKG_SHORTDESC="PPSSPPDL"
 PKG_LONGDESC="PPSSPP Standalone"
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 PKG_CMAKE_OPTS_TARGET="-DUSING_FBDEV=1 -DUSING_GLES2=1 -DUSE_FFMPEG=1 -DARMV7=1 -DSHARED_LIBZIP=1 -DARM_NEON=1"
-# -DNO_VULKAN=1"
+
+if [ "$PROJECT" == "S912" ]; then
+PKG_CMAKE_OPTS_TARGET="$PKG_CMAKE_OPTS_TARGET -DUSING_EGL=1"
+fi
 
 pre_configure_target() {
 cp $PKG_DIR/zipconf.h $SYSROOT_PREFIX/usr/include/zipconf.h 
