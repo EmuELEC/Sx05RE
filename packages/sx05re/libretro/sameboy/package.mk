@@ -19,7 +19,7 @@
 ################################################################################
 
 PKG_NAME="sameboy"
-PKG_VERSION="666ea63"
+PKG_VERSION="e4c72f4"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MIT"
