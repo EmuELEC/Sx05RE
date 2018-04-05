@@ -17,8 +17,9 @@
 #  the Free Software Foundation, 51 Franklin Street, Suite 500, Boston, MA 02110, USA.
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
+
 PKG_NAME="retroarch-sx05re"
-PKG_VERSION="cf7785d"
+PKG_VERSION="ab00d58"
 PKG_REV="9"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv3"
@@ -119,13 +120,10 @@ makeinstall_target() {
   sed -i -e "s/# video_shader_dir =/video_shader_dir =\/tmp\/shaders/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# rgui_show_start_screen = true/rgui_show_start_screen = false/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# assets_directory =/assets_directory =\/tmp\/assets/" $INSTALL/etc/retroarch.cfg
-  sed -i -e "s/# overlays_directory =/overlays_directory =\/usr\/share\/retroarch-overlays/" $INSTALL/etc/retroarch.cfg
+  sed -i -e "s/# overlays_directory =/overlays_directory =\/tmp\/overlays/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# cheat_database_path =/cheat_database_path =\/tmp\/database\/cht/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# menu_driver = \"rgui\"/menu_driver = \"xmb\"/" $INSTALL/etc/retroarch.cfg
-  sed -i -e "s/# menu_show_core_updater = true/menu_show_core_updater = true/" $INSTALL/etc/retroarch.cfg
-  sed -i -e "s/# menu_show_online_updater = true/menu_show_online_updater = true/" $INSTALL/etc/retroarch.cfg
-  echo "core_assets_directory =/storage/roms/downloads" >> $INSTALL/etc/retroarch.cfg
-  
+ 
   # Quick menu
   echo "core_assets_directory =/storage/roms/downloads" >> $INSTALL/etc/retroarch.cfg
   echo "quick_menu_show_undo_save_load_state = \"false\"" >> $INSTALL/etc/retroarch.cfg
@@ -185,7 +183,8 @@ makeinstall_target() {
   echo "playlist_entry_remove = \"false\"" >> $INSTALL/etc/retroarch.cfg
 
   #sx05re
-  sed -i -e "s/# overlay_directory =/overlay_directory =\/usr\/share\/retroarch-overlays/" $INSTALL/etc/retroarch.cfg
+  sed -i -e "s/# menu_show_core_updater = false/menu_show_core_updater = true/" $INSTALL/etc/retroarch.cfg
+  sed -i -e "s/# menu_show_online_updater = false/menu_show_online_updater = true/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# input_overlay_opacity = 1.0/input_overlay_opacity = 0.15/" $INSTALL/etc/retroarch.cfg
 
 
