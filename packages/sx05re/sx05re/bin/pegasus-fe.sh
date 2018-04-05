@@ -4,5 +4,3 @@
     touch /var/lock/start.pegasus
     systemctl start pegasus
     systemctl stop kodi
-
-
