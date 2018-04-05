@@ -44,16 +44,10 @@ mkdir -p $PKG_BUILD/external/pugixml
 }
 
 post_makeinstall_target() {
-  mkdir -p $INSTALL/usr/bin
-    cp $PKG_DIR/scripts/* $INSTALL/usr/bin
-    chmod +x $INSTALL/usr/bin/*
 
   mkdir -p $INSTALL/usr/bin/resources
     cp -rf $PKG_BUILD/resources/* $INSTALL/usr/bin/resources/
 
-  mkdir -p $INSTALL/usr/config/emulationstation
-    cp $PKG_DIR/config/* $INSTALL/usr/config/emulationstation
-  
    mkdir -p $INSTALL/etc/emulationstation/
    ln -sf /storage/.config/emulationstation/themes $INSTALL/etc/emulationstation/
 }
