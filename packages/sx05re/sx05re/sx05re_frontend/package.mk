@@ -16,3 +16,13 @@ PKG_SHORTDESC="Sx05re Frontend Meta Package"
 PKG_LONGDESC="Sx05re Frontend Meta Package"
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
+
+make_target() {
+  : not
+}
+
+makeinstall_target() {
+ 
+   mkdir -p $INSTALL/usr/config/emulationstation
+    cp $PKG_DIR/config/* $INSTALL/usr/config/emulationstation
+  }
