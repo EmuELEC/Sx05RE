@@ -22,7 +22,10 @@ make_target() {
 }
 
 makeinstall_target() {
- 
-   mkdir -p $INSTALL/usr/config/emulationstation
+  mkdir -p $INSTALL/usr/bin
+    cp $PKG_DIR/scripts/* $INSTALL/usr/bin
+    chmod +x $INSTALL/usr/bin/*
+
+  mkdir -p $INSTALL/usr/config/emulationstation
     cp $PKG_DIR/config/* $INSTALL/usr/config/emulationstation
   }
