@@ -4,7 +4,7 @@
 ################################################################################
 
 PKG_NAME="advancemame"
-PKG_VERSION="83e75c7"
+PKG_VERSION="71ddaa2"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MAME"
@@ -39,7 +39,6 @@ makeinstall_target() {
 }
 
 post_make_target() { 
-# Cleanup unnecessary files
 mkdir -p $INSTALL/usr/share/advance
    cp -r $PKG_DIR/config/* $INSTALL/usr/share/advance/
 mkdir -p $INSTALL/usr/bin
