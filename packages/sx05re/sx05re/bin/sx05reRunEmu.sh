@@ -23,7 +23,7 @@ EMU=$(sed -n "$PAT" "$CFG")
 echo "Sx05RE Run Log" > $SX05RELOG
 
 # Default run command
-RUNTHIS=`/usr/bin/retroarch -L /tmp/cores/${EMU}_libretro.so "$2"`
+RUNTHIS='/usr/bin/retroarch -L /tmp/cores/${EMU}_libretro.so "$2"'
 
 # Read the first argument to see if its MAME or PSP
 case $1 in
@@ -31,12 +31,12 @@ case $1 in
       if [ "$EMU" = "AdvanceMame" ]; then
    # advmame runs best at 32bpp   
    BPP="32" 
-   RUNTHIS=`/usr/bin/advmame.sh "$2"`
+   RUNTHIS='/usr/bin/advmame.sh "$2"'
    fi
        ;;
 "PSP")
       if [ "$EMU" = "PPSSPPSA" ]; then
-   RUNTHIS=`/usr/bin/ppsspp.sh "$2"`
+   RUNTHIS='/usr/bin/ppsspp.sh "$2"'
       fi
         ;;
 esac
@@ -48,12 +48,13 @@ fbset -fb /dev/fb0 -g  $X $Y 1920 2160 $BPP
   fbi $SPLASH -noverbose > /dev/null 2>&1
 )&
 
-# Write the command to the log file, fomr reason it does not work :/
+# Write the command to the log file.
 echo "Run Command is:" >> $SX05RELOG 
-echo $RUNTHIS >> $SX05RELOG 
+eval echo  ${RUNTHIS} >> $SX05RELOG 
 
-# Exceute the command and try to output the results to the log file, but no loggin ocurs :/
-eval "$RUNTHIS" >> $SX05RELOG
+# Exceute the command and try to output the results to the log file.
+echo "Emulator Output is:" >> $SX05RELOG
+eval ${RUNTHIS} >> $SX05RELOG 2>&1
 
 # Return to 32bit mode
 fbset -fb /dev/fb0 -g  $X $Y 1920 2160 32
