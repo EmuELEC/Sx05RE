@@ -1,25 +1,25 @@
 #!/bin/sh
 
-hdmimode="1080p60hz"
+hdmimode=`cat /sys/class/display/mode`;
 
 # Most Emulators run best at 16bpp, Retroarch shaders works best and PPSSPPSDL ONLY runs at 16bpp
 bpp="16"
-
 obpp="32"
 
 # Set framebuffer geometry to match the resolution 
 case $hdmimode in
-  480*)            X=720  Y=480  ;;
-  576*)            X=720  Y=576  ;;
-  720p*)           X=1280 Y=720  ;;
-  *)               X=1920 Y=1080 ;;
+  480*)            X=720  Y=480  SPLASH="/storage/.config/splash/splash-1080.png" ;;
+  576*)            X=720  Y=576  SPLASH="/storage/.config/splash/splash-1080.png" ;;
+  720p*)           X=1280 Y=720  SPLASH="/storage/.config/splash/splash-1080.png" ;;
+  *)               X=1920 Y=1080 SPLASH="/storage/.config/splash/splash-1080.png" ;;
 esac
 
 fbset -fb /dev/fb0 -g  $X $Y 1920 2160 $bpp
-fbset -fb /dev/fb1 -g $bpp $bpp $bpp $bpp $bpp
-echo 0 > /sys/class/graphics/fb0/free_scale
-echo 0 > /sys/class/graphics/fb1/free_scale
-echo 1 > /sys/class/video/disable_video
+
+# loading screen, not sure if this is the best way to do it, but it works so far. 
+(
+   (cmdpid=$BASHPID; (sleep 10; kill $cmdpid) & exec fbi $SPLASH -noverbose > /dev/null 2>&1)
+)&
 
 CFG="/storage/.emulationstation/es_settings.cfg"
 
@@ -47,7 +47,3 @@ case $1 in
 esac
 
 fbset -fb /dev/fb0 -g  $X $Y 1920 2160 $obpp
-fbset -fb /dev/fb1 -g $obpp $obpp $obpp $obpp $obpp
-echo 0 > /sys/class/graphics/fb0/free_scale
-echo 0 > /sys/class/graphics/fb1/free_scale
-echo 1 > /sys/class/video/disable_video
