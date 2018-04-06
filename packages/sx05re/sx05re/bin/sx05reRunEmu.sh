@@ -26,6 +26,8 @@ EMU=$(sed -n "$PAT" "$CFG")
 case $1 in
 "MAME")
         if [ "$EMU" = "AdvanceMame" ]; then
+   # advmame runs best at 32bpp     
+   fbset -fb /dev/fb0 -g  $X $Y 1920 2160 32
    /usr/bin/advmame.sh "$2"
           else
    /usr/bin/retroarch -L /tmp/cores/${EMU}_libretro.so "$2"
