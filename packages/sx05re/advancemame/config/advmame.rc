@@ -3,11 +3,11 @@ debug_rawsound no
 debug_speedmark no
 device_alsa_device default
 device_alsa_mixer channel
-device_color_bgr15 yes
+device_color_bgr15 no
 device_color_bgr16 yes
 device_color_bgr24 yes
 device_color_bgr32 yes
-device_color_bgr8 yes
+device_color_bgr8 no
 device_color_palette8 yes
 device_color_yuy2 yes
 device_dpi_pclock_low 31250000
@@ -396,9 +396,9 @@ misc_quiet no
 misc_safequit yes
 misc_smp yes
 misc_timetorun 0
-record_sound yes
+record_sound no
 record_sound_time 15
-record_video yes
+record_video no
 record_video_interleave 2
 record_video_time 15
 script_coin1 
@@ -436,7 +436,7 @@ sound_adjust auto
 sound_equalizer_highvolume 0
 sound_equalizer_lowvolume 0
 sound_equalizer_midvolume 0
-sound_latency 0.05
+sound_latency 0.10
 sound_mode auto
 sound_normalize no
 sound_samplerate 44100
