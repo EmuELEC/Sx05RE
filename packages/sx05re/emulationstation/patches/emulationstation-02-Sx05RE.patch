@@ -37,9 +37,9 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 +		mamechoices.push_back("AdvanceMame");
 +		mamechoices.push_back("mame2003");
 +		mamechoices.push_back("mame2003-midway");
++		mamechoices.push_back("mame2003-plus");
 +		mamechoices.push_back("mame2010");
 +		mamechoices.push_back("mame2014");
-+		/*mamechoices.push_back("mame2000");*/
 +		/*devices.push_back("Other");*/
 +		/*devices.push_back("Options");*/
 +		for (auto it = mamechoices.cbegin(); it != mamechoices.cend(); it++)
