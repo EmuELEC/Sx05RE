@@ -28,9 +28,7 @@ rm -rf $CONFIG_DIR2/*
 touch $CONFIG_DIR2/done
 fi 
 
-exit 0
-
-# Kodi seems to set its own FB settings for 720p, so we rever them to one that work on ES, I use all resolutions just in case :) 
+# Kodi seems to set its own FB settings for 720p, so we revert them to one that work on ES, I use all resolutions just in case :) 
 # Read the video output mode and set it for sx05re to avoid video flicking.
 MODE=`cat /sys/class/display/mode`;
 
@@ -81,3 +79,5 @@ case "$MODE" in
 	echo 0x10001 > /sys/class/graphics/fb0/free_scale
 	;;
 esac
+
+exit 0
