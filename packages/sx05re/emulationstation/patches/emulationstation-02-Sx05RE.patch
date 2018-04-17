@@ -1,10 +1,6 @@
 diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 --- a/es-app/src/guis/GuiMenu.cpp	Thu Jun 08 07:58:22 2017
 +++ b/es-app/src/guis/GuiMenu.cpp	Thu Jun 08 16:55:16 2017
---- GuiMenu.cpp	2018-03-18 16:41:31.432784508 -0600
-+++ GuiMenu.cpp2	2018-03-18 16:41:12.513095202 -0600
---- GuiMenu.cpp	2018-03-18 16:46:26.363943621 -0600
-+++ GuiMenu.cpp2	2018-03-18 16:45:30.072867272 -0600
 @@ -21,11 +21,14 @@
  {
  	bool isFullUI = UIModeController::getInstance()->isUIModeFull();
@@ -23,7 +19,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  
  	if (isFullUI)
  		addEntry("UI SETTINGS", 0x777777FF, true, [this] { openUISettings(); });
-@@ -48,6 +51,228 @@
+@@ -48,6 +51,248 @@
  	setPosition((Renderer::getScreenWidth() - mSize.x()) / 2, Renderer::getScreenHeight() * 0.15f);
  }
  
@@ -236,9 +232,29 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 +	row.elements.clear();
 +
 +	row.makeAcceptInputHandler([window] {
++		window->pushGui(new GuiMsgBox(window, "!!!!!!WARNING THIS WILL DELETE ALL EMULATOR CONFIGS!!!!!!!!!! RESET Sx05RE EMULATORS TO DEFAULT AND RESTART?", "YES",
++				[] { 
++				runSystemCommand("/usr/bin/clearconfig.sh EMUS");
++				}, "NO", nullptr));
++	});
++	row.addElement(std::make_shared<TextComponent>(window, "RESET Sx05RE EMULATORS TO DEFAULT CONFIG", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
++	s->addRow(row);
++	row.elements.clear();
++	
++	row.makeAcceptInputHandler([window] {
++		window->pushGui(new GuiMsgBox(window, "!!!!!!WARNING THIS WILL DELETE ALL KODI ADDONS AND CONFIG!!!!!!!!!! RESET KODI TO DEFAULT CONFIG AND RESTART?", "YES",
++				[] { 
++				runSystemCommand("/usr/bin/clearconfig.sh KODI");
++				}, "NO", nullptr));
++	});
++	row.addElement(std::make_shared<TextComponent>(window, "RESET KODI TO DEFAULT CONFIG", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
++	s->addRow(row);
++	row.elements.clear();
++	
++	row.makeAcceptInputHandler([window] {
 +		window->pushGui(new GuiMsgBox(window, "!!!!!!WARNING THIS WILL DELETE ALL CONFIGS/ADDONS!!!!!!!!!! RESET Sx05RE/KODI TO DEFAULT CONFIG AND RESTART?", "YES",
 +				[] { 
-+				runSystemCommand("/usr/bin/clearconfig.sh");
++				runSystemCommand("/usr/bin/clearconfig.sh ALL");
 +				}, "NO", nullptr));
 +	});
 +	row.addElement(std::make_shared<TextComponent>(window, "RESET SYSTEM TO DEFAULT CONFIG", Font::get(FONT_SIZE_MEDIUM), 0x777777FF), true);
@@ -252,7 +268,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  void GuiMenu::openScraperSettings()
  {
  	auto s = new GuiSettings(mWindow, "SCRAPER");
-@@ -95,13 +320,15 @@
+@@ -95,13 +340,15 @@
  
  	if (UIModeController::getInstance()->isUIModeFull())
  	{
@@ -269,7 +285,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  		for(auto it = transitions.cbegin(); it != transitions.cend(); it++)
  			vol_dev->add(*it, *it, Settings::getInstance()->getString("AudioDevice") == *it);
  		s->addWithLabel("AUDIO DEVICE", vol_dev);
-@@ -110,7 +337,6 @@
+@@ -110,7 +357,6 @@
  			VolumeControl::getInstance()->deinit();
  			VolumeControl::getInstance()->init();
  		});
@@ -277,7 +293,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  
  		// disable sounds
  		auto sounds_enabled = std::make_shared<SwitchComponent>(mWindow);
-@@ -406,57 +632,67 @@
+@@ -412,57 +658,67 @@
  	auto s = new GuiSettings(mWindow, "QUIT");
  
  	Window* window = mWindow;
@@ -368,7 +384,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
  	s->addRow(row);
  
  	mWindow->pushGui(s);
-@@ -468,7 +704,7 @@
+@@ -474,7 +730,7 @@
  
  	mVersion.setFont(Font::get(FONT_SIZE_SMALL));
  	mVersion.setColor(0x5E5E5EFF);
