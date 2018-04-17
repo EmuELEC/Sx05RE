@@ -73,7 +73,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 +	auto sx05re_psp_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "PSP EMULATOR", false);
 +		std::vector<std::string> pspchoices;
 +		pspchoices.push_back("PPSSPPSA");
-+		/*pspchoices.push_back("ppsspp");*/
++		pspchoices.push_back("ppsspp");
 +		/*devices.push_back("Other");*/
 +		/*devices.push_back("Options");*/
 +		/*devices.push_back("Other");*/
