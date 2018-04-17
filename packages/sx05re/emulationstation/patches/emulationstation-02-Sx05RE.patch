@@ -93,7 +93,7 @@ diff U3 a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
 +	auto sx05re_n64_def = std::make_shared< OptionListComponent<std::string> >(mWindow, "N64 CORE", false);
 +		std::vector<std::string> n64choices;
 +		n64choices.push_back("mupen64plus");
-+		n64choices.push_back("parallel-n64");
++		n64choices.push_back("parallel_n64");
 +		/*n64choices.push_back("quicknes");*/
 +		/*devices.push_back("Other");*/
 +		/*devices.push_back("Options");*/
