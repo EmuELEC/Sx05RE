@@ -49,3 +49,5 @@ echo "KODI_ARGS=\"$KODI_ARGS\"" > /run/libreelec/kodi.conf
 if grep -q 'aarch64\|x86_64' /etc/os-release ; then
   echo "MALLOC_MMAP_THRESHOLD_=524288" >> /run/libreelec/kodi.conf
 fi
+
+/usr/bin/setres.sh 32
