@@ -34,10 +34,6 @@ PKG_LONGDESC="RetroArch is the reference frontend for the libretro API. Popular 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-# Since the name has changed we move the files from the original folder to the new name.
-#post_unpack() {
- # mv $BUILD/RetroArch-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
-#}
 
 if [ "$OPENGLES_SUPPORT" = yes ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET $OPENGLES"
@@ -129,7 +125,7 @@ makeinstall_target() {
   echo "quick_menu_show_undo_save_load_state = \"false\"" >> $INSTALL/etc/retroarch.cfg
   echo "quick_menu_show_save_core_overrides = \"false\"" >> $INSTALL/etc/retroarch.cfg
   echo "quick_menu_show_save_game_overrides = \"false\"" >> $INSTALL/etc/retroarch.cfg
-  echo "quick_menu_show_cheats = \"false\"" >> $INSTALL/etc/retroarch.cfg
+  echo "quick_menu_show_cheats = \"true\"" >> $INSTALL/etc/retroarch.cfg
   
   # Video
   sed -i -e "s/# video_windowed_fullscreen = true/video_windowed_fullscreen = false/" $INSTALL/etc/retroarch.cfg
