@@ -30,7 +30,7 @@ case $1 in
 "MAME")
       if [ "$EMU" = "AdvanceMame" ]; then
    # advmame runs best at 32bpp   
-   BPP="32" 
+   /usr/bin/setres.sh 32
    RUNTHIS='/usr/bin/advmame.sh "$2"'
    fi
        ;;
@@ -41,7 +41,6 @@ case $1 in
         ;;
 esac
 
-fbset -fb /dev/fb0 -g  $X $Y 1920 2160 $BPP
 
 # Splash screen, not sure if this is the best way to do it, but it works so far, but not as good as I want it too with PPSSPPSDL and advmame :(
 (
@@ -56,5 +55,5 @@ eval echo  ${RUNTHIS} >> $SX05RELOG
 echo "Emulator Output is:" >> $SX05RELOG
 eval ${RUNTHIS} >> $SX05RELOG 2>&1
 
-# Return to 32bit mode
-fbset -fb /dev/fb0 -g  $X $Y 1920 2160 32
+# Return to default mode
+/usr/bin/setres.sh
