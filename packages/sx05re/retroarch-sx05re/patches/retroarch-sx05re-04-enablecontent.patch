@@ -1,20 +1,90 @@
 --- a/menu/menu_displaylist.c	2017-08-18 06:30:31.000000000 -0500
 +++ b/menu/menu_displaylist.c	2017-08-20 01:54:59.625855817 -0500
-@@ -3200,11 +3200,11 @@
-       menu_displaylist_info_t *info)
+@@ -3010,11 +3010,6 @@
  {
  #ifdef HAVE_LAKKA
--   menu_entries_append_enum(info->list,
-+  /* menu_entries_append_enum(info->list,
-          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_UPDATE_LAKKA),
-          msg_hash_to_str(MENU_ENUM_LABEL_UPDATE_LAKKA),
-          MENU_ENUM_LABEL_UPDATE_LAKKA,
--         MENU_SETTING_ACTION, 0, 0);
-+         MENU_SETTING_ACTION, 0, 0); */
     menu_entries_append_enum(info->list,
+-         msg_hash_to_str(MENU_ENUM_LABEL_VALUE_UPDATE_LAKKA),
+-         msg_hash_to_str(MENU_ENUM_LABEL_UPDATE_LAKKA),
+-         MENU_ENUM_LABEL_UPDATE_LAKKA,
+-         MENU_SETTING_ACTION, 0, 0);
+-   menu_entries_append_enum(info->list,
           msg_hash_to_str(MENU_ENUM_LABEL_VALUE_THUMBNAILS_UPDATER_LIST),
           msg_hash_to_str(MENU_ENUM_LABEL_THUMBNAILS_UPDATER_LIST),
-@@ -5123,13 +5123,13 @@
+          MENU_ENUM_LABEL_THUMBNAILS_UPDATER_LIST,
+@@ -3024,8 +3019,7 @@
+          msg_hash_to_str(MENU_ENUM_LABEL_DOWNLOAD_CORE_CONTENT_DIRS),
+          MENU_ENUM_LABEL_DOWNLOAD_CORE_CONTENT_DIRS,
+          MENU_SETTING_ACTION, 0, 0);
+-#else
+-#ifdef HAVE_NETWORKING
++
+    settings_t *settings         = config_get_ptr();
+ 
+    if (settings->bools.menu_show_core_updater)
+@@ -3041,13 +3035,13 @@
+          MENU_ENUM_LABEL_THUMBNAILS_UPDATER_LIST,
+          MENU_SETTING_ACTION, 0, 0);
+ 
+-#ifdef HAVE_NETWORKING
++
+    menu_entries_append_enum(info->list,
+          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_DOWNLOAD_CORE_CONTENT),
+          msg_hash_to_str(MENU_ENUM_LABEL_DOWNLOAD_CORE_CONTENT_DIRS),
+          MENU_ENUM_LABEL_DOWNLOAD_CORE_CONTENT_DIRS,
+          MENU_SETTING_ACTION, 0, 0);
+-#endif
++
+ 
+    if (settings->bools.menu_show_core_updater)
+       menu_entries_append_enum(info->list,
+@@ -3056,13 +3050,13 @@
+             MENU_ENUM_LABEL_UPDATE_CORE_INFO_FILES,
+             MENU_SETTING_ACTION, 0, 0);
+ 
+-#ifdef HAVE_UPDATE_ASSETS
++
+    menu_entries_append_enum(info->list,
+          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_UPDATE_ASSETS),
+          msg_hash_to_str(MENU_ENUM_LABEL_UPDATE_ASSETS),
+          MENU_ENUM_LABEL_UPDATE_ASSETS,
+          MENU_SETTING_ACTION, 0, 0);
+-#endif
++
+ 
+    menu_entries_append_enum(info->list,
+          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_UPDATE_AUTOCONFIG_PROFILES),
+@@ -3076,15 +3070,11 @@
+          MENU_ENUM_LABEL_UPDATE_CHEATS,
+          MENU_SETTING_ACTION, 0, 0);
+ 
+-#ifdef HAVE_LIBRETRODB
+-#if !defined(VITA)
+    menu_entries_append_enum(info->list,
+          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_UPDATE_DATABASES),
+          msg_hash_to_str(MENU_ENUM_LABEL_UPDATE_DATABASES),
+          MENU_ENUM_LABEL_UPDATE_DATABASES,
+          MENU_SETTING_ACTION, 0, 0);
+-#endif
+-#endif
+ 
+    menu_entries_append_enum(info->list,
+          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_UPDATE_OVERLAYS),
+@@ -3113,13 +3103,6 @@
+             MENU_ENUM_LABEL_UPDATE_SLANG_SHADERS,
+             MENU_SETTING_ACTION, 0, 0);
+ 
+-#else
+-   menu_entries_append_enum(info->list,
+-         msg_hash_to_str(MENU_ENUM_LABEL_VALUE_NO_ITEMS),
+-         msg_hash_to_str(MENU_ENUM_LABEL_NO_ITEMS),
+-         MENU_ENUM_LABEL_NO_ITEMS,
+-         MENU_SETTING_NO_ITEM, 0, 0);
+-#endif
+ #endif
+ 
+    return 0;
+@@ -5151,13 +5134,13 @@
                 PARSE_ONLY_BOOL, false);
  
  #if defined(HAVE_LAKKA)
