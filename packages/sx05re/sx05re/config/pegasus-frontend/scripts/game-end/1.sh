@@ -1,0 +1,1 @@
+setres.sh 32
