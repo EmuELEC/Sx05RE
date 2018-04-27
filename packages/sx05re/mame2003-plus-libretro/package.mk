@@ -19,7 +19,7 @@
 ################################################################################
 
 PKG_NAME="mame2003-plus-libretro"
-PKG_VERSION="612a464"
+PKG_VERSION="c980547"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MAME"
@@ -40,5 +40,5 @@ make_target() {
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp mame2003-plus_libretro.so $INSTALL/usr/lib/libretro/
+  cp mame2003_plus_libretro.so $INSTALL/usr/lib/libretro/
 }
