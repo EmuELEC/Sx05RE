@@ -19,7 +19,7 @@
 ################################################################################
 
 PKG_NAME="retroarch-sx05re"
-PKG_VERSION="ab00d58"
+PKG_VERSION="05ea2cf"
 PKG_REV="9"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv3"

@@ -84,22 +84,6 @@
  #endif
  
     return 0;
-@@ -5151,13 +5134,13 @@
-                PARSE_ONLY_BOOL, false);
- 
- #if defined(HAVE_LAKKA)
--         menu_displaylist_parse_settings_enum(menu, info,
-+ /*        menu_displaylist_parse_settings_enum(menu, info,
-                MENU_ENUM_LABEL_MENU_SHOW_QUIT_RETROARCH,
-                PARSE_ONLY_BOOL, false);
- 
-          menu_displaylist_parse_settings_enum(menu, info,
-                MENU_ENUM_LABEL_MENU_SHOW_REBOOT,
--               PARSE_ONLY_BOOL, false);
-+               PARSE_ONLY_BOOL, false);*/
- #endif
- 
-          menu_displaylist_parse_settings_enum(menu, info,
 --- a/menu/menu_setting.c	2017-03-12 17:52:42.000000000 -0600
 +++ b/menu/menu_setting.c	2017-03-13 19:05:16.526319525 -0600
 @@ -2459,7 +2459,7 @@
